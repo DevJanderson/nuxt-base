@@ -11,14 +11,15 @@ Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./REA
 - Pinia 4, VueUse 14, `@nuxtjs/color-mode` (classe `dark` no `<html>`)
 - Vitest 4 + `@nuxt/test-utils` + happy-dom (ambiente `nuxt` global)
 - pnpm 11 (pinado em `packageManager`), ESLint via `@nuxt/eslint` (sem Prettier)
-  + regras anti-duplicação do `sonarjs`; `knip` para código morto (`knip.jsonc`)
+  + regras anti-duplicação do `sonarjs`; `knip` para código morto (`knip.jsonc`);
+  `jscpd` para copy-paste (`.jscpd.json`, threshold 0 — clone novo falha o CI)
 - Hooks via `lefthook.yml`: pre-commit lint dos staged; pre-push `pnpm verify`
 
 ## Comandos
 
 - `pnpm dev` / `pnpm build`
-- `pnpm lint` / `pnpm lint:fix` / `pnpm typecheck` / `pnpm test` / `pnpm test:watch` / `pnpm knip`
-- `pnpm verify` — lint + typecheck + test + knip, o espelho do CI.
+- `pnpm lint` / `pnpm lint:fix` / `pnpm typecheck` / `pnpm test` / `pnpm test:watch` / `pnpm knip` / `pnpm dup`
+- `pnpm verify` — lint + typecheck + test + knip + dup, o espelho do CI.
   **Rode antes de dizer que terminou: "deveria funcionar" não é terminado.**
 
 ## Convenções inegociáveis

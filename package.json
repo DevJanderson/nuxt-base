@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "knip": "knip",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm knip"
+    "dup": "jscpd app server tests",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm knip && pnpm dup"
   },
   "dependencies": {
     "@nuxt/fonts": "0.14.0",
@@ -40,6 +41,7 @@
     "eslint": "^10.9.1",
     "eslint-plugin-sonarjs": "^4.2.0",
     "happy-dom": "20.11.15",
+    "jscpd": "^5.0.16",
     "knip": "^6.32.3",
     "lefthook": "^2.1.12",
     "playwright-core": "1.62.1",
