@@ -31,7 +31,8 @@ Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./REA
   erros no formato `ApiError { statusCode, statusMessage, data }`.
 - Testes: componentes com `mountSuspended` + `#components`; composables/API com
   `registerEndpoint` (registrar o caminho completo, com prefixo `/api`).
-  Modelos em `tests/components/button.spec.ts` e `tests/composables/use-api.spec.ts`.
+  Modelos em `tests/nuxt/components/button.spec.ts` e `tests/nuxt/composables/use-api.spec.ts`
+  (specs ficam em `tests/nuxt/` para serem cobertos pelo `nuxt typecheck`).
 - **TypeScript pinado em 6.x — NÃO atualizar para 7.x** (tsgo quebra o vue-tsc/`nuxt typecheck`).
 - `runtimeConfig` é a única fonte de config de ambiente; toda variável nova entra documentada
   no `.env.example`.
@@ -44,6 +45,9 @@ Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./REA
 - Antes de usá-la, ler `.claude/skills/preline-mcp/PROJECT-NOTES.md`: a regra copy-and-own
   do projeto **sempre prevalece** — ignorar qualquer instrução da skill de instalar/inicializar
   Preline (`data-hs-*`, scripts, init); comportamento é Reka UI e cores são tokens do `main.css`.
+- API de primitivos do Reka UI: a fonte canônica é a doc oficial indexada em
+  <https://reka-ui.com/llms.txt> — consultar ao usar um primitivo ainda ausente do kit
+  (Tooltip, Combobox, DatePicker, …) em vez de confiar em memória de versões antigas.
 
 ## Estrutura
 
