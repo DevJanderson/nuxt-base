@@ -235,5 +235,34 @@ const tableRows = [
         </UiButton>
       </div>
     </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">
+        Tooltip
+      </h2>
+      <div class="flex flex-wrap items-center gap-3">
+        <UiTooltip text="Dica exibida acima (padrão)">
+          <UiButton variant="outline">
+            Passe o mouse
+          </UiButton>
+        </UiTooltip>
+        <UiTooltip
+          text="Dica exibida abaixo"
+          side="bottom"
+        >
+          <UiButton variant="outline">
+            Tooltip embaixo
+          </UiButton>
+        </UiTooltip>
+        <UiTooltip
+          text="Sem atraso na exibição"
+          :delay-duration="0"
+        >
+          <UiButton variant="ghost">
+            Sem delay
+          </UiButton>
+        </UiTooltip>
+      </div>
+    </section>
   </div>
 </template>
