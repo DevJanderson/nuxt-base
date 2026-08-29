@@ -9,7 +9,8 @@ argument-hint: "[nome-do-novo-projeto]"
 Roteiro executável de "Como virar um projeto novo" do README.md (SPEC.md §10.7):
 virar projeto novo = **renomear + editar tokens + apagar exemplos**. Roda no repositório
 já copiado do template; se o histórico ainda não foi zerado, comece com
-`rm -rf .git && git init`.
+`rm -rf .git && git init`. Zerar o `.git` apaga os git hooks: depois do
+`pnpm install`, rode `pnpm exec simple-git-hooks` para reinstalar o pre-commit.
 
 Antes de editar, pergunte (ou deduza do pedido): nome do projeto, tipo
 (site/SEO, dashboard SPA, SaaS full-stack, frontend puro) e se haverá login.
@@ -25,6 +26,8 @@ Edite os tokens em `app/assets/css/main.css`, **somente** os blocos `:root` (cla
 `.dark` (escuro) — e, se quiser, `--font-sans`/`--radius-*` no `@theme inline`.
 A tabela com o papel de cada token está no README.md, seção "Tema (identidade visual)".
 Nunca espalhe cor pelo código: componentes e páginas usam só tokens semânticos.
+Sem identidade visual definida no pedido? Mantenha os tokens padrão e siga adiante —
+trocar depois é editar só esses dois blocos.
 
 ## 3. Modo de renderização
 
@@ -42,24 +45,30 @@ A base não implementa auth — escolha no README.md, seção "Auth: duas receit
 - **Receita 2** — token contra API externa (cookie `auth.token`; o `useApi` já injeta o Bearer).
 - **Sem login?** Remova os pontos de encaixe: `app/middleware/auth.ts`,
   `app/pages/login.vue` e o redirect de 401 → `/login` em `app/composables/useApi.ts`.
+- **Login futuro (ainda sem receita escolhida)?** Mantenha os pontos de encaixe como
+  estão e não instale nada — eles são inertes até serem usados.
 
 Não instale nada além do que a receita escolhida pedir.
 
 ## 5. Limpar exemplos
 
 - `app/pages/components.vue` (vitrine `/components`): pergunte se o time quer mantê-la
-  como styleguide interno; se remover, remova também o link "Componentes" no header de
-  `app/layouts/default.vue`.
+  como styleguide interno (sem resposta, **mantenha** — remover depois é barato); se
+  remover, remova também o link "Componentes" no header de `app/layouts/default.vue`.
 - `app/pages/index.vue` → substituir o conteúdo de demonstração pelo do projeto.
 - `app/layouts/default.vue` → trocar a marca "Nuxt Base" no header/footer.
 - `app/stores/app.ts` → adaptar ou apagar (novos stores seguem o mesmo formato setup store).
+- Ao final, caça-marca: `grep -ri "nuxt base" app/ server/` — a marca também vive em
+  `app/error.vue` e nos `useSeoMeta` de `components.vue`/`login.vue`; zere o resultado.
 
 ## 6. Documentação e ambiente
 
 - README.md e CLAUDE.md do projeto derivado: título e descrição do projeto novo
-  (as convenções da base continuam valendo — não as apague).
-- `.env.example` → só as variáveis reais do projeto (ex.: `NUXT_PUBLIC_API_BASE` para
-  API externa); copie para `.env` e ajuste os valores locais.
+  (as convenções da base continuam valendo — não as apague). Remova a seção
+  "Como virar um projeto novo" (já cumprida) e atualize exemplos que citem `nuxt-base`.
+- `.env.example` → só as variáveis reais do projeto: remova as variáveis das receitas
+  **não** adotadas (ex.: `NUXT_SESSION_PASSWORD` se não usar a receita 1); copie para
+  `.env` e ajuste os valores locais.
 
 ## 7. Gate final (critérios do SPEC §10)
 
@@ -67,8 +76,10 @@ Não instale nada além do que a receita escolhida pedir.
 pnpm lint && pnpm typecheck && pnpm test
 ```
 
-E `pnpm dev` subindo sem erro e sem warning: confira `http://localhost:3000` e
-`http://localhost:3000/api/health` (deve reportar o nome novo do serviço).
+E `pnpm dev` subindo sem erro e sem warning. Atenção: se a 3000 estiver ocupada o Nuxt
+escolhe outra porta — confira a porta real no log do `pnpm dev` antes de testar
+`http://localhost:<porta>` e `http://localhost:<porta>/api/health` (deve reportar o
+nome novo do serviço).
 
 ## 8. Commit inicial
 
