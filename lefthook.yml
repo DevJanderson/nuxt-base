@@ -1,0 +1,14 @@
+# Guardrails locais (modelo adotado do nuxt-kit, adaptado à base):
+# pre-commit rápido (só lint dos staged), pre-push completo (espelho do CI).
+pre-commit:
+  parallel: true
+  jobs:
+    - name: lint
+      glob: '*.{js,mjs,ts,vue}'
+      run: pnpm exec eslint --fix {staged_files}
+      stage_fixed: true
+
+pre-push:
+  jobs:
+    - name: verify
+      run: pnpm verify

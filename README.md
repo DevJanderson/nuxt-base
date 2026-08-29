@@ -233,15 +233,21 @@ Stack: **Vitest 4 + `@nuxt/test-utils` + happy-dom**, com ambiente `nuxt` global
 
 Dois testes de referência definem o padrão da casa — copie a estrutura deles:
 
-- **Componente** → `tests/components/button.spec.ts`: `mountSuspended` de `@nuxt/test-utils/runtime` + import do componente via `#components`. Cobre render de slot, classes por variante e estado disabled.
-- **Composable/API** → `tests/composables/use-api.spec.ts`: `registerEndpoint` de `@nuxt/test-utils/runtime` mocka rotas no Nitro de teste — sem rede real. Atenção: registre o caminho **completo**, incluindo o prefixo da baseURL (`/api/ping`, não `/ping`). Cobre resposta feliz tipada, erro padronizado e a injeção condicional do header `Authorization`.
+- **Componente** → `tests/nuxt/components/button.spec.ts`: `mountSuspended` de `@nuxt/test-utils/runtime` + import do componente via `#components`. Cobre render de slot, classes por variante e estado disabled.
+- **Composable/API** → `tests/nuxt/composables/use-api.spec.ts`: `registerEndpoint` de `@nuxt/test-utils/runtime` mocka rotas no Nitro de teste — sem rede real. Atenção: registre o caminho **completo**, incluindo o prefixo da baseURL (`/api/ping`, não `/ping`). Cobre resposta feliz tipada, erro padronizado e a injeção condicional do header `Authorization`.
+
+Há ainda um **teste-inventário** (`tests/nuxt/conventions/semantic-tokens.spec.ts`) que trava a convenção "apenas tokens semânticos" em código: cor bruta nova em `app/**/*.vue` falha o CI, e entrada de allowlist que apodreceu também.
 
 ```bash
 pnpm test          # uma execução (é o que o CI roda)
 pnpm test:watch    # watch mode durante o desenvolvimento
 ```
 
-## CI e hooks de git
+## CI, hooks e saúde do código
 
-- **Pre-commit** (local): `simple-git-hooks` roda `lint-staged`, que aplica `eslint --fix` nos arquivos staged (`.js`, `.mjs`, `.ts`, `.vue`). Os hooks são instalados no `pnpm install`; se alterar a config `simple-git-hooks` do `package.json`, rode `pnpm exec simple-git-hooks` para reinstalar.
-- **CI** (GitHub Actions, `.github/workflows/ci.yml`): a cada push na `main` e em todo pull request roda `pnpm install`, `pnpm lint`, `pnpm typecheck` e `pnpm test`, em Node 24, com a versão do pnpm lida do campo `packageManager`.
+- **Hooks de git** (local, via `lefthook.yml`): **pre-commit** aplica `eslint --fix` nos arquivos staged; **pre-push** roda `pnpm verify` — o espelho exato do CI. Instalados automaticamente no `pnpm install` (postinstall do lefthook); após zerar o `.git`, rode `pnpm exec lefthook install`.
+- **`pnpm verify`**: `lint && typecheck && test && knip` num comando. Regra da casa: *"deveria funcionar" não é terminado* — rode antes de considerar qualquer tarefa pronta.
+- **CI** (`.github/workflows/ci.yml`): a cada push na `main` e em todo PR — `pnpm install --frozen-lockfile`, `lint`, `typecheck`, `knip`, `test` e `build`, em Node 24 com `TZ: UTC` (teste sensível a data falha igual aqui e em produção).
+- **Auditoria semanal** (`.github/workflows/security.yml`): `pnpm audit --prod` como gate toda segunda; auditoria completa informativa.
+- **Renovate** (`renovate.json`): updates não-major agrupados às segundas; majors exigem aprovação no Dependency Dashboard; **major do TypeScript bloqueado** (pino em 6.x). Ativa ao instalar o app do Renovate no repositório.
+- **Anti-duplicação e código morto**: regras `sonarjs` no ESLint (funções/branches idênticos) e **knip** (exports, arquivos e dependências sem uso — config em `knip.jsonc`). Para projetos derivados que crescerem, considere também o `jscpd` (detector de copy-paste com threshold no CI) — não vem na base por leveza.

@@ -11,15 +11,21 @@ Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./REA
 - Pinia 4, VueUse 14, `@nuxtjs/color-mode` (classe `dark` no `<html>`)
 - Vitest 4 + `@nuxt/test-utils` + happy-dom (ambiente `nuxt` global)
 - pnpm 11 (pinado em `packageManager`), ESLint via `@nuxt/eslint` (sem Prettier)
+  + regras anti-duplicação do `sonarjs`; `knip` para código morto (`knip.jsonc`)
+- Hooks via `lefthook.yml`: pre-commit lint dos staged; pre-push `pnpm verify`
 
 ## Comandos
 
 - `pnpm dev` / `pnpm build`
-- `pnpm lint` / `pnpm lint:fix` / `pnpm typecheck` / `pnpm test` / `pnpm test:watch`
+- `pnpm lint` / `pnpm lint:fix` / `pnpm typecheck` / `pnpm test` / `pnpm test:watch` / `pnpm knip`
+- `pnpm verify` — lint + typecheck + test + knip, o espelho do CI.
+  **Rode antes de dizer que terminou: "deveria funcionar" não é terminado.**
 
 ## Convenções inegociáveis
 
 - SFCs: `<script setup lang="ts">` sempre, ordem script → template.
+- **Reuso antes de criar**: confira `app/components/ui/` (e a vitrine `/components`) e
+  `app/composables/` antes de criar componente ou composable — estender vence duplicar.
 - Identificadores (variáveis, funções, tipos, rotas de API) em inglês; textos de UI em pt-BR.
 - **Apenas tokens semânticos** (`bg-primary`, `text-muted-foreground`, `rounded-field`, …).
   Nunca cor bruta (`bg-blue-600`, hex). Cor nova = token novo em `main.css` (`:root`/`.dark` + `@theme inline`).
@@ -49,6 +55,8 @@ Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./REA
   `app/components/ui/` (Reka + Preline traduzido + vitrine + teste); usar ao estender o kit.
 - `.claude/skills/derivar-projeto/` — roteiro para transformar o template num projeto novo
   (renomear, tokens, SSR/SPA, auth, limpar exemplos); usar ao derivar/renomear a base.
+- `.claude/skills/ci-verde/` — prevenção e diagnóstico de CI (`pnpm verify`, `gh run`,
+  catálogo de falhas conhecidas); usar quando o CI falhar ou antes de push importante.
 - API de primitivos do Reka UI: a fonte canônica é a doc oficial indexada em
   <https://reka-ui.com/llms.txt> — consultar ao usar um primitivo ainda ausente do kit
   (Tooltip, Combobox, DatePicker, …) em vez de confiar em memória de versões antigas.

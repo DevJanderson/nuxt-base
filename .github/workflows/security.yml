@@ -1,0 +1,24 @@
+name: security
+
+on:
+  schedule:
+    # toda segunda 09:00 UTC (06:00 em Brasília)
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    name: Auditoria de dependências
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/setup@v2
+        with:
+          runtime: node@24
+
+      - name: Auditoria de produção (gate — falha em moderate ou pior)
+        run: pnpm audit --prod --audit-level moderate
+
+      - name: Auditoria completa (informativa, não bloqueia)
+        run: pnpm audit || true

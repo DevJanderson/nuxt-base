@@ -1,0 +1,24 @@
+{
+  "test_cases": [
+    {
+      "prompt": "o CI falhou no meu último push, dá uma olhada e resolve",
+      "expected_behavior": "Usa gh run list/gh run view --log-failed para identificar o step vermelho, reproduz localmente com o comando equivalente do step, corrige a causa (sem desabilitar o step), roda pnpm verify, faz push e acompanha com gh run watch --exit-status sem pipe, confirmando a conclusão com gh run view.",
+      "tags": ["diagnostico", "gh"]
+    },
+    {
+      "prompt": "vou dar push agora, tá seguro?",
+      "expected_behavior": "Roda pnpm verify (lint + typecheck + test + knip) antes do push, confere se o pnpm-lock.yaml está em sincronia quando houve mudança de dependências, e não sugere --no-verify.",
+      "tags": ["prevencao"]
+    },
+    {
+      "prompt": "no meu pc funciona, mas no CI dá 'vitest: not found'",
+      "expected_behavior": "Reconhece o padrão de dependência implícita do catálogo de falhas conhecidas (peer auto-instalado local, ausente no CI) e declara o pacote explicitamente em devDependencies; não desabilita o step nem re-roda o CI sem mudança.",
+      "tags": ["falha-conhecida", "dependencias"]
+    },
+    {
+      "prompt": "tem um teste de data que só quebra no CI, roda de novo lá que deve passar",
+      "expected_behavior": "Recusa re-rodar o CI sem mudança; identifica a diferença de fuso (CI roda TZ=UTC), reproduz localmente com TZ=UTC pnpm test e corrige o teste/código para ser imune a fuso, registrando o caso no catálogo se for inédito.",
+      "tags": ["falha-conhecida", "timezone", "anti-rerun"]
+    }
+  ]
+}
