@@ -19,14 +19,14 @@
 
   --border: var(--color-zinc-200);
 
-  --primary: var(--color-indigo-600);
-  --primary-hover: var(--color-indigo-700);
-  --primary-foreground: var(--color-white);
+  --primary: var(--color-zinc-900);
+  --primary-hover: var(--color-zinc-800);
+  --primary-foreground: var(--color-zinc-50);
 
   --destructive: var(--color-red-600);
   --destructive-foreground: var(--color-white);
 
-  --ring: var(--color-indigo-500);
+  --ring: var(--color-zinc-400);
 }
 
 .dark {
@@ -41,14 +41,14 @@
 
   --border: var(--color-zinc-800);
 
-  --primary: var(--color-indigo-500);
-  --primary-hover: var(--color-indigo-600);
-  --primary-foreground: var(--color-white);
+  --primary: var(--color-zinc-50);
+  --primary-hover: var(--color-zinc-300);
+  --primary-foreground: var(--color-zinc-900);
 
   --destructive: var(--color-red-500);
   --destructive-foreground: var(--color-white);
 
-  --ring: var(--color-indigo-400);
+  --ring: var(--color-zinc-500);
 }
 
 /*
