@@ -49,6 +49,15 @@ docs/SPEC.md              # especificação da base
 
 ## Como virar um projeto novo
 
+**TL;DR** — do zero ao codando:
+
+```bash
+gh repo create meu-projeto --template DevJanderson/nuxt-base --private --clone
+cd meu-projeto
+pnpm install    # deps + git hooks (lefthook) sozinho
+claude          # e dentro da sessão: /derivar-projeto meu-projeto
+```
+
 Virar um projeto novo = renomear + editar tokens + limpar exemplos (docs/SPEC.md §11). Três caminhos, em ordem de preferência:
 
 1. **"Use this template" + skill (recomendado)** — crie o repositório pelo botão do GitHub (ou `gh repo create <nome> --template DevJanderson/nuxt-base --clone`) e, no clone, invoque a skill `/derivar-projeto <nome>` no Claude Code: ela executa o roteiro completo e valida os gates.
