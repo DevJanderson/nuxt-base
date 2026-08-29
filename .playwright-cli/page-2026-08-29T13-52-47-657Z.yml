@@ -1,0 +1,122 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - status [ref=e118]: Componentes — Nuxt Base
+    - generic [ref=e3]:
+      - banner [ref=e4]:
+        - generic [ref=e5]:
+          - link "Nuxt Base" [ref=e6] [cursor=pointer]:
+            - /url: /
+          - navigation "Navegação principal" [ref=e7]:
+            - link "Início" [ref=e8] [cursor=pointer]:
+              - /url: /
+            - link "Componentes" [ref=e9] [cursor=pointer]:
+              - /url: /components
+            - button "Alternar tema claro/escuro" [active] [ref=e10]
+      - main [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - heading "Componentes" [level=1] [ref=e15]
+            - paragraph [ref=e16]: "Vitrine do kit próprio (SPEC §4): comportamento via Reka UI, visual portado do Preline, tudo estilizado só com os tokens semânticos da base."
+          - generic [ref=e17]:
+            - heading "Button" [level=2] [ref=e18]
+            - generic [ref=e19]:
+              - button "Salvar" [ref=e20]
+              - button "Cancelar" [ref=e21]
+              - button "Saiba mais" [ref=e22]
+              - button "Excluir" [ref=e23]
+              - button "Desabilitado" [disabled]
+            - generic [ref=e24]:
+              - button "Pequeno" [ref=e25]
+              - button "Médio" [ref=e26]
+              - button "Grande" [ref=e27]
+          - generic [ref=e28]:
+            - heading "Input" [level=2] [ref=e29]
+            - generic [ref=e30]:
+              - generic [ref=e31]:
+                - generic [ref=e32]: Nome
+                - textbox "Nome" [ref=e33]:
+                  - /placeholder: Maria da Silva
+                - paragraph [ref=e34]: Como aparece no seu documento.
+              - generic [ref=e35]:
+                - generic [ref=e36]: E-mail
+                - textbox "E-mail" [invalid] [ref=e37]:
+                  - /placeholder: voce@exemplo.com
+                  - text: email-invalido
+                - paragraph [ref=e38]: Informe um endereço de e-mail válido.
+          - generic [ref=e39]:
+            - heading "Select" [level=2] [ref=e40]
+            - generic [ref=e42]:
+              - generic [ref=e43]: Framework
+              - combobox "Framework" [ref=e44]:
+                - generic: Escolha um framework…
+            - paragraph [ref=e46]: "Selecionado: nenhum"
+          - generic [ref=e47]:
+            - heading "Modal" [level=2] [ref=e48]
+            - button "Abrir modal" [ref=e49]
+          - generic [ref=e50]:
+            - heading "Card" [level=2] [ref=e51]
+            - generic [ref=e52]:
+              - heading "Resumo do projeto" [level=3] [ref=e54]
+              - paragraph [ref=e56]: Cards agrupam conteúdo relacionado. Header e footer são slots opcionais; o corpo é o slot default.
+              - generic [ref=e58]:
+                - button "Detalhes" [ref=e59]
+                - button "Continuar" [ref=e60]
+          - generic [ref=e61]:
+            - heading "Badge" [level=2] [ref=e62]
+            - generic [ref=e63]:
+              - generic [ref=e64]: Neutro
+              - generic [ref=e65]: Primário
+              - generic [ref=e66]: Destrutivo
+              - generic [ref=e67]: Outline
+          - generic [ref=e68]:
+            - heading "Table" [level=2] [ref=e69]
+            - table [ref=e71]:
+              - rowgroup [ref=e72]:
+                - row [ref=e73]:
+                  - columnheader "Nome" [ref=e74]
+                  - columnheader "E-mail" [ref=e75]
+                  - columnheader "Papel" [ref=e76]
+                  - columnheader "Status" [ref=e77]
+              - rowgroup [ref=e78]:
+                - row [ref=e79]:
+                  - cell "Ana Souza" [ref=e80]
+                  - cell "ana@exemplo.com" [ref=e81]
+                  - cell "Admin" [ref=e82]
+                  - cell "Ativo" [ref=e83]
+                - row [ref=e85]:
+                  - cell "Bruno Lima" [ref=e86]
+                  - cell "bruno@exemplo.com" [ref=e87]
+                  - cell "Editor" [ref=e88]
+                  - cell "Ativo" [ref=e89]
+                - row [ref=e91]:
+                  - cell "Carla Nunes" [ref=e92]
+                  - cell "carla@exemplo.com" [ref=e93]
+                  - cell "Leitora" [ref=e94]
+                  - cell "Inativo" [ref=e95]
+                - row [ref=e97]:
+                  - cell "Diego Alves" [ref=e98]
+                  - cell "diego@exemplo.com" [ref=e99]
+                  - cell "Editor" [ref=e100]
+                  - cell "Ativo" [ref=e101]
+          - generic [ref=e103]:
+            - heading "Toast" [level=2] [ref=e104]
+            - generic [ref=e105]:
+              - button "Toast de sucesso" [ref=e106]
+              - button "Toast de erro" [ref=e107]
+              - button "Toast de informação" [ref=e108]
+          - generic [ref=e109]:
+            - heading "Tooltip" [level=2] [ref=e110]
+            - generic [ref=e111]:
+              - button "Passe o mouse" [ref=e112]
+              - button "Tooltip embaixo" [ref=e113]
+              - button "Sem delay" [ref=e114]
+      - contentinfo [ref=e115]:
+        - paragraph [ref=e117]: Nuxt Base — template para começar projetos Nuxt 4.
+      - region "Notificações (F8)":
+        - list
+  - generic [ref=e120]:
+    - button "Toggle Nuxt DevTools" [ref=e121] [cursor=pointer]
+    - generic "Page load time" [ref=e125]:
+      - generic [ref=e126]: "89"
+      - generic [ref=e127]: ms
+    - button "Toggle Component Inspector" [ref=e129] [cursor=pointer]

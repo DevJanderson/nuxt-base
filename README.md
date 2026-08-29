@@ -243,6 +243,12 @@ pnpm test          # uma execução (é o que o CI roda)
 pnpm test:watch    # watch mode durante o desenvolvimento
 ```
 
+## Versionamento e branches
+
+- **`main` única** — o template não usa `develop`: o "Use this template" copia a branch default, e é ela que os gates mantêm sempre estável. Mudança arriscada = branch de feature ad hoc + PR (CI verde antes do merge), sem branch permanente.
+- **Tags de versão** (`v1.0.0`, …) marcam estados estáveis da base — um projeto derivado sabe de qual versão nasceu.
+- **Projetos derivados decidem o próprio fluxo** conforme a realidade de deploy (trunk-based, `develop → main`, preview environments) — a base não impõe.
+
 ## CI, hooks e saúde do código
 
 - **Hooks de git** (local, via `lefthook.yml`): **pre-commit** aplica `eslint --fix` nos arquivos staged; **pre-push** roda `pnpm verify` — o espelho exato do CI. Instalados automaticamente no `pnpm install` (postinstall do lefthook); após zerar o `.git`, rode `pnpm exec lefthook install`.
