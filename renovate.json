@@ -5,7 +5,7 @@
     "group:allNonMajor",
     ":semanticCommits"
   ],
-  "timezone": "America/Fortaleza",
+  "timezone": "America/Manaus",
   "schedule": ["before 8am on monday"],
   "prConcurrentLimit": 5,
   "labels": ["dependencies"],
