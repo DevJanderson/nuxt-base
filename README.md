@@ -87,7 +87,7 @@ Os tokens vivem em `app/assets/css/main.css`, em duas camadas:
 
 Regra da casa: **componentes e páginas usam apenas tokens semânticos** — nunca cor bruta (`bg-blue-600`, hex). Se precisar de uma cor nova, crie um token.
 
-O dark mode é do `@nuxtjs/color-mode` (classe `dark` no `<html>`, preferência persistida). O toggle está no layout default: `colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'`. Em SSR, renderize ícones dependentes do tema dentro de `<ClientOnly>` (o valor efetivo só é conhecido no client).
+O dark mode é do `@nuxtjs/color-mode` (classe `dark` no `<html>`, preferência persistida). **O tema claro é o padrão da plataforma** (`preference: 'light'` no `nuxt.config.ts` — primeira visita abre clara independentemente do SO); o toggle está no layout default e a escolha do usuário persiste: `colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'`. Em SSR, renderize ícones dependentes do tema dentro de `<ClientOnly>` (o valor efetivo só é conhecido no client).
 
 ## SSR ou SPA
 
