@@ -1,0 +1,25 @@
+name: renovate
+
+# Renovate self-hosted (substitui o app da Mend): roda com o token do dono
+# (secret RENOVATE_TOKEN), então os PRs criados disparam o CI normalmente.
+on:
+  schedule:
+    # segunda 09:00 UTC = 06:00 em Fortaleza — dentro da janela
+    # "before 8am on monday" do renovate.json (timezone America/Fortaleza)
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: renovatebot/github-action@v46.2.4
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          # O workflow do template cuida da base e dos derivados listados aqui;
+          # cada repo usa o próprio renovate.json
+          RENOVATE_REPOSITORIES: DevJanderson/nuxt-base,DevJanderson/radar
+          LOG_LEVEL: info
