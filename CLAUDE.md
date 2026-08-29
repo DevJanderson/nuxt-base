@@ -1,7 +1,7 @@
 # CLAUDE.md — Nuxt Base
 
 Template Nuxt 4 agnóstico (sem backend/banco/auth impostos), enxuto, copy-and-own na UI.
-Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./README.md) (receitas: tema, SSR/SPA, API, auth).
+Referências: [SPEC.md](./docs/SPEC.md) (especificação fechada) e [README.md](./README.md) (receitas: tema, SSR/SPA, API, auth).
 
 ## Stack
 

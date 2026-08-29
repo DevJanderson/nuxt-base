@@ -7,7 +7,7 @@ argument-hint: "[nome-do-componente]"
 # Novo componente no kit de UI
 
 Fluxo da casa para criar um componente em `app/components/ui/`, seguindo o copy-and-own
-do SPEC.md (§4) e as "Convenções inegociáveis" do CLAUDE.md. Exemplo vivo que cumpre
+de docs/SPEC.md (§4) e as "Convenções inegociáveis" do CLAUDE.md. Exemplo vivo que cumpre
 todo o padrão: `app/components/ui/Select.vue`.
 
 ## 1. Verificar se já existe

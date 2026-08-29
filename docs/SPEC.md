@@ -131,7 +131,7 @@ tests/nuxt/             # referência + smoke + inventário (cobertos pelo typec
 .claude/skills/         # as 4 skills
 .github/workflows/      # ci.yml, security.yml
 lefthook.yml  knip.jsonc  .jscpd.json  renovate.json
-.env.example  CLAUDE.md  README.md  SPEC.md
+docs/SPEC.md  .env.example  CLAUDE.md  README.md
 ```
 
 ## 10. Fora do escopo (por decisão, não esquecimento)
