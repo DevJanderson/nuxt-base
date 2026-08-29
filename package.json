@@ -13,13 +13,9 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
-    "test:watch": "vitest"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm exec lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,mjs,ts,vue}": "eslint --fix"
+    "test:watch": "vitest",
+    "knip": "knip",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm knip"
   },
   "dependencies": {
     "@nuxt/fonts": "0.14.0",
@@ -42,10 +38,11 @@
     "@nuxt/test-utils": "4.2.0",
     "@vue/test-utils": "2.5.0",
     "eslint": "^10.9.1",
+    "eslint-plugin-sonarjs": "^4.2.0",
     "happy-dom": "20.11.15",
-    "lint-staged": "17.4.1",
+    "knip": "^6.32.3",
+    "lefthook": "^2.1.12",
     "playwright-core": "1.62.1",
-    "simple-git-hooks": "2.14.0",
     "typescript": "6.0.3",
     "vitest": "4.1.11",
     "vue-tsc": "3.3.11"

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreDependencies": [
+    // Coleção de ícones descoberta em runtime pelo @nuxt/icon (não é importada)
+    "@iconify-json/lucide",
+    // Executado por dentro do `nuxt typecheck`, nunca importado
+    "vue-tsc",
+    // Fornecido pelo @nuxt/test-utils (environment "nuxt" do vitest.config.ts)
+    "vitest-environment-nuxt"
+  ]
+}

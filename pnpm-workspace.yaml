@@ -1,8 +1,7 @@
 allowBuilds:
   esbuild: true
   unrs-resolver: true
-  simple-git-hooks: true
   vue-demi: true
+  lefthook: true
 minimumReleaseAgeExclude:
   - happy-dom@20.11.15
-  - simple-git-hooks@2.14.0

@@ -9,8 +9,8 @@ argument-hint: "[nome-do-novo-projeto]"
 Roteiro executável de "Como virar um projeto novo" do README.md (SPEC.md §10.7):
 virar projeto novo = **renomear + editar tokens + apagar exemplos**. Roda no repositório
 já copiado do template; se o histórico ainda não foi zerado, comece com
-`rm -rf .git && git init`. Zerar o `.git` apaga os git hooks: depois do
-`pnpm install`, rode `pnpm exec simple-git-hooks` para reinstalar o pre-commit.
+`rm -rf .git && git init`. Zerar o `.git` apaga os git hooks: rode
+`pnpm exec lefthook install` para reinstalar pre-commit e pre-push.
 
 Antes de editar, pergunte (ou deduza do pedido): nome do projeto, tipo
 (site/SEO, dashboard SPA, SaaS full-stack, frontend puro) e se haverá login.
