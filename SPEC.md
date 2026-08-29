@@ -1,15 +1,18 @@
 # Especificação — Base Nuxt 4
 
-> Documento de referência do projeto-base. Fechado em 2026-08-28, antes de qualquer código.
+> Documento de referência do projeto-base. Fechado em 2026-08-28, antes de qualquer código;
+> **revisado em 2026-08-29** para refletir a base construída (kit, skills e guardrails).
 
 ## 1. Objetivo
 
 Repositório-modelo (template) em Nuxt 4 que sirva de ponto de partida para qualquer projeto:
 dashboards/painéis atrás de login, sites com SEO, SaaS full-stack e frontends puros
-consumindo API externa.
+consumindo API externa. Publicado como Template repository em
+<https://github.com/DevJanderson/nuxt-base>.
 
-**Estratégia de reuso:** template primeiro — cada projeto nasce de uma cópia. Quando a base
-estabilizar, o que for genérico será extraído para uma Nuxt Layer (fase futura, fora deste escopo).
+**Estratégia de reuso:** template primeiro — cada projeto nasce de uma cópia ("Use this
+template" ou clone + skill `derivar-projeto`). Quando a base estabilizar, o que for genérico
+poderá ser extraído para uma Nuxt Layer (fase futura, fora deste escopo).
 
 ## 2. Princípios
 
@@ -21,99 +24,131 @@ estabilizar, o que for genérico será extraído para uma Nuxt Layer (fase futur
    O visual é nosso; referências externas são fonte de cópia, não runtime.
 4. **100% Vue-nativa** — comportamento de UI vive no Vue (via Reka UI), nunca em
    plugins JS vanilla que manipulam o DOM por fora.
+5. **Convenção que importa vira código executável** — regra crítica ganha teste-inventário,
+   regra de lint ou gate de CI; documento sozinho não segura regressão.
 
 ## 3. Fundação
 
 - **Nuxt 4** com estrutura `app/`
-- **TypeScript estrito**
-- **pnpm** como gerenciador de pacotes
-- **SSR ligado por padrão.** O ajuste por tipo de projeto é documentado no README:
-  - Dashboard SPA → `ssr: false` global ou `routeRules` por rota
-  - Site com SEO → padrão da base, com `routeRules` de prerender onde couber
+- **TypeScript estrito** — **pinado em 6.x** (7.x/tsgo quebra `vue-tsc`/`nuxt typecheck`;
+  o Renovate bloqueia o major)
+- **pnpm 11** (pinado em `packageManager`; build scripts liberados via `allowBuilds`)
+- **SSR ligado por padrão.** Ajuste por tipo de projeto documentado no README
+  (dashboard SPA → `ssr: false` ou `routeRules`)
 - **`runtimeConfig` como única fonte de configuração de ambiente**, espelhado num
   `.env.example` sempre atualizado
 
 ## 4. UI e Design System
 
-- **Tailwind 4** (config CSS-first): tokens do projeto via `@theme` — cores, tipografia,
-  espaçamento, raios. Trocar a identidade visual de um projeto = editar tokens.
-- **Kit de componentes próprio** em `app/components/ui/`:
-  - **Comportamento:** Reka UI (headless — foco, teclado, ARIA resolvidos)
-  - **Visual:** markup portado do Preline UI (core MIT), adaptado aos nossos tokens.
-    Variantes próprias do Preline (`hs-*`) são traduzidas para os estados do Reka
-    (`data-[state=open]:` etc.)
-  - **Preline nunca entra como dependência** — nem o pacote npm, nem o plugin JS.
-    É catálogo de referência e fonte de cópia.
-- **Kit inicial (mínimo fechado):** Button, Input, Select, Modal, Card, Badge, Table, Toast.
-  Table começa simples (markup + slots) e evolui conforme demanda real.
-- **Dark mode** funcionando via `@nuxt/color-mode`, integrado aos tokens.
-- **Módulos:** `@nuxt/icon`, `@nuxt/fonts`, `@nuxt/image`.
+- **Tailwind 4** (CSS-first via `@tailwindcss/vite`): tokens do projeto em
+  `app/assets/css/main.css`, em duas camadas — valores por tema (`:root`/`.dark`) e
+  registro como utilities (`@theme inline`, obrigatório pela indireção `var()`).
+  Trocar a identidade visual de um projeto = editar os blocos de tema.
+- **Dark mode** via `@nuxtjs/color-mode` (classe `dark`, `@custom-variant` no CSS).
+  **Tema claro é o padrão** (`preference: 'light'`); o toggle do layout persiste a
+  escolha do usuário.
+- **Kit de componentes próprio** em `app/components/ui/` (auto-import `<UiX>`):
+  - **Comportamento:** Reka UI (headless — foco, teclado, ARIA). API de primitivos:
+    fonte canônica <https://reka-ui.com/llms.txt>.
+  - **Visual:** markup portado do Preline UI, adaptado aos tokens. Variantes `hs-*`
+    traduzidas para estados Reka (`data-[state=…]`). **Preline nunca entra como
+    dependência** — regras completas em `.claude/skills/preline-mcp/PROJECT-NOTES.md`.
+- **Kit atual:** Button, Input, Select, Modal, Card, Badge, Table, Toast (Toaster +
+  `useToast`), Tooltip. Vitrine em `/components`. Componente novo segue a skill
+  `novo-componente-ui` e entra no smoke de regressão no mesmo commit.
+- **Módulos:** `@nuxt/icon` (+ `@iconify-json/lucide` local), `@nuxt/fonts`, `@nuxt/image`.
 
 ## 5. Dados e API
 
-- **`useApi`** — composable central: wrapper de `$fetch`/`useFetch` com:
-  - baseURL vinda do `runtimeConfig` (aponta para o Nitro próprio ou para API externa)
-  - injeção de credencial (preparada, sem implementação de auth fixa)
-  - tratamento de erro padronizado e tipagem de resposta
-- **`server/`** estruturado com exemplo mínimo (rota de healthcheck).
-  **Sem ORM e sem banco** — entram por projeto.
-- **Pinia** com um store de exemplo definindo o padrão da casa (setup stores).
-- **VueUse** disponível.
+- **`useApi`** — wrapper tipado de `$fetch` (baseURL do `runtimeConfig.public.apiBase`,
+  injeção condicional de Bearer via cookie `auth.token`, erro padronizado
+  `ApiError { statusCode, statusMessage, data }`, redirect 401 → `/login` no client) +
+  **`useApiData`** sobre `useFetch`. Toda chamada HTTP passa por aqui.
+- **`server/`** com exemplo mínimo (`server/api/health.get.ts`). **Sem ORM e sem banco.**
+- **Pinia** (setup stores; modelo em `app/stores/app.ts`) e **VueUse**.
 
 ## 6. Auth — pontos de encaixe, sem implementação
 
-A base **não implementa** autenticação. Ela entrega:
+- Middleware nomeado `auth` (esqueleto), página `/login` placeholder, `useApi`
+  preparado para credencial.
+- **Duas receitas no README:** sessão no servidor (`nuxt-auth-utils`) e token contra
+  API externa. Terceiro caso documentado na skill `derivar-projeto`: login futuro →
+  manter encaixes, não instalar nada.
 
-- Middleware de rota `auth` (esqueleto documentado)
-- Página `/login` placeholder
-- `useApi` já preparado para injetar credencial
-- **Duas receitas no README:**
-  1. Sessão no servidor (SaaS full-stack) → `nuxt-auth-utils`
-  2. Token contra API externa (frontend puro) → armazenamento + injeção no `useApi`
+## 7. Qualidade e guardrails (anti-regressão)
 
-## 7. DX e Qualidade
+Três camadas, todas espelhando o mesmo padrão:
 
-- **`@nuxt/eslint`** flat config, com formatação inclusa (sem Prettier)
-- **Vitest + `@nuxt/test-utils`**: um teste de componente e um de composable como referência
-- **`simple-git-hooks` + `lint-staged`**: lint no pre-commit
-- **CI (GitHub Actions):** lint + typecheck + test
-- **`CLAUDE.md`** com as convenções da base — herdado por todos os projetos
+- **Local, na mão:** `pnpm verify` = `lint && typecheck && test && knip && dup`.
+  Regra da casa: *"deveria funcionar" não é terminado.*
+- **Local, automático (lefthook):** pre-commit roda `eslint --fix` nos staged;
+  pre-push roda `pnpm verify` inteiro.
+- **CI (GitHub Actions):** push/PR → `install --frozen-lockfile`, `lint`, `typecheck`,
+  `knip`, `dup`, `test`, `build` em Node 24 com `TZ: UTC` + job **gitleaks** (segredos,
+  histórico completo). Semanal: `security.yml` (`pnpm audit --prod` como gate).
+  **Renovate** configurado (não-majors agrupados; majors com aprovação; TS major bloqueado).
 
-## 8. Estrutura de pastas (proposta)
+Ferramentas e regras:
+
+- **ESLint** (`@nuxt/eslint`, flat, sem Prettier) + **sonarjs** (duplicação estrutural,
+  complexidade) + **`no-console`** (erro em `server/` — receita pino no README; aviso no
+  `app/` com `warn`/`error` liberados).
+- **knip** (código morto/deps sem uso, `knip.jsonc`) e **jscpd** (copy-paste,
+  `.jscpd.json`, **threshold 0** — baseline da base é 0,00%).
+- **Strip de console em produção** (client): `console.log/info/debug/trace` removidos do
+  bundle via terser `pure_funcs` em `$production` (Vite 8/oxc ignora `vite.esbuild.*`;
+  validado por inspeção de bundle).
+- **Testes (Vitest + `@nuxt/test-utils`, ambiente `nuxt`, happy-dom):** referência de
+  componente (`button.spec.ts`), de composable (`use-api.spec.ts` com `registerEndpoint`),
+  **smoke de regressão do kit inteiro** (`kit-smoke.spec.ts`) e **teste-inventário**
+  de tokens semânticos (`semantic-tokens.spec.ts` — cor bruta falha; allowlist podre falha).
+  Specs vivem em `tests/nuxt/` (cobertos pelo `nuxt typecheck`).
+
+## 8. Skills (automação de fluxo com IA)
+
+Em `.claude/skills/`, viajam com o template para os derivados:
+
+- **`preline-mcp`** — skill oficial do Preline (cópia fiel) + `PROJECT-NOTES.md` com as
+  regras da casa, que sempre prevalecem.
+- **`novo-componente-ui`** — fluxo de estender o kit (+ checklist de a11y + 4 evals).
+- **`derivar-projeto`** — roteiro de virar projeto novo (+ 3 evals; corrigida após teste
+  real em clone).
+- **`ci-verde`** — prevenção e diagnóstico de CI (+ catálogo de falhas conhecidas
+  vivido em produção + 4 evals).
+
+Evals no formato skill-creator (`evals/evals.json`), executáveis via plugin oficial.
+
+## 9. Estrutura
 
 ```
 app/
-  assets/css/        # main.css com @theme (tokens)
-  components/
-    ui/              # kit próprio (Button, Input, Modal, ...)
-  composables/       # useApi, ...
-  layouts/           # default
-  middleware/        # auth (esqueleto)
-  pages/             # index, login (placeholder)
-  stores/            # exemplo Pinia
-  error.vue          # erro global + 404
-server/
-  api/               # healthcheck de exemplo
-public/
-.env.example
-CLAUDE.md
-README.md            # convenções + receitas (SSR/SPA, auth, deploy)
-SPEC.md              # este documento
+  assets/css/main.css   # tokens (identidade visual = editar :root/.dark)
+  components/ui/        # kit próprio (9 componentes); vitrine em /components
+  composables/          # useApi/useApiData, useToast
+  layouts/ pages/ stores/ middleware/ error.vue
+server/api/health.get.ts
+tests/nuxt/             # referência + smoke + inventário (cobertos pelo typecheck)
+.claude/skills/         # as 4 skills
+.github/workflows/      # ci.yml, security.yml
+lefthook.yml  knip.jsonc  .jscpd.json  renovate.json
+.env.example  CLAUDE.md  README.md  SPEC.md
 ```
 
-## 9. Fora do escopo (por decisão, não esquecimento)
+## 10. Fora do escopo (por decisão, não esquecimento)
 
-i18n, ORM/banco, upload de arquivos, filas, e-mail, billing, PWA, admin.
-Entram por projeto; quando um padrão se repetir, vira receita no README — não código na base.
+i18n, ORM/banco, upload de arquivos, filas, e-mail, billing, PWA, admin, e2e Playwright,
+logger estruturado (pino — receita no README). Entram por projeto; padrão que se repetir
+vira receita no README — não código na base.
 
-## 10. Critérios de pronto
+## 11. Critérios de pronto
 
-A base está pronta quando, a partir de um clone limpo:
+A partir de um clone limpo:
 
 1. `pnpm install && pnpm dev` sobe sem erro e sem warning
-2. Lint, typecheck e testes passam (`pnpm lint`, `pnpm typecheck`, `pnpm test`)
-3. Dark mode alterna corretamente em todos os componentes do kit
-4. Todos os componentes do kit inicial existem, com uso demonstrado em uma página de exemplo
-5. `useApi` funciona contra o healthcheck do próprio Nitro
-6. README cobre: trocar tokens de tema, escolher SSR/SPA, as duas receitas de auth
-7. Virar um projeto novo = renomear + editar tokens + apagar exemplos
+2. `pnpm verify` verde (lint, typecheck, testes, knip, jscpd)
+3. `pnpm build` completa; bundle de produção sem `console.log` (verificável por marcador)
+4. Tema claro por padrão; dark mode alterna corretamente em todos os componentes do kit
+5. Kit completo com uso demonstrado em `/components`; todo componente no smoke de regressão
+6. `useApi` funciona contra o healthcheck do próprio Nitro
+7. README cobre: tema, SSR/SPA, as duas receitas de auth, guardrails
+8. Virar um projeto novo = skill `derivar-projeto` (renomear + tokens + limpar exemplos)

@@ -41,6 +41,10 @@ export default defineNuxtConfig({
   },
 
   colorMode: {
+    // Tema claro é o padrão da plataforma (decisão de produto, não do SO do visitante);
+    // o toggle do layout continua alternando e persistindo a escolha do usuário
+    preference: 'light',
+    fallback: 'light',
     classSuffix: ''
   },
 
