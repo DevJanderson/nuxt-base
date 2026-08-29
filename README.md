@@ -49,23 +49,24 @@ docs/SPEC.md              # especificação da base
 
 ## Como virar um projeto novo
 
-Virar um projeto novo = renomear + editar tokens + apagar exemplos (docs/SPEC.md §11):
+Virar um projeto novo = renomear + editar tokens + limpar exemplos (docs/SPEC.md §11). Três caminhos, em ordem de preferência:
 
-1. **Copie a base e zere o histórico**: `rm -rf .git && git init`.
-2. **Renomeie** em dois lugares:
-   - `package.json` → campo `"name"`;
-   - `server/api/health.get.ts` → `service: 'nuxt-base'` (o healthcheck reporta o nome do serviço).
-3. **Edite os tokens** em `app/assets/css/main.css`, apenas os blocos `:root` e `.dark` (cores) e, se quiser, `--font-sans` e `--radius-*` no `@theme inline`. Nada mais precisa mudar para trocar a identidade visual — ver [Tema](#tema-identidade-visual).
-4. **Apague/substitua os exemplos**:
-   - `app/pages/components.vue` — vitrine do kit; apague junto com o link "Componentes" no header de `app/layouts/default.vue`;
-   - `app/pages/index.vue` — conteúdo de demonstração; substitua pelo do projeto;
-   - `app/pages/login.vue` — placeholder; substitua ao implementar uma das [receitas de auth](#auth-duas-receitas);
-   - `app/layouts/default.vue` — troque a marca "Nuxt Base" no header/footer;
-   - `app/stores/app.ts` — store-referência; adapte ou apague (novos stores seguem o mesmo formato).
-5. **Configure o ambiente**: copie `.env.example` para `.env` e ajuste (ex.: `NUXT_PUBLIC_API_BASE` se for consumir API externa).
-6. **Valide**: `pnpm install && pnpm dev` deve subir sem erro; confira `http://localhost:3000` e `http://localhost:3000/api/health`. `pnpm verify` deve passar inteiro.
+1. **"Use this template" + skill (recomendado)** — crie o repositório pelo botão do GitHub (ou `gh repo create <nome> --template DevJanderson/nuxt-base --clone`) e, no clone, invoque a skill `/derivar-projeto <nome>` no Claude Code: ela executa o roteiro completo e valida os gates.
+2. **"Use this template" + passos manuais** — mesmo início; siga os passos abaixo pulando o item 1 (o histórico já nasce limpo e os hooks se instalam no `pnpm install`).
+3. **Cópia manual** — copie a pasta e rode `rm -rf .git && git init`; zerar o `.git` apaga os git hooks, então rode também `pnpm exec lefthook install`.
 
-Os testes de referência em `tests/` cobrem `UiButton` e `useApi` — continuam válidos no projeto novo enquanto esses arquivos existirem.
+Os passos (a fonte canônica, sempre atualizada, é a skill em `.claude/skills/derivar-projeto/`):
+
+1. **Histórico e hooks** — só no caminho 3, acima.
+2. **Renomeie** em dois lugares: `package.json` → campo `"name"`; `server/api/health.get.ts` → campo `service` (o healthcheck reporta o nome do serviço).
+3. **Tokens** em `app/assets/css/main.css`, apenas os blocos `:root` e `.dark` (e, se quiser, `--font-sans`/`--radius-*`) — ver [Tema](#tema-identidade-visual). Sem identidade definida ainda? Mantenha o padrão e siga: trocar depois é editar só esses dois blocos.
+4. **Renderização**: site/SEO mantém o SSR padrão; dashboard atrás de login → `ssr: false`; misto → `routeRules` — ver [SSR ou SPA](#ssr-ou-spa).
+5. **Auth**, quatro ramos: [receita 1 ou 2](#auth-duas-receitas); **sem login** → remova `app/middleware/auth.ts`, `app/pages/login.vue` e o redirect de 401 no `useApi`; **login futuro** → mantenha os pontos de encaixe como estão e não instale nada.
+6. **Limpe os exemplos**: vitrine `/components` (mantê-la como styleguide interno é válido; se remover, tire o link do header), `app/pages/index.vue`, marca no `app/layouts/default.vue`, `app/stores/app.ts`. Ao final, caça-marca: `grep -ri "nuxt base" app/ server/` — a marca vive também em `error.vue` e nos `useSeoMeta`; zere o resultado.
+7. **Docs e ambiente**: título/descrição de README e CLAUDE.md (as convenções continuam valendo), remova esta seção (já cumprida), `.env.example` só com as variáveis reais do projeto (fora as das receitas não adotadas) e copie para `.env`.
+8. **Valide**: `pnpm install && pnpm dev` sem erro e sem warning — se a porta 3000 estiver ocupada o Nuxt escolhe outra, confira no log — e `/api/health` reportando o nome novo; `pnpm verify` inteiro verde. Feche com o commit inicial.
+
+A suíte herdada continua valendo no projeto novo: os testes de referência (componente e composable), o smoke de regressão do kit e o teste-inventário de tokens.
 
 ## Tema (identidade visual)
 
