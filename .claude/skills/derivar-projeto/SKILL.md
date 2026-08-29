@@ -1,12 +1,12 @@
 ---
 name: derivar-projeto
-description: Transforma o template nuxt-base num projeto novo — renomeia pacote e healthcheck, edita os tokens de tema, define SSR/SPA, trata auth, limpa os exemplos e valida com os gates do SPEC §10. Use quando o usuário pedir para "usar o template", "começar um projeto novo a partir da base", "derivar" a base ou "renomear a base".
+description: Transforma o template nuxt-base num projeto novo — renomeia pacote e healthcheck, edita os tokens de tema, define SSR/SPA, trata auth, limpa os exemplos e valida com os gates do SPEC §11. Use quando o usuário pedir para "usar o template", "começar um projeto novo a partir da base", "derivar" a base ou "renomear a base".
 argument-hint: "[nome-do-novo-projeto]"
 ---
 
 # Derivar um projeto novo da base
 
-Roteiro executável de "Como virar um projeto novo" do README.md (SPEC.md §10.7):
+Roteiro executável de "Como virar um projeto novo" do README.md (docs/SPEC.md §11):
 virar projeto novo = **renomear + editar tokens + apagar exemplos**. Roda no repositório
 já copiado do template; se o histórico ainda não foi zerado, comece com
 `rm -rf .git && git init`. Zerar o `.git` apaga os git hooks: rode
@@ -70,7 +70,7 @@ Não instale nada além do que a receita escolhida pedir.
   **não** adotadas (ex.: `NUXT_SESSION_PASSWORD` se não usar a receita 1); copie para
   `.env` e ajuste os valores locais.
 
-## 7. Gate final (critérios do SPEC §10)
+## 7. Gate final (critérios do SPEC §11)
 
 ```bash
 pnpm lint && pnpm typecheck && pnpm test

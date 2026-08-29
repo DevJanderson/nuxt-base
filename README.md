@@ -1,6 +1,6 @@
 # Nuxt Base
 
-Template Nuxt 4 que serve de ponto de partida para qualquer projeto: dashboard atrás de login, site com SEO, SaaS full-stack ou frontend puro contra API externa. A base é **agnóstica** (não impõe backend, banco nem auth — deixa os pontos de encaixe prontos), **enxuta** (na dúvida, fica de fora com receita documentada) e **copy-and-own na UI** (o visual é nosso; bibliotecas estilizadas não entram como dependência). A especificação completa está em [SPEC.md](./SPEC.md).
+Template Nuxt 4 que serve de ponto de partida para qualquer projeto: dashboard atrás de login, site com SEO, SaaS full-stack ou frontend puro contra API externa. A base é **agnóstica** (não impõe backend, banco nem auth — deixa os pontos de encaixe prontos), **enxuta** (na dúvida, fica de fora com receita documentada) e **copy-and-own na UI** (o visual é nosso; bibliotecas estilizadas não entram como dependência). A especificação completa está em [SPEC.md](./docs/SPEC.md).
 
 ## Requisitos
 
@@ -26,7 +26,7 @@ pnpm test:watch     # Vitest em modo watch
 ```
 app/                      # código da aplicação (srcDir do Nuxt 4)
   assets/css/main.css     # design tokens (Tailwind 4 CSS-first) — identidade visual vive aqui
-  components/ui/          # kit próprio: Button, Input, Select, Modal, Card, Badge, Table, Toaster
+  components/ui/          # kit próprio: Button, Input, Select, Modal, Card, Badge, Table, Toaster, Tooltip
   composables/            # useApi/useApiData (porta única para a API), useToast
   layouts/default.vue     # header + nav + toggle de tema + <UiToaster />
   middleware/auth.ts      # esqueleto do middleware de rota (auth é ponto de encaixe)
@@ -35,19 +35,21 @@ app/                      # código da aplicação (srcDir do Nuxt 4)
   error.vue               # página de erro global + 404
 server/
   api/health.get.ts       # rota-referência do Nitro (GET /api/health)
-tests/
-  components/             # teste-referência de componente (mountSuspended)
+tests/nuxt/               # specs aqui entram no nuxt typecheck
+  components/             # referência (mountSuspended) + smoke de regressão do kit
   composables/            # teste-referência de composable (registerEndpoint)
+  conventions/            # teste-inventário: só tokens semânticos
+.claude/skills/           # skills de IA (preline-mcp, novo-componente-ui, derivar-projeto, ci-verde)
 .env.example              # espelho documentado do runtimeConfig
 nuxt.config.ts            # módulos, css, runtimeConfig
 vitest.config.ts          # ambiente nuxt global + happy-dom
 CLAUDE.md                 # convenções para sessões de IA
-SPEC.md                   # especificação da base
+docs/SPEC.md              # especificação da base
 ```
 
 ## Como virar um projeto novo
 
-Virar um projeto novo = renomear + editar tokens + apagar exemplos (SPEC §10.7):
+Virar um projeto novo = renomear + editar tokens + apagar exemplos (docs/SPEC.md §11):
 
 1. **Copie a base e zere o histórico**: `rm -rf .git && git init`.
 2. **Renomeie** em dois lugares:
@@ -61,7 +63,7 @@ Virar um projeto novo = renomear + editar tokens + apagar exemplos (SPEC §10.7)
    - `app/layouts/default.vue` — troque a marca "Nuxt Base" no header/footer;
    - `app/stores/app.ts` — store-referência; adapte ou apague (novos stores seguem o mesmo formato).
 5. **Configure o ambiente**: copie `.env.example` para `.env` e ajuste (ex.: `NUXT_PUBLIC_API_BASE` se for consumir API externa).
-6. **Valide**: `pnpm install && pnpm dev` deve subir sem erro; confira `http://localhost:3000` e `http://localhost:3000/api/health`. `pnpm lint && pnpm typecheck && pnpm test` devem passar.
+6. **Valide**: `pnpm install && pnpm dev` deve subir sem erro; confira `http://localhost:3000` e `http://localhost:3000/api/health`. `pnpm verify` deve passar inteiro.
 
 Os testes de referência em `tests/` cobrem `UiButton` e `useApi` — continuam válidos no projeto novo enquanto esses arquivos existirem.
 
