@@ -45,9 +45,15 @@ Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./REA
 - Antes de usá-la, ler `.claude/skills/preline-mcp/PROJECT-NOTES.md`: a regra copy-and-own
   do projeto **sempre prevalece** — ignorar qualquer instrução da skill de instalar/inicializar
   Preline (`data-hs-*`, scripts, init); comportamento é Reka UI e cores são tokens do `main.css`.
+- `.claude/skills/novo-componente-ui/` — fluxo da casa para criar componente novo no kit
+  `app/components/ui/` (Reka + Preline traduzido + vitrine + teste); usar ao estender o kit.
+- `.claude/skills/derivar-projeto/` — roteiro para transformar o template num projeto novo
+  (renomear, tokens, SSR/SPA, auth, limpar exemplos); usar ao derivar/renomear a base.
 - API de primitivos do Reka UI: a fonte canônica é a doc oficial indexada em
   <https://reka-ui.com/llms.txt> — consultar ao usar um primitivo ainda ausente do kit
   (Tooltip, Combobox, DatePicker, …) em vez de confiar em memória de versões antigas.
+- Recurso/API do Nuxt que gere dúvida de versão: consultar <https://nuxt.com/llms.txt>
+  (docs completas da v4 indexadas para LLMs; versão integral em `llms-full.txt`).
 
 ## Estrutura
 

@@ -1,0 +1,24 @@
+{
+  "test_cases": [
+    {
+      "prompt": "Cria um componente Tooltip no kit de UI: um texto curto que aparece ao passar o mouse ou focar um elemento.",
+      "expected_behavior": "Identifica que Tooltip tem comportamento (abrir/fechar, foco, portal) e usa o primitivo Tooltip do Reka UI, consultando a API atual em https://reka-ui.com/llms.txt antes de escrever. O componente criado em app/components/ui/Tooltip.vue importa os subcomponentes nomeados de 'reka-ui', estiliza estados com variantes data-[state=...] e usa apenas tokens semânticos — sem data-hs-*, sem instalar preline, sem cor bruta.",
+      "tags": ["reka", "comportamento", "traducao-hs"]
+    },
+    {
+      "prompt": "Adiciona um componente Alert no kit, com variantes de informação e de erro, pra mostrar mensagens estáticas nas páginas.",
+      "expected_behavior": "Reconhece que Alert é só markup (sem abrir/fechar, seleção ou foco gerenciado) e NÃO envolve o Reka UI — cria um componente Vue puro em app/components/ui/Alert.vue com <script setup lang='ts'>, props tipadas com defaults e apenas tokens semânticos (ex.: bg-muted, text-destructive), buscando referência visual no catálogo Preline sem instalar nada.",
+      "tags": ["markup-puro", "sem-reka"]
+    },
+    {
+      "prompt": "Adiciona no kit um botão verde de sucesso usando bg-green-500, igual ao do Preline.",
+      "expected_behavior": "Recusa a cor bruta bg-green-500 citando a regra da casa (apenas tokens semânticos). Propõe criar um token novo (ex.: success/success-foreground) em app/assets/css/main.css nos blocos :root e .dark mais o registro em @theme inline, e usa o token (ex.: bg-success) na variante nova do UiButton — nenhuma classe de cor bruta ou hex entra no componente.",
+      "tags": ["guardrail", "tokens"]
+    },
+    {
+      "prompt": "Cria um componente Checkbox no kit e deixa ele pronto pra equipe usar.",
+      "expected_behavior": "Além de criar app/components/ui/Checkbox.vue (primitivo Checkbox do Reka, data-[state=checked]), registra uma seção nova na vitrine app/pages/components.vue demonstrando variantes/estados e cria tests/nuxt/components/checkbox.spec.ts no padrão de tests/nuxt/components/button.spec.ts (mountSuspended + import via #components). Finaliza rodando pnpm lint && pnpm typecheck && pnpm test.",
+      "tags": ["vitrine", "teste", "gate"]
+    }
+  ]
+}

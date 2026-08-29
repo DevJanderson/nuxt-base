@@ -1,0 +1,19 @@
+{
+  "test_cases": [
+    {
+      "prompt": "Acabei de copiar o nuxt-base. Transforma isso no projeto 'painel-vendas', por favor.",
+      "expected_behavior": "Renomeia o campo name do package.json para painel-vendas e o campo service de server/api/health.get.ts para o mesmo nome; aponta que a identidade visual se troca editando apenas os blocos :root/.dark de app/assets/css/main.css; revisa os exemplos (vitrine /components, index, marca no layout) e finaliza rodando pnpm lint && pnpm typecheck && pnpm test com os três passando.",
+      "tags": ["renomear", "tokens", "gate"]
+    },
+    {
+      "prompt": "Esse projeto derivado vai ser um dashboard interno, tudo atrás de login, sem nenhuma página pública.",
+      "expected_behavior": "Recomenda o modo SPA conforme a receita 'SSR ou SPA' do README.md: ssr: false global no nuxt.config.ts (ou routeRules com '/app/**': { ssr: false } se houver área mista) — sem inventar configuração fora do README, e cita que o padrão SSR da base é para sites com SEO.",
+      "tags": ["ssr-spa", "receita-readme"]
+    },
+    {
+      "prompt": "O projeto novo não vai ter login nenhum, é um site totalmente público.",
+      "expected_behavior": "Sugere remover os pontos de encaixe de auth em vez de implementar algo: apagar app/middleware/auth.ts e app/pages/login.vue e retirar o redirect de 401 para /login em app/composables/useApi.ts. Não instala nenhum pacote de auth (nem nuxt-auth-utils).",
+      "tags": ["sem-auth", "pontos-de-encaixe"]
+    }
+  ]
+}
