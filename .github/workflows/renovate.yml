@@ -4,9 +4,9 @@ name: renovate
 # (secret RENOVATE_TOKEN), então os PRs criados disparam o CI normalmente.
 on:
   schedule:
-    # segunda 09:00 UTC = 06:00 em Fortaleza — dentro da janela
-    # "before 8am on monday" do renovate.json (timezone America/Fortaleza)
-    - cron: '0 9 * * 1'
+    # segunda 10:00 UTC = 06:00 em Manaus — dentro da janela
+    # "before 8am on monday" do renovate.json (timezone America/Manaus)
+    - cron: '0 10 * * 1'
   workflow_dispatch:
 
 jobs:

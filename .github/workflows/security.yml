@@ -2,8 +2,8 @@ name: security
 
 on:
   schedule:
-    # toda segunda 09:00 UTC (06:00 em Brasília)
-    - cron: '0 9 * * 1'
+    # toda segunda 10:00 UTC (06:00 em Manaus)
+    - cron: '0 10 * * 1'
   workflow_dispatch:
 
 jobs:
