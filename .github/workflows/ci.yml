@@ -31,3 +31,18 @@ jobs:
       - run: pnpm knip
       - run: pnpm test
       - run: pnpm build
+
+  gitleaks:
+    name: Varredura de segredos
+    runs-on: ubuntu-latest
+    steps:
+      # fetch-depth 0: o gitleaks varre o histórico, não só o snapshot
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # v3 = runtime Node 24 (v2 morre em 16/09/2026 com a remoção do Node 20).
+      # Licença: gratuito para conta pessoal; organização exige GITLEAKS_LICENSE.
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

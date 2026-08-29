@@ -22,6 +22,24 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()]
   },
 
+  // Anti-vazamento no client em produção: console.log/info/debug/trace saem do
+  // bundle final; warn/error ficam (diagnóstico legítimo — o lint só permite esses).
+  // Vite 8 minifica com oxc, cujo dropConsole é tudo-ou-nada; o terser permite a
+  // remoção seletiva via pure_funcs. Só em $production — dev continua logando.
+  $production: {
+    vite: {
+      build: {
+        minify: 'terser',
+        terserOptions: {
+          compress: {
+            pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.trace'],
+            drop_debugger: true
+          }
+        }
+      }
+    }
+  },
+
   colorMode: {
     classSuffix: ''
   },
