@@ -15,4 +15,16 @@ export default withNuxt(
       'sonarjs/cognitive-complexity': ['warn', 15],
     },
   },
+  // Anti-vazamento: log de servidor estruturado é decisão do projeto derivado
+  // (receita pino no README) — console.* solto em server/ é erro.
+  {
+    files: ['server/**/*.ts'],
+    rules: { 'no-console': 'error' },
+  },
+  // No client, console.log é aviso (o strip de produção no nuxt.config remove
+  // log/info/debug/trace do bundle final; warn/error sobrevivem de propósito).
+  {
+    files: ['app/**/*.{ts,vue}'],
+    rules: { 'no-console': ['warn', { allow: ['warn', 'error'] }] },
+  },
 )

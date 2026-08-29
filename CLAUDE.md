@@ -41,7 +41,9 @@ Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./REA
   (specs ficam em `tests/nuxt/` para serem cobertos pelo `nuxt typecheck`).
 - **TypeScript pinado em 6.x — NÃO atualizar para 7.x** (tsgo quebra o vue-tsc/`nuxt typecheck`).
 - `runtimeConfig` é a única fonte de config de ambiente; toda variável nova entra documentada
-  no `.env.example`.
+  no `.env.example`. Segredo nunca em código nem em `public.*` (gitleaks varre no CI).
+- `console.*` em `server/` é erro de lint (derivado que precisar de log adota pino — README);
+  no `app/` só `console.warn`/`error` passam, e produção remove log/info/debug do bundle.
 - Auth é ponto de encaixe: não implementar na base; seguir uma das duas receitas do README.
 
 ## Skills
