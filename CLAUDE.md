@@ -37,6 +37,14 @@ Referências: [SPEC.md](./SPEC.md) (especificação fechada) e [README.md](./REA
   no `.env.example`.
 - Auth é ponto de encaixe: não implementar na base; seguir uma das duas receitas do README.
 
+## Skills
+
+- `.claude/skills/preline-mcp/` — skill **oficial do Preline** (cópia fiel de
+  [htmlstreamofficial/preline/skills](https://github.com/htmlstreamofficial/preline/tree/main/skills)); usar ao criar/estilizar componentes UI para **descobrir e copiar** markup do catálogo Preline.
+- Antes de usá-la, ler `.claude/skills/preline-mcp/PROJECT-NOTES.md`: a regra copy-and-own
+  do projeto **sempre prevalece** — ignorar qualquer instrução da skill de instalar/inicializar
+  Preline (`data-hs-*`, scripts, init); comportamento é Reka UI e cores são tokens do `main.css`.
+
 ## Estrutura
 
 - `app/assets/css/main.css` — tokens (trocar identidade visual = editar `:root`/`.dark`)
