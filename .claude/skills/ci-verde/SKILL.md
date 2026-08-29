@@ -7,12 +7,13 @@ argument-hint: "[run-id]"
 # CI verde
 
 O CI (`.github/workflows/ci.yml`) roda: `pnpm install --frozen-lockfile` → `lint` →
-`typecheck` → `knip` → `test` → `build`, em Node 24 com `TZ: UTC`. A regra da casa:
+`typecheck` → `knip` → `dup` → `test` → `build`, em Node 24 com `TZ: UTC` (+ job
+`gitleaks` varrendo segredos no histórico). A regra da casa:
 **"deveria funcionar" não é terminado** — terminado é `pnpm verify` verde.
 
 ## Prevenir (antes do push)
 
-1. `pnpm verify` — o espelho local do CI (lint + typecheck + test + knip).
+1. `pnpm verify` — o espelho local do CI (lint + typecheck + test + knip + dup).
    O hook pre-push do lefthook já roda isso; **nunca** contorne com `--no-verify`
    sem motivo documentado.
 2. Mexeu em dependências? Confira `git status pnpm-lock.yaml` — lockfile fora de
