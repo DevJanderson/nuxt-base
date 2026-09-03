@@ -322,7 +322,7 @@ async function stepProduction() {
     NITRO_PORT: String(port),
   })
   // `strictStderr`: no servidor compilado, stderr com qualquer coisa já é regressão.
-  await exerciseServer('produção', proc, port, () => /Listening/i.test(proc.output), true)
+  await exerciseServer('produção', proc, port, () => /Listening/i.test(plain(proc.output)), true)
 }
 
 async function stepDev() {
