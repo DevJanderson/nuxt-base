@@ -10,6 +10,7 @@ const name = ref('')
 const email = ref('email-invalido')
 const framework = ref<string>()
 const modalOpen = ref(false)
+const modalFramework = ref<string>()
 
 const frameworks = [
   { label: 'Nuxt', value: 'nuxt' },
@@ -75,6 +76,28 @@ const tableRows = [
           Grande
         </UiButton>
       </div>
+      <p class="text-sm text-muted-foreground">
+        Com a prop <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">to</code> o
+        botão vira <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">NuxtLink</code>,
+        mantendo variantes e tamanhos.
+      </p>
+      <div class="flex flex-wrap items-center gap-3">
+        <UiButton to="/">
+          Ir para a home
+        </UiButton>
+        <UiButton
+          to="/login"
+          variant="outline"
+        >
+          Link outline
+        </UiButton>
+        <UiButton
+          to="/login"
+          disabled
+        >
+          Link desabilitado
+        </UiButton>
+      </div>
     </section>
 
     <section class="space-y-4">
@@ -119,6 +142,12 @@ const tableRows = [
       <h2 class="text-lg font-semibold">
         Modal
       </h2>
+      <p class="text-sm text-muted-foreground">
+        Informe sempre a <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">description</code>:
+        é ela que o leitor de tela anuncia ao abrir o diálogo. Sem ela o componente cai num
+        fallback oculto com o título, que é só rede de segurança para o
+        <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">aria-describedby</code>.
+      </p>
       <UiModal
         v-model:open="modalOpen"
         title="Confirmar publicação"
@@ -127,6 +156,16 @@ const tableRows = [
         <template #trigger>
           <UiButton>Abrir modal</UiButton>
         </template>
+
+        <!-- Select portalizado dentro do modal: confere a escala de z-index a olho nu -->
+        <div class="mb-4 max-w-xs">
+          <UiSelect
+            v-model="modalFramework"
+            :items="frameworks"
+            label="Framework"
+            placeholder="Escolha um framework…"
+          />
+        </div>
 
         <p class="text-sm">
           Revise as informações antes de confirmar. Dá para fechar com Esc, clicando

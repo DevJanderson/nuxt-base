@@ -1,0 +1,11 @@
+{
+  // Extensões recomendadas ao abrir o projeto (VS Code sugere instalar)
+  "recommendations": [
+    // Vue Official (Volar): SFC, TypeScript em <script setup>
+    "Vue.volar",
+    // Autocomplete das utilities do Tailwind 4 (tokens do main.css)
+    "bradlc.vscode-tailwindcss",
+    // ESLint — o único formatador/linter da casa
+    "dbaeumer.vscode-eslint"
+  ]
+}

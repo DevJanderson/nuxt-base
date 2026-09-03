@@ -14,6 +14,11 @@
       "prompt": "O projeto novo não vai ter login nenhum, é um site totalmente público.",
       "expected_behavior": "Sugere remover os pontos de encaixe de auth em vez de implementar algo: apagar app/middleware/auth.ts e app/pages/login.vue e retirar o redirect de 401 para /login em app/composables/useApi.ts. Não instala nenhum pacote de auth (nem nuxt-auth-utils).",
       "tags": ["sem-auth", "pontos-de-encaixe"]
+    },
+    {
+      "prompt": "Terminei de derivar a base. Sobrou algum arquivo de CI do template que eu deveria mexer?",
+      "expected_behavior": "Manda apagar .github/workflows/renovate.yml no projeto derivado (workflow do template: a lista de repos e o secret RENOVATE_TOKEN só existem na base — copiado, vira run vermelho toda segunda) e mantém o renovate.json, que é a config de update do repositório. Pede para o dono da base incluir o repo novo em RENOVATE_REPOSITORIES no workflow do template. Não sugere criar o secret RENOVATE_TOKEN no derivado, e deixa ci.yml e security.yml intactos.",
+      "tags": ["ci", "renovate", "derivado"]
     }
   ]
 }

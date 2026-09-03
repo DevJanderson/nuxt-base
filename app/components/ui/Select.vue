@@ -80,7 +80,7 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
         <SelectContent
           position="popper"
           :side-offset="4"
-          class="z-50 max-h-(--reka-select-content-available-height) w-(--reka-select-trigger-width) overflow-hidden rounded-field border border-border bg-card shadow-md"
+          class="z-(--z-dropdown) max-h-(--reka-select-content-available-height) w-(--reka-select-trigger-width) overflow-hidden rounded-field border border-border bg-card shadow-md"
         >
           <SelectViewport class="p-1">
             <SelectItem

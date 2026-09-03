@@ -4,7 +4,7 @@ Template Nuxt 4 que serve de ponto de partida para qualquer projeto: dashboard a
 
 ## Requisitos
 
-- **Node 22.19+** (ou 24.11+ — o CI usa Node 24)
+- **Node 24+** — é o que o CI usa, o que `engines.node` exige e o que o `.node-version` seleciona (`fnm use`, `nvm use`, `asdf`)
 - **pnpm 11** — a versão exata está pinada em `packageManager` no `package.json`
 
 ## Comandos
@@ -73,7 +73,8 @@ Os passos (a fonte canônica, sempre atualizada, é a skill em `.claude/skills/d
 5. **Auth**, quatro ramos: [receita 1 ou 2](#auth-duas-receitas); **sem login** → remova `app/middleware/auth.ts`, `app/pages/login.vue` e o redirect de 401 no `useApi`; **login futuro** → mantenha os pontos de encaixe como estão e não instale nada.
 6. **Limpe os exemplos**: vitrine `/components` (mantê-la como styleguide interno é válido; se remover, tire o link do header), `app/pages/index.vue`, marca no `app/layouts/default.vue`, `app/stores/app.ts`. Ao final, caça-marca: `grep -ri "nuxt base" app/ server/` — a marca vive também em `error.vue` e nos `useSeoMeta`; zere o resultado.
 7. **Docs e ambiente**: título/descrição de README e CLAUDE.md (as convenções continuam valendo), remova esta seção (já cumprida), `.env.example` só com as variáveis reais do projeto (fora as das receitas não adotadas) e copie para `.env`.
-8. **Valide**: `pnpm install && pnpm dev` sem erro e sem warning — se a porta 3000 estiver ocupada o Nuxt escolhe outra, confira no log — e `/api/health` reportando o nome novo; `pnpm verify` inteiro verde. Feche com o commit inicial.
+8. **CI do derivado**: **apague `.github/workflows/renovate.yml`** — é workflow do template (lista de repos fixa + secret `RENOVATE_TOKEN` que só existe na base), e copiado gera run vermelho toda segunda; o `renovate.json` fica. Peça ao dono da base para incluir o repositório novo em `RENOVATE_REPOSITORIES`, no workflow do template. `ci.yml` e `security.yml` seguem valendo como estão.
+9. **Valide**: `pnpm install && pnpm dev` sem erro e sem warning — se a porta 3000 estiver ocupada o Nuxt escolhe outra, confira no log — e `/api/health` reportando o nome novo; `pnpm verify` inteiro verde. Feche com o commit inicial.
 
 A suíte herdada continua valendo no projeto novo: os testes de referência (componente e composable), o smoke de regressão do kit e o teste-inventário de tokens.
 
@@ -95,9 +96,14 @@ Os tokens vivem em `app/assets/css/main.css`, em duas camadas:
 | `ring` | anel de foco |
 | `--radius-box` → `rounded-box` | raio de containers (cards, modais) |
 | `--radius-field` → `rounded-field` | raio de controles (botões, inputs) |
-| `--font-sans` | tipografia base |
+| `--font-sans` | tipografia base (trocar aqui **e** em `fonts.families` — ver abaixo) |
+| `--z-overlay` / `--z-modal` / `--z-dropdown` / `--z-toast` / `--z-tooltip` → `z-(--z-modal)` | escala de empilhamento (40/50/60/70/80) — dropdown acima do modal porque o Reka portaliza o `SelectContent` para o `body`; camada nova entra na escala, nunca `z-[n]` solto |
 
 Regra da casa: **componentes e páginas usam apenas tokens semânticos** — nunca cor bruta (`bg-blue-600`, hex). Se precisar de uma cor nova, crie um token.
+
+**Trocar a fonte são dois lugares**, não um: o token `--font-sans` no `main.css` **e** a família em `fonts.families`, no `nuxt.config.ts`. O `@nuxt/fonts` não detecta sozinho a fonte declarada dentro de `@theme inline` — o Tailwind 4 a compila para `--default-font-family` atrás de um `var()`, que o scanner não segue (bug upstream [nuxt/fonts#638](https://github.com/nuxt/fonts/issues/638)). Sem a declaração explícita, nenhum `@font-face` é gerado e o browser cai na fonte de sistema, em silêncio.
+
+**Idioma e título do documento** vivem no `app.head` do `nuxt.config.ts`: `htmlAttrs: { lang: 'pt-BR' }` (sem isso o `<html>` sai sem `lang` — a11y e SEO), `title: 'Nuxt Base'` como fallback de página sem `useSeoMeta({ title })` e `titleTemplate: '%s'` moldando o título das que têm. Projeto derivado troca o idioma nessa linha e ganha sufixo de marca com `titleTemplate: '%s · Meu Projeto'`.
 
 O dark mode é do `@nuxtjs/color-mode` (classe `dark` no `<html>`, preferência persistida). **O tema claro é o padrão da plataforma** (`preference: 'light'` no `nuxt.config.ts` — primeira visita abre clara independentemente do SO); o toggle está no layout default e a escolha do usuário persiste: `colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'`. Em SSR, renderize ícones dependentes do tema dentro de `<ClientOnly>` (o valor efetivo só é conhecido no client).
 
@@ -196,7 +202,11 @@ Aponte a base para a API externa no `.env`: `NUXT_PUBLIC_API_BASE=https://api.ex
 // essência da página de login
 const email = ref('')
 const password = ref('')
-const token = useCookie('auth.token', { maxAge: 60 * 60 * 24 * 7, sameSite: 'lax' })
+const token = useCookie('auth.token', {
+  maxAge: 60 * 60 * 24 * 7,
+  sameSite: 'lax',
+  secure: !import.meta.dev, // só trafega em https fora do dev
+})
 
 async function submit() {
   const api = useApi()
@@ -209,6 +219,8 @@ async function submit() {
 }
 ```
 
+**Trade-off desta receita:** o cookie é gravado pelo client, então **não pode ser `httpOnly`** — é legível por qualquer JavaScript da página, e um XSS leva o token junto. É o preço de guardar credencial num frontend puro; mitigue com `secure: true` em produção (acima, via `!import.meta.dev`), `sameSite: 'lax'`, expiração curta com refresh, e nunca injetando HTML de terceiros sem sanitizar. Se o projeto tem servidor próprio, a **receita 1** evita o problema: a sessão fica num cookie selado `httpOnly`, invisível para o JS.
+
 Em `app/middleware/auth.ts`, descomente o bloco da receita 2:
 
 ```ts
@@ -220,16 +232,39 @@ if (!token.value) {
 
 A partir daí toda chamada do `useApi` sai autenticada; um 401 da API derruba o usuário de volta para `/login` (comportamento já embutido). Logout = `useCookie('auth.token').value = null`.
 
+## Headers de segurança
+
+A base **não** envia cabeçalhos de segurança — é receita, não default (proxy/CDN na frente do app costuma já cuidar disso, e duplicar atrapalha). Para o app cuidar deles, `routeRules` no `nuxt.config.ts` resolve o básico sem dependência nenhuma:
+
+```ts
+export default defineNuxtConfig({
+  routeRules: {
+    '/**': {
+      headers: {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+        // Só faz sentido servindo em https — em http o browser ignora
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      },
+    },
+  },
+})
+```
+
+CSP séria (nonce por requisição, `frame-ancestors`, relatórios) é mais do que `routeRules` entrega bem: aí vale o módulo [`nuxt-security`](https://nuxt-security.vercel.app) (`npx nuxi module add security`), que traz headers, CSP com nonce e rate limiting — **instalação é decisão do projeto derivado**, a base não o inclui.
+
 ## Componentes de UI
 
 O kit vive em `app/components/ui/` e é auto-importado com prefixo `Ui` (`<UiButton>`, `<UiModal>`, …). A vitrine com todos os componentes em uso está em `/components`.
 
 | Componente | Props essenciais | Slots |
 |---|---|---|
-| `UiButton` | `variant` (`solid` \| `outline` \| `ghost` \| `destructive`), `size` (`sm` \| `md` \| `lg`), `disabled`, `type` | default |
+| `UiButton` | `variant` (`solid` \| `outline` \| `ghost` \| `destructive`), `size` (`sm` \| `md` \| `lg`), `disabled`, `type`, `to` (com `to` renderiza `NuxtLink` no lugar de `<button>`) | default |
 | `UiInput` | `v-model`, `label`, `hint`, `error`, `type`, `placeholder`, `disabled` | — |
 | `UiSelect` | `v-model`, `items: { label, value, disabled? }[]`, `label`, `placeholder`, `error`, `disabled` | — |
-| `UiModal` | `v-model:open`, `title` (obrigatória), `description` | `trigger`, default, `footer` |
+| `UiModal` | `v-model:open`, `title` (obrigatória), `description` (informe sempre — sem ela o componente cai num fallback oculto com o título, rede de segurança só para o `aria-describedby`) | `trigger`, default, `footer` |
 | `UiCard` | — | `header`, default, `footer` |
 | `UiBadge` | `variant` (`neutral` \| `primary` \| `destructive` \| `outline`) | default |
 | `UiTable` | `columns: { key, label }[]`, `rows` | `#cell-[key]` recebe `{ row, value }` |
@@ -267,7 +302,7 @@ pnpm test:watch    # watch mode durante o desenvolvimento
 - **`pnpm verify`**: `lint && typecheck && test && knip && dup` num comando. Regra da casa: *"deveria funcionar" não é terminado* — rode antes de considerar qualquer tarefa pronta.
 - **CI** (`.github/workflows/ci.yml`): a cada push na `main` e em todo PR — `pnpm install --frozen-lockfile`, `lint`, `typecheck`, `knip`, `dup`, `test` e `build`, em Node 24 com `TZ: UTC` (teste sensível a data falha igual aqui e em produção).
 - **Auditoria semanal** (`.github/workflows/security.yml`): `pnpm audit --prod` como gate toda segunda; auditoria completa informativa.
-- **Renovate** (`renovate.json` + `.github/workflows/renovate.yml`): updates não-major agrupados às segundas; majors exigem aprovação no Dependency Dashboard; **major do TypeScript bloqueado** (pino em 6.x). Roda **self-hosted via Actions** (segunda 06:00 e manual via workflow_dispatch), com o secret `RENOVATE_TOKEN` (token do dono — PRs disparam o CI normalmente; sem app externo). O workflow do template também cobre os derivados listados em `RENOVATE_REPOSITORIES`.
+- **Renovate** (`renovate.json` + `.github/workflows/renovate.yml`): updates não-major agrupados às segundas; majors exigem aprovação no Dependency Dashboard; **major do TypeScript bloqueado** (pino em 6.x). Roda **self-hosted via Actions** (segunda 06:00 e manual via workflow_dispatch), com o secret `RENOVATE_TOKEN` (token do dono — PRs disparam o CI normalmente; sem app externo). O workflow do template também cobre os derivados listados em `RENOVATE_REPOSITORIES` — por isso **`renovate.yml` é o único arquivo de CI que o projeto derivado apaga** (lá o secret não existe e a lista de repos não é dele: sobraria só um run vermelho por semana). O `renovate.json` continua em cada repositório, e cada derivado novo entra na lista `RENOVATE_REPOSITORIES` aqui na base.
 - **Anti-duplicação e código morto**: regras `sonarjs` no ESLint (funções/branches idênticos), **knip** (exports, arquivos e dependências sem uso — config em `knip.jsonc`) e **jscpd** (`pnpm dup` — detector de copy-paste em `app/`, `server/` e `tests/`, config em `.jscpd.json`). O threshold é **0**: a base parte de 0,00% de duplicação e qualquer clone novo falha o CI — subir o threshold num projeto derivado é decisão consciente, documentada no `.jscpd.json`.
 - **Anti-vazamento de logs**: `no-console` no ESLint — **erro** em `server/**` (log de servidor estruturado é decisão do derivado; receita: [pino](https://github.com/pinojs/pino)) e aviso em `app/` (só `console.warn`/`console.error` liberados). No build de produção do client, `console.log/info/debug/trace` são **removidos do bundle** (terser `pure_funcs`, só em `$production` no `nuxt.config.ts`); `warn`/`error` sobrevivem de propósito.
 - **Varredura de segredos**: job `gitleaks` no CI varre o histórico inteiro a cada push/PR (chaves, tokens, senhas commitados por acidente). Segredo detectado = CI vermelho → remova, **rotacione a credencial** (ela já vazou no histórico) e reescreva o histórico se o repo for público. `.env`/`.env.*` são gitignorados; só `.env.example` (com placeholders) é versionado.

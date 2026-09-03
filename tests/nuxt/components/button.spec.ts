@@ -35,4 +35,29 @@ describe('UiButton', () => {
 
     expect(wrapper.find('button').attributes('disabled')).toBeDefined()
   })
+
+  it('com to, renderiza <a> (NuxtLink) com href e as classes da variante', async () => {
+    const wrapper = await mountSuspended(UiButton, { props: { to: '/login', variant: 'outline' } })
+
+    const link = wrapper.find('a')
+    expect(link.attributes('href')).toBe('/login')
+    expect(link.classes()).toContain('border-border')
+    expect(wrapper.find('button').exists()).toBe(false)
+  })
+
+  it('com to e disabled, marca aria-disabled e tabindex -1 sem o atributo disabled nativo', async () => {
+    const wrapper = await mountSuspended(UiButton, { props: { to: '/login', disabled: true } })
+
+    const link = wrapper.find('a')
+    expect(link.attributes('aria-disabled')).toBe('true')
+    expect(link.attributes('tabindex')).toBe('-1')
+    expect(link.attributes('disabled')).toBeUndefined()
+  })
+
+  it('sem to, continua renderizando <button type=button>', async () => {
+    const wrapper = await mountSuspended(UiButton)
+
+    expect(wrapper.find('button').attributes('type')).toBe('button')
+    expect(wrapper.find('a').exists()).toBe(false)
+  })
 })

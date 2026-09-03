@@ -70,7 +70,18 @@ Não instale nada além do que a receita escolhida pedir.
   **não** adotadas (ex.: `NUXT_SESSION_PASSWORD` se não usar a receita 1); copie para
   `.env` e ajuste os valores locais.
 
-## 7. Gate final (critérios do SPEC §11)
+## 7. CI do projeto derivado
+
+- **Apague `.github/workflows/renovate.yml`.** Esse workflow é do template: a lista de
+  repositórios é fixa e o secret `RENOVATE_TOKEN` só existe lá — copiado para o derivado,
+  ele só gera run vermelho toda segunda. O `renovate.json` **fica** (é ele que define as
+  regras de update do repositório).
+- Avise o dono da base para acrescentar o repositório novo em `RENOVATE_REPOSITORIES`
+  no `.github/workflows/renovate.yml` **do template** — uma execução só cuida da base e
+  de todos os derivados listados.
+- `ci.yml` e `security.yml` continuam como estão: valem para qualquer projeto.
+
+## 8. Gate final (critérios do SPEC §11)
 
 ```bash
 pnpm lint && pnpm typecheck && pnpm test
@@ -81,7 +92,7 @@ escolhe outra porta — confira a porta real no log do `pnpm dev` antes de testa
 `http://localhost:<porta>` e `http://localhost:<porta>/api/health` (deve reportar o
 nome novo do serviço).
 
-## 8. Commit inicial
+## 9. Commit inicial
 
 Com os gates verdes, faça o commit inicial do projeto derivado, por exemplo:
 `git add -A && git commit -m "chore: bootstrap <nome> a partir do nuxt-base"`.

@@ -38,12 +38,9 @@ const highlights = [
         Copie, renomeie, edite os tokens e comece a construir.
       </p>
       <div class="mt-6 flex flex-wrap items-center gap-3">
-        <NuxtLink
-          to="/login"
-          class="inline-flex items-center gap-x-2 rounded-field bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
+        <UiButton to="/login">
           Ver placeholder de login
-        </NuxtLink>
+        </UiButton>
         <span class="inline-flex items-center gap-x-1.5 rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground">
           <Icon
             name="lucide:sparkles"

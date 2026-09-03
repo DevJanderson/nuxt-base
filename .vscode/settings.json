@@ -1,0 +1,12 @@
+{
+  // ESLint 10 = flat config (eslint.config.mjs)
+  "eslint.useFlatConfig": true,
+  "eslint.validate": ["javascript", "typescript", "vue"],
+  // Salvar aplica o autofix do ESLint — o mesmo que o pre-commit do lefthook faz
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  // Sem Prettier no projeto: formatOnSave desligado evita que um formatador
+  // qualquer do editor brigue com o autofix do ESLint acima
+  "editor.formatOnSave": false
+}

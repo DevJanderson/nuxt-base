@@ -5,6 +5,19 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-08-28',
   devtools: { enabled: true },
 
+  app: {
+    head: {
+      // Idioma do documento: sem isso o <html> sai sem `lang` (a11y e SEO).
+      // Projeto derivado com outro idioma troca só esta linha.
+      htmlAttrs: { lang: 'pt-BR' },
+      // `title` é o fallback de página sem `useSeoMeta({ title })`;
+      // `titleTemplate` molda o title das que têm (aqui, sem sufixo).
+      // Sufixo de marca = trocar para '%s · Meu Projeto'.
+      title: 'Nuxt Base',
+      titleTemplate: '%s',
+    },
+  },
+
   modules: [
     '@nuxt/eslint',
     '@nuxt/icon',
@@ -17,6 +30,16 @@ export default defineNuxtConfig({
   ],
 
   css: ['~/assets/css/main.css'],
+
+  fonts: {
+    // Família declarada na mão de propósito: o scanner do @nuxt/fonts não enxerga
+    // a fonte definida em `@theme inline` do Tailwind 4 (vira `--default-font-family`
+    // atrás de um var()) — bug upstream nuxt/fonts#638, corrigido no fontless 0.3 mas
+    // ainda não liberado no @nuxt/fonts 0.14. Sem isto, nenhum @font-face é gerado.
+    families: [
+      { name: 'Inter', provider: 'google', global: true },
+    ],
+  },
 
   vite: {
     plugins: [tailwindcss()]

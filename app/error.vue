@@ -29,12 +29,11 @@ function goHome() {
           : (error.statusMessage || 'Ocorreu um erro inesperado. Tente novamente em instantes.')
       }}
     </p>
-    <button
-      type="button"
-      class="mt-8 inline-flex items-center gap-x-2 rounded-field bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    <UiButton
+      class="mt-8"
       @click="goHome"
     >
       Voltar ao início
-    </button>
+    </UiButton>
   </div>
 </template>

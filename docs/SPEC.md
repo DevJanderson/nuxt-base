@@ -32,6 +32,7 @@ poderá ser extraído para uma Nuxt Layer (fase futura, fora deste escopo).
 - **Nuxt 4** com estrutura `app/`
 - **TypeScript estrito** — **pinado em 6.x** (7.x/tsgo quebra `vue-tsc`/`nuxt typecheck`;
   o Renovate bloqueia o major)
+- **Node 24+** — mesma versão em todo lugar: `engines.node`, `.node-version` e o runner do CI
 - **pnpm 11** (pinado em `packageManager`; build scripts liberados via `allowBuilds`)
 - **SSR ligado por padrão.** Ajuste por tipo de projeto documentado no README
   (dashboard SPA → `ssr: false` ou `routeRules`)
@@ -56,7 +57,11 @@ poderá ser extraído para uma Nuxt Layer (fase futura, fora deste escopo).
 - **Kit atual:** Button, Input, Select, Modal, Card, Badge, Table, Toast (Toaster +
   `useToast`), Tooltip. Vitrine em `/components`. Componente novo segue a skill
   `novo-componente-ui` e entra no smoke de regressão no mesmo commit.
+- **Documento:** `app.head` no `nuxt.config.ts` fixa `htmlAttrs.lang` (a11y e SEO — sem isso o
+  `<html>` sai sem idioma), `title` de fallback e `titleTemplate`.
 - **Módulos:** `@nuxt/icon` (+ `@iconify-json/lucide` local), `@nuxt/fonts`, `@nuxt/image`.
+  A família de fonte é **declarada em `fonts.families`**: o scanner do `@nuxt/fonts` não
+  enxerga o token dentro de `@theme inline` (bug upstream nuxt/fonts#638).
 
 ## 5. Dados e API
 
@@ -86,13 +91,17 @@ Três camadas, todas espelhando o mesmo padrão:
 - **CI (GitHub Actions):** push/PR → `install --frozen-lockfile`, `lint`, `typecheck`,
   `knip`, `dup`, `test`, `build` em Node 24 com `TZ: UTC` + job **gitleaks** (segredos,
   histórico completo). Semanal: `security.yml` (`pnpm audit --prod` como gate).
-  **Renovate** configurado (não-majors agrupados; majors com aprovação; TS major bloqueado).
+  **Renovate** configurado (não-majors agrupados; majors com aprovação; TS major bloqueado):
+  `renovate.yml` é workflow **só do template** (lista fixa de repos + secret do dono) e o
+  projeto derivado o apaga — o `renovate.json`, esse sim, fica em cada repositório.
 
 Ferramentas e regras:
 
 - **ESLint** (`@nuxt/eslint`, flat, sem Prettier) + **sonarjs** (duplicação estrutural,
   complexidade) + **`no-console`** (erro em `server/` — receita pino no README; aviso no
   `app/` com `warn`/`error` liberados).
+- **Editor alinhado por padrão:** `.editorconfig` e `.vscode/` versionados (extensões
+  recomendadas + autofix do ESLint ao salvar, sem formatador concorrente).
 - **knip** (código morto/deps sem uso, `knip.jsonc`) e **jscpd** (copy-paste,
   `.jscpd.json`, **threshold 0** — baseline da base é 0,00%).
 - **Strip de console em produção** (client): `console.log/info/debug/trace` removidos do
