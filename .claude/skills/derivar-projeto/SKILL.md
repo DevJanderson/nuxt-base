@@ -135,13 +135,18 @@ Não instale nada além do que a receita escolhida pedir.
 ## 9. Gate final (critérios do SPEC §11)
 
 ```bash
-pnpm lint && pnpm typecheck && pnpm test
+pnpm verify   # lint + typecheck + test + knip + dup + smoke
 ```
 
-E `pnpm dev` subindo sem erro e sem warning. Atenção: se a 3000 estiver ocupada o Nuxt
-escolhe outra porta — confira a porta real no log do `pnpm dev` antes de testar
-`http://localhost:<porta>` e `http://localhost:<porta>/api/health` (deve reportar o
-nome novo do serviço).
+O `smoke` é o gate de runtime: sobe o build **e** o `nuxt dev` em portas livres, requisita
+as rotas e reprova log com WARN/ERROR — ele substitui a antiga conferência manual de
+"`pnpm dev` sem erro e sem warning". **Cole a saída dele**: validação de runtime sem log
+colado não conta.
+
+Depois do rename, confira à mão só o que o smoke não sabe: `pnpm dev` e
+`http://localhost:<porta>/api/health` devem reportar o **nome novo** do serviço (o smoke
+checa `status: "ok"`, não o nome). Se a 3000 estiver ocupada o Nuxt escolhe outra porta —
+confira a porta real no log.
 
 ## 10. Commit inicial
 

@@ -23,7 +23,10 @@ Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualiz
 
 - `pnpm dev` / `pnpm build`
 - `pnpm lint` / `pnpm lint:fix` / `pnpm typecheck` / `pnpm test` / `pnpm test:watch` / `pnpm knip` / `pnpm dup`
-- `pnpm verify` — lint + typecheck + test + knip + dup, o espelho do CI.
+- `pnpm smoke` — gate de runtime (`scripts/smoke.mjs`): builda, sobe produção **e** `nuxt dev`,
+  requisita as rotas de referência e reprova se alguma asserção quebrar **ou** se o log do
+  servidor tiver WARN/ERROR. É o único gate que roda o app.
+- `pnpm verify` — lint + typecheck + test + knip + dup + smoke, o espelho do CI.
   **Rode antes de dizer que terminou: "deveria funcionar" não é terminado.**
 
 ## Convenções inegociáveis
@@ -49,6 +52,10 @@ Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualiz
   no `.env.example`. Segredo nunca em código nem em `public.*` (gitleaks varre no CI).
 - `console.*` em `server/` é erro de lint (derivado que precisar de log adota pino — README);
   no `app/` só `console.warn`/`error` passam, e produção remove log/info/debug do bundle.
+- **Validação em runtime só vale com o log colado.** Mudou rota, `error.vue`, `nuxt.config.ts`,
+  módulo ou qualquer coisa de `server/`? Terminado = `pnpm smoke` verde **com a saída anexada**
+  na resposta. "Subi e testei" sem log não é evidência: foi assim que um 404 com `fatal: true`
+  passou logando stack trace a cada requisição.
 - Auth é ponto de encaixe: não implementar na base; seguir uma das duas receitas do README.
 
 ## Skills
@@ -79,4 +86,5 @@ Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualiz
 - `app/middleware/auth.ts` — esqueleto nomeado (`definePageMeta({ middleware: 'auth' })`)
 - `app/pages/`, `app/layouts/default.vue`, `app/stores/`, `app/error.vue`
 - `server/api/health.get.ts` — rota-referência Nitro (`<nome>.<método>.ts`, retorno tipado)
+- `scripts/smoke.mjs` — gate de runtime (`pnpm smoke`), Node puro, sem dependência
 - `tests/` — os dois testes de referência

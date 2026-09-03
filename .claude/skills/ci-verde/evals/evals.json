@@ -7,7 +7,7 @@
     },
     {
       "prompt": "vou dar push agora, tá seguro?",
-      "expected_behavior": "Roda pnpm verify (lint + typecheck + test + knip) antes do push, confere se o pnpm-lock.yaml está em sincronia quando houve mudança de dependências, e não sugere --no-verify.",
+      "expected_behavior": "Roda pnpm verify (lint + typecheck + test + knip + dup + smoke) antes do push, confere se o pnpm-lock.yaml está em sincronia quando houve mudança de dependências, e não sugere --no-verify.",
       "tags": ["prevencao"]
     },
     {
