@@ -27,12 +27,12 @@ useSeoMeta({
         servidor (nuxt-auth-utils) ou token contra API externa — e substitua esta
         página pelo fluxo real do seu projeto.
       </p>
-      <NuxtLink
+      <UiButton
         to="/"
-        class="mt-6 inline-flex items-center gap-x-2 rounded-field bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        class="mt-6"
       >
         Voltar ao início
-      </NuxtLink>
+      </UiButton>
     </div>
   </div>
 </template>

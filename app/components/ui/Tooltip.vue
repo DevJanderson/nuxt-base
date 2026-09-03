@@ -14,6 +14,9 @@ withDefaults(defineProps<{
 </script>
 
 <template>
+  <!-- Um TooltipProvider por instância: o componente fica autocontido e testável isolado.
+       Custo: sem skip-delay entre tooltips vizinhos. O Reka recomenda um Provider único —
+       quem quiser esse comportamento move o TooltipProvider para o app.vue. -->
   <TooltipProvider :delay-duration="delayDuration">
     <TooltipRoot :default-open="defaultOpen">
       <TooltipTrigger as-child>
@@ -23,7 +26,7 @@ withDefaults(defineProps<{
         <TooltipContent
           :side="side"
           :side-offset="6"
-          class="z-10 rounded-field border border-border bg-card px-2 py-1 text-xs font-medium text-card-foreground opacity-100 shadow-2xs transition-opacity duration-150 starting:opacity-0"
+          class="z-(--z-tooltip) rounded-field border border-border bg-card px-2 py-1 text-xs font-medium text-card-foreground opacity-100 shadow-2xs transition-opacity duration-150 starting:opacity-0"
         >
           {{ text }}
         </TooltipContent>

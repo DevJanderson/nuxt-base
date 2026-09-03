@@ -3,5 +3,10 @@ allowBuilds:
   unrs-resolver: true
   vue-demi: true
   lefthook: true
+# Quarentena de 24h: versão recém-publicada só é instalada um dia depois
+# (é o default do pnpm 11 — explícito aqui para a intenção não depender do default)
+minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
+  # Exceção deliberada: é a versão pinada no package.json e o ambiente de teste
+  # (happy-dom) precisa estar disponível na hora do install, sem esperar a quarentena
   - happy-dom@20.11.15

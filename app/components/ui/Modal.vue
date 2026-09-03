@@ -8,6 +8,7 @@ import {
   DialogRoot,
   DialogTitle,
   DialogTrigger,
+  VisuallyHidden,
 } from 'reka-ui'
 
 withDefaults(defineProps<{
@@ -31,12 +32,10 @@ const open = defineModel<boolean>('open', { default: false })
 
     <DialogPortal>
       <!-- Backdrop do Preline (hs-overlay-backdrop) vira DialogOverlay explícito -->
-      <DialogOverlay class="fixed inset-0 z-40 bg-foreground/50 transition-opacity duration-300 starting:opacity-0 dark:bg-background/80" />
+      <DialogOverlay class="fixed inset-0 z-(--z-overlay) bg-foreground/50 transition-opacity duration-300 starting:opacity-0 dark:bg-background/80" />
 
-      <!-- Sem description, o aria-describedby literal 'undefined' suprime o aviso do Reka -->
       <DialogContent
-        :aria-describedby="description ? undefined : 'undefined'"
-        class="fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-box border border-border bg-card shadow-2xs transition duration-300 starting:translate-y-[calc(-50%-0.5rem)] starting:opacity-0"
+        class="fixed top-1/2 left-1/2 z-(--z-modal) flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-box border border-border bg-card shadow-2xs transition duration-300 starting:translate-y-[calc(-50%-0.5rem)] starting:opacity-0"
       >
         <div class="flex items-center justify-between gap-x-2 border-b border-border px-4 py-3">
           <DialogTitle class="font-semibold text-card-foreground">
@@ -61,6 +60,13 @@ const open = defineModel<boolean>('open', { default: false })
           >
             {{ description }}
           </DialogDescription>
+          <!-- Sem description o aria-describedby precisa de um id real: título como fallback -->
+          <VisuallyHidden
+            v-else
+            as-child
+          >
+            <DialogDescription>{{ title }}</DialogDescription>
+          </VisuallyHidden>
           <slot />
         </div>
 

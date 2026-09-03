@@ -79,7 +79,7 @@ function onOpenChange(open: boolean, id: number) {
 
     <ToastViewport
       label="Notificações ({hotkey})"
-      class="fixed end-0 bottom-0 z-[60] flex w-full max-w-sm flex-col gap-y-3 p-4"
+      class="fixed end-0 bottom-0 z-(--z-toast) flex w-full max-w-sm flex-col gap-y-3 p-4"
     />
   </ToastProvider>
 </template>

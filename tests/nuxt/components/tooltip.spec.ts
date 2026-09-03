@@ -1,12 +1,17 @@
 // Segue o teste-referência de componente (tests/nuxt/components/button.spec.ts).
 // O conteúdo do tooltip renderiza via TooltipPortal (Reka) direto no <body>,
-// por isso as asserções de conteúdo olham document.body, não o wrapper.
-import { describe, expect, it } from 'vitest'
+// por isso as asserções de conteúdo olham document.body, não o wrapper; e o
+// portal acumula markup entre testes — afterEach limpa document.body.
+import { afterEach, describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { UiTooltip } from '#components'
 
 describe('UiTooltip', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+  })
+
   it('renderiza o gatilho do slot', async () => {
     const wrapper = await mountSuspended(UiTooltip, {
       props: { text: 'Dica' },

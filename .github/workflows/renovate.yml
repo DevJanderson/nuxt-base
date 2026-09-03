@@ -2,6 +2,15 @@ name: renovate
 
 # Renovate self-hosted (substitui o app da Mend): roda com o token do dono
 # (secret RENOVATE_TOKEN), então os PRs criados disparam o CI normalmente.
+#
+# ATENÇÃO — ESTE ARQUIVO NÃO VAI PARA PROJETO DERIVADO. Ele é do template:
+# a lista de repositórios é fixa (RENOVATE_REPOSITORIES) e o secret
+# RENOVATE_TOKEN só existe aqui — copiado para um derivado, o cron de segunda
+# só produz run vermelho semanal. Ao derivar a base:
+#   1. apague `.github/workflows/renovate.yml` no projeto novo (o `renovate.json`
+#      fica: é ele que configura as regras de update do repositório);
+#   2. acrescente o repo novo em RENOVATE_REPOSITORIES abaixo, aqui no template —
+#      esta execução cuida da base e de todos os derivados listados.
 on:
   schedule:
     # segunda 10:00 UTC = 06:00 em Manaus — dentro da janela

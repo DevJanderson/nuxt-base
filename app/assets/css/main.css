@@ -82,6 +82,17 @@
 
   --radius-box: 0.75rem; /* containers: cards, modais, overlays */
   --radius-field: 0.5rem; /* controles: botões, inputs, selects */
+
+  /* Escala de empilhamento — usar via z-(--z-modal); camada nova entra aqui, nunca z-[n] solto.
+     Dropdown acima do modal: o Reka portaliza o SelectContent para o body, então um select
+     dentro de um modal precisa vencer o content (50). O prefixo --z-* fica FORA dos namespaces
+     do Tailwind de propósito: assim vira variável no :root e z-(--z-x) resolve; renomear para
+     --z-index-* viraria namespace de utilitário e quebraria em silêncio. */
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-dropdown: 60;
+  --z-toast: 70;
+  --z-tooltip: 80;
 }
 
 @layer base {
