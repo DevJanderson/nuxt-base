@@ -1,4 +1,4 @@
-// Teste-referência de COMPONENTE (SPEC §7): novos testes de componente seguem este formato.
+// Teste-referência de COMPONENTE (convenção do CLAUDE.md): novos testes de componente seguem este formato.
 // `mountSuspended` monta o componente com o runtime do Nuxt (auto-imports, plugins);
 // `#components` expõe os componentes auto-importados (UiButton = app/components/ui/Button.vue).
 import { describe, expect, it } from 'vitest'

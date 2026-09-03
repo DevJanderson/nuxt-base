@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Auth é ponto de encaixe (SPEC §6): a base não implementa autenticação.
+// Auth é ponto de encaixe (convenção do CLAUDE.md): a base não implementa autenticação.
 // Ao adotar uma das receitas do README — sessão no servidor com nuxt-auth-utils
 // ou token contra API externa injetado no useApi — substitua esta página.
 definePageMeta({ layout: 'default' })

@@ -1,5 +1,5 @@
 // Middleware NOMEADO (não global) — proteja páginas com definePageMeta({ middleware: 'auth' }).
-// Esqueleto sem auth implementada (SPEC §6): hoje deixa tudo passar.
+// Esqueleto sem auth implementada (convenção do CLAUDE.md): hoje deixa tudo passar.
 // Ao implementar, escolha UMA das receitas abaixo (detalhes no README).
 export default defineNuxtRouteMiddleware(() => {
   // Receita 1 — sessão no servidor (nuxt-auth-utils):

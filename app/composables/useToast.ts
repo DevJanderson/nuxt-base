@@ -18,7 +18,7 @@ export interface ToastItem {
 const DEFAULT_DURATION = 5000
 
 /**
- * Fila global de toasts (SPEC §4). O estado vive em `useState` (SSR-safe) e é
+ * Fila global de toasts. O estado vive em `useState` (SSR-safe) e é
  * renderizado pelo `<UiToaster />` montado no layout default — uma única
  * instância de `ToastProvider`/`ToastViewport` por app.
  *

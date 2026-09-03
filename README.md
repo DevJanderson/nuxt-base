@@ -1,6 +1,6 @@
 # Nuxt Base
 
-Template Nuxt 4 que serve de ponto de partida para qualquer projeto: dashboard atrás de login, site com SEO, SaaS full-stack ou frontend puro contra API externa. A base é **agnóstica** (não impõe backend, banco nem auth — deixa os pontos de encaixe prontos), **enxuta** (na dúvida, fica de fora com receita documentada) e **copy-and-own na UI** (o visual é nosso; bibliotecas estilizadas não entram como dependência). A especificação completa está em [SPEC.md](./docs/SPEC.md).
+Template Nuxt 4 que serve de ponto de partida para qualquer projeto: dashboard atrás de login, site com SEO, SaaS full-stack ou frontend puro contra API externa. A base é **agnóstica** (não impõe backend, banco nem auth — deixa os pontos de encaixe prontos), **enxuta** (na dúvida, fica de fora com receita documentada) e **copy-and-own na UI** (o visual é nosso; bibliotecas estilizadas não entram como dependência). A especificação do template está em [docs/SPEC.md](./docs/SPEC.md) — arquivo **só do template**, que não viaja para os projetos derivados.
 
 ## Requisitos
 
@@ -44,39 +44,88 @@ tests/nuxt/               # specs aqui entram no nuxt typecheck
 nuxt.config.ts            # módulos, css, runtimeConfig
 vitest.config.ts          # ambiente nuxt global + happy-dom
 CLAUDE.md                 # convenções para sessões de IA
-docs/SPEC.md              # especificação da base
+docs/SPEC.md              # especificação do template (não viaja para o derivado)
 ```
 
 ## Como virar um projeto novo
 
-**TL;DR** — do zero ao codando:
+**TL;DR** — do zero ao codando, sem perder o vínculo com a base:
 
 ```bash
-gh repo create meu-projeto --template DevJanderson/nuxt-base --private --clone
+gh repo create meu-projeto --private     # repositório VAZIO: sem --template, sem --add-readme
+git clone git@github.com:DevJanderson/nuxt-base.git meu-projeto
 cd meu-projeto
+git remote rename origin template        # a base vira remoto de leitura
+git remote add origin git@github.com:<owner>/meu-projeto.git
+git push -u origin main
 pnpm install    # deps + git hooks (lefthook) sozinho
 claude          # e dentro da sessão: /derivar-projeto meu-projeto
 ```
 
-Virar um projeto novo = renomear + editar tokens + limpar exemplos (docs/SPEC.md §11). Três caminhos, em ordem de preferência:
+Virar um projeto novo = renomear + editar tokens + limpar exemplos + apagar os arquivos "só do template". Dois caminhos:
 
-1. **"Use this template" + skill (recomendado)** — crie o repositório pelo botão do GitHub (ou `gh repo create <nome> --template DevJanderson/nuxt-base --clone`) e, no clone, invoque a skill `/derivar-projeto <nome>` no Claude Code: ela executa o roteiro completo e valida os gates.
-2. **"Use this template" + passos manuais** — mesmo início; siga os passos abaixo pulando o item 1 (o histórico já nasce limpo e os hooks se instalam no `pnpm install`).
-3. **Cópia manual** — copie a pasta e rode `rm -rf .git && git init`; zerar o `.git` apaga os git hooks, então rode também `pnpm exec lefthook install`.
+1. **Clone com histórico (recomendado)** — o do TL;DR. O derivado nasce com o histórico da base e com o remoto `template` apontando para ela, então **continua recebendo as evoluções**: `git fetch template --tags && git merge vX.Y.Z` (ver [Atualizar a base no derivado](#atualizar-a-base-no-derivado)). Por isso o repositório novo é criado **vazio**: qualquer commit inicial gerado pelo GitHub (README, licença, `--template`) vira uma raiz de histórico diferente da base, e todo merge futuro morre em `refusing to merge unrelated histories`.
+2. **"Use this template" (sem atualizações futuras)** — `gh repo create <nome> --template DevJanderson/nuxt-base --private --clone`, ou o botão do GitHub. Continua funcionando e é o começo mais rápido, mas o GitHub monta o repo com **um único commit inicial**, sem ancestral comum com a base: não há `git merge` possível, e trazer uma correção da base vira cópia de arquivo à mão. Escolha só se o projeto não pretende acompanhar a base. Cópia manual (`rm -rf .git && git init`) é o mesmo caso, com um passo extra: zerar o `.git` apaga os git hooks, então rode `pnpm exec lefthook install`.
 
-Os passos (a fonte canônica, sempre atualizada, é a skill em `.claude/skills/derivar-projeto/`):
+Em qualquer caminho, a skill `/derivar-projeto <nome>` executa o roteiro completo e valida os gates — a fonte canônica dos passos, sempre atualizada, é `.claude/skills/derivar-projeto/`:
 
-1. **Histórico e hooks** — só no caminho 3, acima.
+1. **Apague os arquivos "só do template"** — a lista, com o porquê de cada item, está logo abaixo em [Atualizar a base no derivado](#atualizar-a-base-no-derivado). É a mesma lista que reaparece como conflito em cada merge futuro.
 2. **Renomeie** em dois lugares: `package.json` → campo `"name"`; `server/api/health.get.ts` → campo `service` (o healthcheck reporta o nome do serviço).
 3. **Tokens** em `app/assets/css/main.css`, apenas os blocos `:root` e `.dark` (e, se quiser, `--font-sans`/`--radius-*`) — ver [Tema](#tema-identidade-visual). Sem identidade definida ainda? Mantenha o padrão e siga: trocar depois é editar só esses dois blocos.
 4. **Renderização**: site/SEO mantém o SSR padrão; dashboard atrás de login → `ssr: false`; misto → `routeRules` — ver [SSR ou SPA](#ssr-ou-spa).
 5. **Auth**, quatro ramos: [receita 1 ou 2](#auth-duas-receitas); **sem login** → remova `app/middleware/auth.ts`, `app/pages/login.vue` e o redirect de 401 no `useApi`; **login futuro** → mantenha os pontos de encaixe como estão e não instale nada.
 6. **Limpe os exemplos**: vitrine `/components` (mantê-la como styleguide interno é válido; se remover, tire o link do header), `app/pages/index.vue`, marca no `app/layouts/default.vue`, `app/stores/app.ts`. Ao final, caça-marca: `grep -ri "nuxt base" app/ server/` — a marca vive também em `error.vue` e nos `useSeoMeta`; zere o resultado.
-7. **Docs e ambiente**: título/descrição de README e CLAUDE.md (as convenções continuam valendo), remova esta seção (já cumprida), `.env.example` só com as variáveis reais do projeto (fora as das receitas não adotadas) e copie para `.env`.
-8. **CI do derivado**: **apague `.github/workflows/renovate.yml`** — é workflow do template (lista de repos fixa + secret `RENOVATE_TOKEN` que só existe na base), e copiado gera run vermelho toda segunda; o `renovate.json` fica. Peça ao dono da base para incluir o repositório novo em `RENOVATE_REPOSITORIES`, no workflow do template. `ci.yml` e `security.yml` seguem valendo como estão.
+7. **Docs e ambiente**: título/descrição de README e CLAUDE.md (as convenções continuam valendo), remova **esta** seção (já cumprida) e mantenha a próxima, `.env.example` só com as variáveis reais do projeto (fora as das receitas não adotadas) e copie para `.env`.
+8. **CI do derivado**: `renovate.yml` já saiu no passo 1; peça ao dono da base para incluir o repositório novo em `RENOVATE_REPOSITORIES`, no workflow do template. O `renovate.json` fica, e `ci.yml`/`security.yml` seguem valendo como estão.
 9. **Valide**: `pnpm install && pnpm dev` sem erro e sem warning — se a porta 3000 estiver ocupada o Nuxt escolhe outra, confira no log — e `/api/health` reportando o nome novo; `pnpm verify` inteiro verde. Feche com o commit inicial.
 
 A suíte herdada continua valendo no projeto novo: os testes de referência (componente e composable), o smoke de regressão do kit e o teste-inventário de tokens.
+
+## Atualizar a base no derivado
+
+**Esta seção permanece no projeto derivado** — é a receita de trazer as evoluções da base, e a tabela "só do template" abaixo é a fonte canônica da lista. Só funciona no caminho 1 (clone com histórico), que é o que dá ancestral comum; confira com `git remote -v` e, se faltar o remoto, `git remote add template git@github.com:DevJanderson/nuxt-base.git`.
+
+```bash
+git switch -c chore/atualizar-base   # nunca direto na main: o merge pode dar trabalho
+git fetch template --tags            # --tags é essencial: é por tag que se escolhe a versão
+git merge v1.2.0                     # a tag desejada da base (ou template/main, para o topo)
+# … resolver os conflitos (tabelas abaixo) …
+pnpm install                         # o lockfile veio junto; dependência nova não se instala sozinha
+pnpm verify                          # lint + typecheck + test + knip + dup, o gate do CI
+git rm -r --ignore-unmatch docs/SPEC.md .github/workflows/renovate.yml \
+          .claude/skills/derivar-projeto .claude/skills/*/evals
+git commit                           # fecha o merge só com os gates verdes
+```
+
+O `git rm -r` antes do commit não é redundância: arquivo **novo** que a base criou dentro de um
+caminho só-do-template (um eval a mais, um `references/` novo na skill de derivação) não gera
+conflito nenhum — entra calado no merge. O `--ignore-unmatch` deixa o comando passar quando não
+há o que remover.
+
+**Arquivos "só do template"** — apagados na derivação e, a cada merge, chegando como conflito **modify/delete** (`deleted by us`). A resolução é sempre `git rm -r <caminho>` (o `-r` porque duas linhas da tabela são diretórios):
+
+| Arquivo | Por que não viaja |
+|---|---|
+| `docs/SPEC.md` | especificação **do template**; as convenções que valem no derivado moram no `CLAUDE.md`, que é autossuficiente |
+| `.github/workflows/renovate.yml` | lista de repositórios fixa + secret `RENOVATE_TOKEN` que só existe na base — copiado, é run vermelho toda segunda |
+| `.claude/skills/derivar-projeto/` | usada uma vez, na derivação |
+| `.claude/skills/*/evals/` | avaliam as skills durante o desenvolvimento do template |
+| seção "Como virar um projeto novo" (README) | já cumprida |
+
+A última linha é a exceção da tabela: como o `README.md` continua existindo dos dois lados, ela chega como **conflito de texto normal** dentro do arquivo, não como modify/delete — resolve-se apagando o bloco da seção, não com `git rm`.
+
+`app/pages/components.vue` (vitrine) **não** entra na lista: mantê-la como styleguide interno é escolha do projeto.
+
+**Conflitos esperados** e a regra de resolução:
+
+| Onde | Regra |
+|---|---|
+| `app/assets/css/main.css` | seus valores em `:root`/`.dark`; da base o `@theme inline` (token novo é evolução da base) |
+| `app/layouts/default.vue`, `app/pages/index.vue` | sua marca e seu conteúdo vencem; traga só a estrutura nova (item de nav, slot) |
+| `README.md`, `CLAUDE.md` | seu título e sua descrição vencem; **traga as convenções e receitas novas** da base |
+| `package.json` | seu `name`; da base as dependências e os scripts |
+| `app/components/ui/**`, `app/composables/**` | da base, salvo customização deliberada sua — nesse caso reaplique-a por cima |
+| arquivos "só do template" | `git rm` (tabela acima) |
 
 ## Tema (identidade visual)
 
@@ -282,7 +331,7 @@ O kit vive em `app/components/ui/` e é auto-importado com prefixo `Ui` (`<UiBut
 
 Toasts são imperativos, via composable: `useToast()` retorna `{ toasts, dismiss, success, error, info }` — ex.: `toast.success('Salvo.', { title: 'Pronto', duration: 8000 })`.
 
-**Regra do copy-and-own** (SPEC §2 e §4): o **comportamento** vem do Reka UI (headless — foco, teclado e ARIA resolvidos; esse sim é dependência) e o **visual** é markup portado do Preline UI, adaptado aos nossos tokens. **Preline nunca entra como dependência** — nem o pacote npm, nem o plugin JS; é catálogo de referência e fonte de cópia. Componente novo segue o mesmo caminho: escolher o primitivo Reka, portar o markup do Preline, traduzir variantes `hs-*` para os estados `data-[state=…]` do Reka e usar apenas tokens semânticos. Visual inspirado no [Preline UI](https://preline.co) (MIT).
+**Regra do copy-and-own** (CLAUDE.md, "Convenções inegociáveis"): o **comportamento** vem do Reka UI (headless — foco, teclado e ARIA resolvidos; esse sim é dependência) e o **visual** é markup portado do Preline UI, adaptado aos nossos tokens. **Preline nunca entra como dependência** — nem o pacote npm, nem o plugin JS; é catálogo de referência e fonte de cópia. Componente novo segue o mesmo caminho: escolher o primitivo Reka, portar o markup do Preline, traduzir variantes `hs-*` para os estados `data-[state=…]` do Reka e usar apenas tokens semânticos. Visual inspirado no [Preline UI](https://preline.co) (MIT).
 
 ## Testes
 
@@ -302,8 +351,8 @@ pnpm test:watch    # watch mode durante o desenvolvimento
 
 ## Versionamento e branches
 
-- **`main` única** — o template não usa `develop`: o "Use this template" copia a branch default, e é ela que os gates mantêm sempre estável. Mudança arriscada = branch de feature ad hoc + PR (CI verde antes do merge), sem branch permanente.
-- **Tags de versão** (`v1.0.0`, …) marcam estados estáveis da base — um projeto derivado sabe de qual versão nasceu.
+- **`main` única** — o template não usa `develop`: é a branch que o derivado clona e de onde sai todo merge de atualização, e é ela que os gates mantêm sempre estável. Mudança arriscada = branch de feature ad hoc + PR (CI verde antes do merge), sem branch permanente.
+- **Tags de versão** (`v1.0.0`, …) marcam estados estáveis da base: o derivado sabe de qual versão nasceu e escolhe por tag até onde atualizar (`git merge v1.2.0`) em vez de engolir o topo da `main`.
 - **Projetos derivados decidem o próprio fluxo** conforme a realidade de deploy (trunk-based, `develop → main`, preview environments) — a base não impõe.
 
 ## CI, hooks e saúde do código
@@ -313,7 +362,7 @@ pnpm test:watch    # watch mode durante o desenvolvimento
 - **CI** (`.github/workflows/ci.yml`): a cada push na `main` e em todo PR — `pnpm install --frozen-lockfile`, `lint`, `typecheck`, `knip`, `dup`, `test` e `build`, em Node 24 com `TZ: UTC` (teste sensível a data falha igual aqui e em produção).
 - **Auditoria semanal** (`.github/workflows/security.yml`): `pnpm audit --prod` como gate toda segunda; auditoria completa informativa.
 - **Política de pin: versão exata em toda dependência** (sem `^`/`~`) — quem decide a atualização é o Renovate, num PR com o CI verde, e não um `pnpm install` num dia qualquer; o lockfile governa o resto.
-- **Renovate** (`renovate.json` + `.github/workflows/renovate.yml`): updates não-major agrupados às segundas; majors exigem aprovação no Dependency Dashboard; **major do TypeScript bloqueado** (pino em 6.x). Roda **self-hosted via Actions** (segunda 06:00 e manual via workflow_dispatch), com o secret `RENOVATE_TOKEN` (token do dono — PRs disparam o CI normalmente; sem app externo). O workflow do template também cobre os derivados listados em `RENOVATE_REPOSITORIES` — por isso **`renovate.yml` é o único arquivo de CI que o projeto derivado apaga** (lá o secret não existe e a lista de repos não é dele: sobraria só um run vermelho por semana). O `renovate.json` continua em cada repositório, e cada derivado novo entra na lista `RENOVATE_REPOSITORIES` aqui na base.
+- **Renovate** (`renovate.json` + `.github/workflows/renovate.yml`): updates não-major agrupados às segundas; majors exigem aprovação no Dependency Dashboard; **major do TypeScript bloqueado** (pino em 6.x). Roda **self-hosted via Actions** (segunda 06:00 e manual via workflow_dispatch), com o secret `RENOVATE_TOKEN` (token do dono — PRs disparam o CI normalmente; sem app externo). O workflow do template também cobre os derivados listados em `RENOVATE_REPOSITORIES` — por isso **`renovate.yml` é o único arquivo de CI que o projeto derivado apaga** — está na lista "só do template", porque lá o secret não existe e a lista de repos não é dele: sobraria só um run vermelho por semana. O `renovate.json` continua em cada repositório, e cada derivado novo entra na lista `RENOVATE_REPOSITORIES` aqui na base.
 - **Anti-duplicação e código morto**: regras `sonarjs` no ESLint (funções/branches idênticos), **knip** (exports, arquivos e dependências sem uso — config em `knip.jsonc`) e **jscpd** (`pnpm dup` — detector de copy-paste em `app/`, `server/` e `tests/`, config em `.jscpd.json`). O threshold é **0**: a base parte de 0,00% de duplicação e qualquer clone novo falha o CI — subir o threshold num projeto derivado é decisão consciente, documentada no `.jscpd.json`.
 - **Anti-vazamento de logs**: `no-console` no ESLint — **erro** em `server/**` (log de servidor estruturado é decisão do derivado; receita: [pino](https://github.com/pinojs/pino)) e aviso em `app/` (só `console.warn`/`console.error` liberados). No build de produção do client, `console.log/info/debug/trace` são **removidos do bundle** (terser `pure_funcs`, só em `$production` no `nuxt.config.ts`); `warn`/`error` sobrevivem de propósito.
 - **Varredura de segredos**: job `gitleaks` no CI varre o histórico inteiro a cada push/PR (chaves, tokens, senhas commitados por acidente). Segredo detectado = CI vermelho → remova, **rotacione a credencial** (ela já vazou no histórico) e reescreva o histórico se o repo for público. `.env`/`.env.*` são gitignorados; só `.env.example` (com placeholders) é versionado.
