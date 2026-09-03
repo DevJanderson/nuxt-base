@@ -3,7 +3,7 @@
 > Arquivo **do projeto** (não faz parte da skill oficial). O `SKILL.md` e `references/`
 > são cópia fiel de <https://github.com/htmlstreamofficial/preline/tree/main/skills/preline-mcp>
 > e não devem ser editados. **Em qualquer conflito entre o SKILL.md e estas notas,
-> estas notas (e o CLAUDE.md/SPEC §4) prevalecem.**
+> estas notas (e as "Convenções inegociáveis" do CLAUDE.md) prevalecem.**
 
 ## O que muda aqui
 
@@ -62,4 +62,4 @@ habilitar por usuário: `claude mcp add --transport http preline https://mpc.pre
 
 A segunda skill oficial (`theme-generator`, que gera arquivos de tema CSS do Preline)
 **não foi instalada de propósito**: a identidade visual deste projeto vive nos tokens de
-`main.css` (`:root`/`.dark`), e gerar temas Preline contraria o SPEC §4.
+`main.css` (`:root`/`.dark`), e gerar temas Preline contraria a regra copy-and-own do CLAUDE.md.

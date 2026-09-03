@@ -1,7 +1,11 @@
 # CLAUDE.md — Nuxt Base
 
 Template Nuxt 4 agnóstico (sem backend/banco/auth impostos), enxuto, copy-and-own na UI.
-Referências: [SPEC.md](./docs/SPEC.md) (especificação fechada) e [README.md](./README.md) (receitas: tema, SSR/SPA, API, auth).
+As convenções abaixo são **autossuficientes**: valem sem consultar nenhum outro documento.
+Receitas (tema, SSR/SPA, API, auth, headers, atualizar a base) ficam no [README.md](./README.md).
+Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualizar a base no derivado".
+
+> Só do template: [docs/SPEC.md](./docs/SPEC.md), a especificação fechada. Ao derivar, esta linha sai junto com o arquivo.
 
 ## Stack
 
@@ -57,7 +61,8 @@ Referências: [SPEC.md](./docs/SPEC.md) (especificação fechada) e [README.md](
 - `.claude/skills/novo-componente-ui/` — fluxo da casa para criar componente novo no kit
   `app/components/ui/` (Reka + Preline traduzido + vitrine + teste); usar ao estender o kit.
 - `.claude/skills/derivar-projeto/` — roteiro para transformar o template num projeto novo
-  (renomear, tokens, SSR/SPA, auth, limpar exemplos); usar ao derivar/renomear a base.
+  (clone com histórico, renomear, tokens, SSR/SPA, auth, limpar exemplos); usar ao derivar a base.
+  É **só do template**: o derivado a apaga depois de usar, junto com os `evals/` das outras skills.
 - `.claude/skills/ci-verde/` — prevenção e diagnóstico de CI (`pnpm verify`, `gh run`,
   catálogo de falhas conhecidas); usar quando o CI falhar ou antes de push importante.
 - API de primitivos do Reka UI: a fonte canônica é a doc oficial indexada em

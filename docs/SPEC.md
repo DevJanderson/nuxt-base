@@ -1,7 +1,9 @@
 # Especificação — Base Nuxt 4
 
 > Documento de referência do projeto-base. Fechado em 2026-08-28, antes de qualquer código;
-> **revisado em 2026-08-29** para refletir a base construída (kit, skills e guardrails).
+> **revisado em 2026-08-29** para refletir a base construída (kit, skills e guardrails) e em
+> **2026-09-03** para fixar a estratégia de reuso (clone com histórico) e a lista "só do template".
+> Arquivo **só do template**: não viaja para os projetos derivados.
 
 ## 1. Objetivo
 
@@ -10,9 +12,18 @@ dashboards/painéis atrás de login, sites com SEO, SaaS full-stack e frontends 
 consumindo API externa. Publicado como Template repository em
 <https://github.com/DevJanderson/nuxt-base>.
 
-**Estratégia de reuso:** template primeiro — cada projeto nasce de uma cópia ("Use this
-template" ou clone + skill `derivar-projeto`). Quando a base estabilizar, o que for genérico
-poderá ser extraído para uma Nuxt Layer (fase futura, fora deste escopo).
+**Estratégia de reuso: clone com histórico.** Cada projeto nasce de um `git clone` da base,
+com o remoto renomeado para `template` e um `origin` próprio **criado vazio** (`gh repo create
+<nome> --private`, sem `--template` e sem README inicial: commit inicial alheio mata o ancestral
+comum). Atualizar o derivado = `git fetch template --tags && git merge vX.Y.Z`; a receita, a
+lista "só do template" e a tabela de conflitos vivem no README, seção **"Atualizar a base no
+derivado"** — a única seção do README que permanece no derivado. "Use this template" continua
+possível e é o começo mais rápido, mas o repo nasce com um único commit, sem ancestral comum:
+derivado assim **não recebe evolução por merge**.
+
+**Nuxt Layer adiada:** extrair o genérico para uma Nuxt Layer só quando existirem
+**2–3 derivados reais**. Antes disso não há evidência do que de fato é genérico, e a Layer
+cobra publicação e versionamento que o merge não cobra.
 
 ## 2. Princípios
 
@@ -118,7 +129,8 @@ Ferramentas e regras:
 
 ## 8. Skills (automação de fluxo com IA)
 
-Em `.claude/skills/`, viajam com o template para os derivados:
+Em `.claude/skills/`, viajam com o template para os derivados — exceto `derivar-projeto`
+(usada uma vez, na derivação) e os `evals/` de todas elas, que são **só do template** (§9):
 
 - **`preline-mcp`** — skill oficial do Preline (cópia fiel) + `PROJECT-NOTES.md` com as
   regras da casa, que sempre prevalecem.
@@ -146,6 +158,14 @@ lefthook.yml  knip.jsonc  .jscpd.json  renovate.json
 docs/SPEC.md  .env.example  CLAUDE.md  README.md
 ```
 
+**Só do template** — apagados na derivação e apagados de novo (`git rm`) nos conflitos
+modify/delete de cada merge: `docs/SPEC.md`, `.github/workflows/renovate.yml`,
+`.claude/skills/derivar-projeto/`, `.claude/skills/*/evals/` e a seção "Como virar um projeto
+novo" do README. A lista **canônica**, com o porquê de cada item e a regra de resolução, mora
+no README ("Atualizar a base no derivado"), que é justamente o que fica no derivado — daí o
+`CLAUDE.md` ser autossuficiente e não depender de "ver SPEC §N". `app/pages/components.vue`
+(vitrine) é opcional, não "só do template".
+
 ## 10. Fora do escopo (por decisão, não esquecimento)
 
 i18n, ORM/banco, upload de arquivos, filas, e-mail, billing, PWA, admin, e2e Playwright,
@@ -164,4 +184,8 @@ A partir de um clone limpo:
 5. Kit completo com uso demonstrado em `/components`; todo componente no smoke de regressão
 6. `useApi` funciona contra o healthcheck do próprio Nitro
 7. README cobre: tema, SSR/SPA, as duas receitas de auth, guardrails
-8. Virar um projeto novo = skill `derivar-projeto` (renomear + tokens + limpar exemplos)
+8. Virar um projeto novo = skill `derivar-projeto` (clone com histórico + renomear + tokens +
+   limpar exemplos + apagar os "só do template")
+9. **Derivado consegue fazer merge de uma tag nova da base:** `git fetch template --tags &&
+   git merge vX.Y.Z` produz só os conflitos previstos no README, e `pnpm install && pnpm verify`
+   fecham verdes antes do commit de merge

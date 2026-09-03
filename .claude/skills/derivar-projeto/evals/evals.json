@@ -1,24 +1,66 @@
 {
   "test_cases": [
     {
+      "prompt": "Quero começar o projeto 'painel-vendas' a partir do nuxt-base. Como crio o repositório?",
+      "expected_behavior": "Recomenda o clone com histórico em vez de \"Use this template\": cria o repositório novo VAZIO (gh repo create painel-vendas --private, sem --template e sem --add-readme), clona a base, renomeia o remoto origin para template, adiciona o origin próprio e faz git push -u origin main. Justifica: é o único caminho que preserva ancestral comum, então o derivado atualiza depois com git fetch template --tags && git merge vX.Y.Z; um commit inicial criado pelo GitHub quebraria o merge com \"refusing to merge unrelated histories\". Cita \"Use this template\" apenas como alternativa explícita, sem atualizações futuras.",
+      "tags": [
+        "clone-com-historico",
+        "remoto-template",
+        "repo-vazio"
+      ]
+    },
+    {
       "prompt": "Acabei de copiar o nuxt-base. Transforma isso no projeto 'painel-vendas', por favor.",
       "expected_behavior": "Renomeia o campo name do package.json para painel-vendas e o campo service de server/api/health.get.ts para o mesmo nome; aponta que a identidade visual se troca editando apenas os blocos :root/.dark de app/assets/css/main.css; revisa os exemplos (vitrine /components, index, marca no layout) e finaliza rodando pnpm lint && pnpm typecheck && pnpm test com os três passando.",
-      "tags": ["renomear", "tokens", "gate"]
+      "tags": [
+        "renomear",
+        "tokens",
+        "gate"
+      ]
+    },
+    {
+      "prompt": "Estou derivando a base. Tem algum arquivo do template que não deveria vir junto?",
+      "expected_behavior": "Aponta a lista \"só do template\" cuja fonte canônica é a seção \"Atualizar a base no derivado\" do README: docs/SPEC.md, .github/workflows/renovate.yml, .claude/skills/derivar-projeto/, os .claude/skills/*/evals/ e a seção \"Como virar um projeto novo\" do README. Remove com git rm e tira as referências penduradas (link do SPEC no README e a linha \"Só do template\" do CLAUDE.md). NÃO remove a seção \"Atualizar a base no derivado\" (ela permanece no derivado) nem trata app/pages/components.vue como só-do-template (é opcional).",
+      "tags": [
+        "so-do-template",
+        "lista-canonica",
+        "readme"
+      ]
     },
     {
       "prompt": "Esse projeto derivado vai ser um dashboard interno, tudo atrás de login, sem nenhuma página pública.",
       "expected_behavior": "Recomenda o modo SPA conforme a receita 'SSR ou SPA' do README.md: ssr: false global no nuxt.config.ts (ou routeRules com '/app/**': { ssr: false } se houver área mista) — sem inventar configuração fora do README, e cita que o padrão SSR da base é para sites com SEO.",
-      "tags": ["ssr-spa", "receita-readme"]
+      "tags": [
+        "ssr-spa",
+        "receita-readme"
+      ]
     },
     {
       "prompt": "O projeto novo não vai ter login nenhum, é um site totalmente público.",
       "expected_behavior": "Sugere remover os pontos de encaixe de auth em vez de implementar algo: apagar app/middleware/auth.ts e app/pages/login.vue e retirar o redirect de 401 para /login em app/composables/useApi.ts. Não instala nenhum pacote de auth (nem nuxt-auth-utils).",
-      "tags": ["sem-auth", "pontos-de-encaixe"]
+      "tags": [
+        "sem-auth",
+        "pontos-de-encaixe"
+      ]
     },
     {
       "prompt": "Terminei de derivar a base. Sobrou algum arquivo de CI do template que eu deveria mexer?",
-      "expected_behavior": "Manda apagar .github/workflows/renovate.yml no projeto derivado (workflow do template: a lista de repos e o secret RENOVATE_TOKEN só existem na base — copiado, vira run vermelho toda segunda) e mantém o renovate.json, que é a config de update do repositório. Pede para o dono da base incluir o repo novo em RENOVATE_REPOSITORIES no workflow do template. Não sugere criar o secret RENOVATE_TOKEN no derivado, e deixa ci.yml e security.yml intactos.",
-      "tags": ["ci", "renovate", "derivado"]
+      "expected_behavior": "Aponta que .github/workflows/renovate.yml é um dos arquivos \"só do template\" e sai do derivado (lista de repos fixa + secret RENOVATE_TOKEN que só existe na base — copiado, vira run vermelho toda segunda), e mantém o renovate.json, que é a config de update do repositório. Pede para o dono da base incluir o repo novo em RENOVATE_REPOSITORIES no workflow do template. Não sugere criar o secret RENOVATE_TOKEN no derivado, e deixa ci.yml e security.yml intactos.",
+      "tags": [
+        "ci",
+        "renovate",
+        "derivado"
+      ]
+    },
+    {
+      "prompt": "A base ganhou a tag v1.2.0. Como trago essas mudanças para o meu projeto derivado?",
+      "expected_behavior": "Segue a receita \"Atualizar a base no derivado\" do README: branch dedicada, git fetch template --tags, git merge v1.2.0, resolve os conflitos previstos (valores de :root/.dark seus e @theme inline da base, marca/conteúdo seus, convenções novas da base no README/CLAUDE.md) e resolve os conflitos modify/delete dos arquivos só-do-template com git rm. Roda pnpm install e pnpm verify ANTES de fechar o commit de merge. Se não houver remoto template (repo veio de \"Use this template\"), avisa que não há ancestral comum e o merge não é possível.",
+      "tags": [
+        "atualizar",
+        "merge",
+        "conflitos",
+        "verify"
+      ]
     }
   ]
 }

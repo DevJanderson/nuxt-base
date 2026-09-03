@@ -12,7 +12,7 @@ export interface ApiError {
 }
 
 /**
- * Wrapper tipado de `$fetch` — a porta única de saída para a API (SPEC §5).
+ * Wrapper tipado de `$fetch` — a porta única de saída para a API (convenção do CLAUDE.md).
  * baseURL vem de `runtimeConfig.public.apiBase` (Nitro próprio por padrão;
  * troque via NUXT_PUBLIC_API_BASE para consumir API externa).
  *
@@ -23,7 +23,7 @@ export function useApi(): typeof $fetch {
   const nuxtApp = useNuxtApp()
   const config = useRuntimeConfig()
 
-  // Ponto de encaixe de auth (SPEC §6): sem implementação fixa.
+  // Ponto de encaixe de auth (convenção do CLAUDE.md): sem implementação fixa.
   // Na receita de token contra API externa, o login grava o token neste cookie
   // e toda chamada passa a sair autenticada. Ver receitas no README.
   const authToken = useCookie('auth.token')

@@ -1,4 +1,4 @@
-// Teste-referência de COMPOSABLE (SPEC §7): novos testes de composable seguem este formato.
+// Teste-referência de COMPOSABLE (convenção do CLAUDE.md): novos testes de composable seguem este formato.
 // `registerEndpoint` sobe um handler no Nitro mockado do ambiente de teste — o `$fetch`
 // global (base do useApi) passa a resolver essas rotas sem rede real.
 import { describe, expect, it } from 'vitest'

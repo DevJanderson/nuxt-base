@@ -41,7 +41,7 @@ const tableRows = [
         Componentes
       </h1>
       <p class="mt-2 text-muted-foreground">
-        Vitrine do kit próprio (SPEC §4): comportamento via Reka UI, visual portado
+        Vitrine do kit próprio: comportamento via Reka UI, visual portado
         do Preline, tudo estilizado só com os tokens semânticos da base.
       </p>
     </header>
