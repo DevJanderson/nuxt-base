@@ -98,12 +98,12 @@ cobra publicação e versionamento que o merge não cobra.
 
 Três camadas, todas espelhando o mesmo padrão:
 
-- **Local, na mão:** `pnpm verify` = `lint && typecheck && test && knip && dup`.
+- **Local, na mão:** `pnpm verify` = `lint && typecheck && test && knip && dup && smoke`.
   Regra da casa: *"deveria funcionar" não é terminado.*
 - **Local, automático (lefthook):** pre-commit roda `eslint --fix` nos staged;
   pre-push roda `pnpm verify` inteiro.
 - **CI (GitHub Actions):** push/PR → `install --frozen-lockfile`, `lint`, `typecheck`,
-  `knip`, `dup`, `test`, `build` em Node 24 com `TZ: UTC` + job **gitleaks** (segredos,
+  `knip`, `dup`, `test`, `smoke` (que já builda) em Node 24 com `TZ: UTC` + job **gitleaks** (segredos,
   histórico completo). Semanal: `security.yml` (`pnpm audit --prod` como gate).
   **Renovate** configurado (não-majors agrupados; majors com aprovação; TS major bloqueado):
   `renovate.yml` é workflow **só do template** (lista fixa de repos + secret do dono) e o
@@ -118,6 +118,16 @@ Ferramentas e regras:
   recomendadas + autofix do ESLint ao salvar, sem formatador concorrente).
 - **knip** (código morto/deps sem uso, `knip.jsonc`) e **jscpd** (copy-paste,
   `.jscpd.json`, **threshold 0** — baseline da base é 0,00%).
+- **`pnpm smoke`** (`scripts/smoke.mjs`, Node puro, sem dependência) — **gate de runtime**,
+  a quarta ferramenta ao lado de ESLint, knip e jscpd, e a única que roda o app: builda,
+  confere o teto de peso do `.output/server` (15 MB; hoje ~5 MB), sobe o servidor de
+  produção **e** o `nuxt dev` em portas livres e requisita `/`, `/components`, `/login`,
+  `/api/health` e uma URL inexistente. Reprova por asserção (status, `<html lang>`,
+  `<title>`, JSON do health, 404 com a página de erro) **e por log sujo**: qualquer linha
+  de stdout/stderr do servidor casando `/WARN|ERROR|request error|\[nuxt\] \[|VUE_ROUTER/`, e em produção stderr não vazio reprova por si só,
+  derruba o gate (allowlist explícita no topo do script, hoje vazia). Nasceu de um caso
+  real — 404 commitado com `fatal: true` logando stack trace a cada requisição, invisível
+  para todos os outros gates.
 - **Strip de console em produção** (client): `console.log/info/debug/trace` removidos do
   bundle via terser `pure_funcs` em `$production` (Vite 8/oxc ignora `vite.esbuild.*`;
   validado por inspeção de bundle).
@@ -177,9 +187,11 @@ projeto; padrão que se repetir vira receita no README — não código na base.
 
 A partir de um clone limpo:
 
-1. `pnpm install && pnpm dev` sobe sem erro e sem warning
-2. `pnpm verify` verde (lint, typecheck, testes, knip, jscpd)
-3. `pnpm build` completa; bundle de produção sem `console.log` (verificável por marcador)
+1. `pnpm smoke` verde: build, servidor de produção e `nuxt dev` sobem, as rotas de
+   referência respondem e **nenhum** dos dois logs tem WARN/ERROR (o antigo "`pnpm dev`
+   sem erro e sem warning", que era conferência manual, virou gate executável)
+2. `pnpm verify` verde (lint, typecheck, testes, knip, jscpd, smoke)
+3. Bundle de produção sem `console.log` (verificável por marcador)
 4. Tema claro por padrão; dark mode alterna corretamente em todos os componentes do kit
 5. Kit completo com uso demonstrado em `/components`; todo componente no smoke de regressão
 6. `useApi` funciona contra o healthcheck do próprio Nitro

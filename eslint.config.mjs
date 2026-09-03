@@ -21,6 +21,12 @@ export default withNuxt(
     files: ['server/**/*.ts'],
     rules: { 'no-console': 'error' },
   },
+  // Scripts de automação da base (gate `pnpm smoke`) falam pelo stdout: o relatório
+  // é a saída deles. `no-console` aqui só serviria para virar ruído silenciado à mão.
+  {
+    files: ['scripts/**/*.mjs'],
+    rules: { 'no-console': 'off' },
+  },
   // No client, console.log é aviso (o strip de produção no nuxt.config remove
   // log/info/debug/trace do bundle final; warn/error sobrevivem de propósito).
   {

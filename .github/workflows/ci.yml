@@ -31,7 +31,9 @@ jobs:
       - run: pnpm knip
       - run: pnpm dup
       - run: pnpm test
-      - run: pnpm build
+      # Substitui o `pnpm build`: o smoke já builda e ainda sobe o app
+      # (produção e dev), requisita as rotas e reprova log sujo.
+      - run: pnpm smoke
 
   gitleaks:
     name: Varredura de segredos

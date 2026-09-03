@@ -19,7 +19,8 @@
     "test:watch": "vitest",
     "knip": "knip",
     "dup": "jscpd app server tests",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm knip && pnpm dup"
+    "smoke": "node scripts/smoke.mjs",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm knip && pnpm dup && pnpm smoke"
   },
   "dependencies": {
     "@nuxt/fonts": "0.14.0",

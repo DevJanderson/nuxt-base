@@ -7,13 +7,17 @@ argument-hint: "[run-id]"
 # CI verde
 
 O CI (`.github/workflows/ci.yml`) roda: `pnpm install --frozen-lockfile` → `lint` →
-`typecheck` → `knip` → `dup` → `test` → `build`, em Node 24 com `TZ: UTC` (+ job
-`gitleaks` varrendo segredos no histórico). A regra da casa:
+`typecheck` → `knip` → `dup` → `test` → `smoke`, em Node 24 com `TZ: UTC` (+ job
+`gitleaks` varrendo segredos no histórico). O `smoke` substitui o antigo `build`: ele
+já builda e ainda sobe o app (produção e `nuxt dev`), requisita as rotas de referência
+e reprova log com WARN/ERROR. A regra da casa:
 **"deveria funcionar" não é terminado** — terminado é `pnpm verify` verde.
+Para o que roda em runtime há uma regra a mais: **afirmação de validação só vale com o
+log colado** — cole a saída do `pnpm smoke`, não o resumo dela.
 
 ## Prevenir (antes do push)
 
-1. `pnpm verify` — o espelho local do CI (lint + typecheck + test + knip + dup).
+1. `pnpm verify` — o espelho local do CI (lint + typecheck + test + knip + dup + smoke).
    O hook pre-push do lefthook já roda isso; **nunca** contorne com `--no-verify`
    sem motivo documentado.
 2. Mexeu em dependências? Confira `git status pnpm-lock.yaml` — lockfile fora de
@@ -34,7 +38,9 @@ gh run view <run-id> --log-failed    # o log só do que falhou
 ```
 
 Reproduza localmente com o comando do step (`pnpm lint`, `pnpm typecheck`,
-`pnpm knip`, `pnpm test`, `pnpm build`; para install: `pnpm install --frozen-lockfile`).
+`pnpm knip`, `pnpm test`, `pnpm smoke`; para install: `pnpm install --frozen-lockfile`).
+Falha no `smoke` vem com a etapa (build / produção / dev), a asserção quebrada ou as
+linhas de log ofensivas — leia essas linhas antes de mexer em qualquer coisa.
 Não reproduziu local? É diferença de ambiente — consulte
 `references/falhas-conhecidas.md` (catálogo com os casos já vividos e a correção).
 
