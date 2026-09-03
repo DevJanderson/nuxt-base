@@ -85,7 +85,7 @@ function fail(message) {
 }
 
 function tail(output) {
-  return output.trim().split('\n').slice(-25).join('\n')
+  return plain(output).trim().split('\n').slice(-25).join('\n')
 }
 
 // ── processos ──────────────────────────────────────────────────────────────────────────
@@ -109,7 +109,10 @@ function launch(command, args, env = {}) {
     cwd: ROOT,
     detached: true,
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, NUXT_TELEMETRY_DISABLED: '1', ...env },
+    // Sem cor nos filhos: no GitHub Actions o consola força ANSI e o `Local:` do `nuxt dev`
+    // saía como `Local:   \x1b[39m \x1b[36m\x1b[4mhttp://…` — a prontidão nunca casava
+    // (caso real no CI). O relatório ainda tira ANSI por segurança em `logLines`.
+    env: { ...process.env, NUXT_TELEMETRY_DISABLED: '1', NO_COLOR: '1', FORCE_COLOR: '0', ...env },
   })
   running.add(child)
 
@@ -204,8 +207,13 @@ async function dirSizeBytes(dir) {
 // montado por código para não deixar caractere de controle solto no fonte.
 const ANSI = new RegExp(`${String.fromCharCode(27)}\\[[0-?]*[ -/]*[@-~]`, 'g')
 
+/** Texto sem cor: toda leitura do buffer do servidor passa por aqui (prontidão, tail, regras). */
+function plain(output) {
+  return output.replace(ANSI, '')
+}
+
 function logLines(output) {
-  return output.replace(ANSI, '').split('\n').map(line => line.trimEnd()).filter(line => line.trim() !== '')
+  return plain(output).split('\n').map(line => line.trimEnd()).filter(line => line.trim() !== '')
 }
 
 /**
@@ -328,7 +336,7 @@ async function stepDev() {
   })
   // O `Local:` sai antes de o Vite compilar a primeira página; só o 200 em `/` prova pronto.
   const ready = async () => {
-    if (!/Local:\s+http/.test(proc.output)) return false
+    if (!/Local:\s+http/.test(plain(proc.output))) return false
     try {
       return (await fetch(`http://127.0.0.1:${port}/`, { redirect: 'manual' })).status === 200
     }

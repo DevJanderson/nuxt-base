@@ -13,6 +13,8 @@ env:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    # O smoke sobe servidores; rota pendurada não pode segurar o runner até o limite dele
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
 
