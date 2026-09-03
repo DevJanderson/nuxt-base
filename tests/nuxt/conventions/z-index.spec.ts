@@ -41,6 +41,6 @@ describe('convenção: todo z-(--z-x) usado existe como token em main.css', () =
     const missing = [...names].filter(name => !new RegExp(`--z-${name}:`).test(mainCss))
 
     expect(missing, `token(s) --z-* inexistente(s) em main.css, referenciado(s) via `
-      + `z-(--z-<nome>) em app/**: ${missing.join(', ')}`).toEqual([])
+    + `z-(--z-<nome>) em app/**: ${missing.join(', ')}`).toEqual([])
   })
 })

@@ -14,7 +14,7 @@ pnpm install        # instala dependências e roda nuxt prepare
 pnpm dev            # servidor de desenvolvimento em http://localhost:3000
 pnpm build          # build de produção (.output/)
 pnpm preview        # serve o build localmente
-pnpm lint           # ESLint (inclui formatação — não há Prettier)
+pnpm lint           # ESLint, inclusive formatação (regras @stylistic do @nuxt/eslint) — não há Prettier
 pnpm lint:fix       # ESLint com autofix
 pnpm typecheck      # vue-tsc via nuxt typecheck
 pnpm test           # Vitest (uma execução)
@@ -232,6 +232,16 @@ if (!token.value) {
 
 A partir daí toda chamada do `useApi` sai autenticada; um 401 da API derruba o usuário de volta para `/login` (comportamento já embutido). Logout = `useCookie('auth.token').value = null`.
 
+## Imagens otimizadas (receita)
+
+A base **não** traz `@nuxt/image`: o provider padrão (IPX) carrega o `sharp`, que sozinho responde por ~19 MB do build de servidor — peso que todo projeto pagaria para um recurso que nem todo projeto usa. Precisou de `<NuxtImg>`/`<NuxtPicture>`, redimensionamento ou conversão para WebP/AVIF:
+
+```bash
+npx nuxt module add image   # instala e registra em `modules` sozinho
+```
+
+Nota de deploy: o `sharp` é binário nativo, então **build e runtime precisam da mesma plataforma**. Se você builda em macOS/ARM e sobe para um container Linux x64, configure o gerenciador de pacotes para trazer os binários das duas plataformas (troubleshooting da [doc oficial](https://image.nuxt.com/get-started/installation)) — ou builde dentro da própria imagem. Sem `@nuxt/image`, `<img>` comum continua funcionando normalmente.
+
 ## Headers de segurança
 
 A base **não** envia cabeçalhos de segurança — é receita, não default (proxy/CDN na frente do app costuma já cuidar disso, e duplicar atrapalha). Para o app cuidar deles, `routeRules` no `nuxt.config.ts` resolve o básico sem dependência nenhuma:
@@ -302,6 +312,7 @@ pnpm test:watch    # watch mode durante o desenvolvimento
 - **`pnpm verify`**: `lint && typecheck && test && knip && dup` num comando. Regra da casa: *"deveria funcionar" não é terminado* — rode antes de considerar qualquer tarefa pronta.
 - **CI** (`.github/workflows/ci.yml`): a cada push na `main` e em todo PR — `pnpm install --frozen-lockfile`, `lint`, `typecheck`, `knip`, `dup`, `test` e `build`, em Node 24 com `TZ: UTC` (teste sensível a data falha igual aqui e em produção).
 - **Auditoria semanal** (`.github/workflows/security.yml`): `pnpm audit --prod` como gate toda segunda; auditoria completa informativa.
+- **Política de pin: versão exata em toda dependência** (sem `^`/`~`) — quem decide a atualização é o Renovate, num PR com o CI verde, e não um `pnpm install` num dia qualquer; o lockfile governa o resto.
 - **Renovate** (`renovate.json` + `.github/workflows/renovate.yml`): updates não-major agrupados às segundas; majors exigem aprovação no Dependency Dashboard; **major do TypeScript bloqueado** (pino em 6.x). Roda **self-hosted via Actions** (segunda 06:00 e manual via workflow_dispatch), com o secret `RENOVATE_TOKEN` (token do dono — PRs disparam o CI normalmente; sem app externo). O workflow do template também cobre os derivados listados em `RENOVATE_REPOSITORIES` — por isso **`renovate.yml` é o único arquivo de CI que o projeto derivado apaga** (lá o secret não existe e a lista de repos não é dele: sobraria só um run vermelho por semana). O `renovate.json` continua em cada repositório, e cada derivado novo entra na lista `RENOVATE_REPOSITORIES` aqui na base.
 - **Anti-duplicação e código morto**: regras `sonarjs` no ESLint (funções/branches idênticos), **knip** (exports, arquivos e dependências sem uso — config em `knip.jsonc`) e **jscpd** (`pnpm dup` — detector de copy-paste em `app/`, `server/` e `tests/`, config em `.jscpd.json`). O threshold é **0**: a base parte de 0,00% de duplicação e qualquer clone novo falha o CI — subir o threshold num projeto derivado é decisão consciente, documentada no `.jscpd.json`.
 - **Anti-vazamento de logs**: `no-console` no ESLint — **erro** em `server/**` (log de servidor estruturado é decisão do derivado; receita: [pino](https://github.com/pinojs/pino)) e aviso em `app/` (só `console.warn`/`console.error` liberados). No build de produção do client, `console.log/info/debug/trace` são **removidos do bundle** (terser `pure_funcs`, só em `$production` no `nuxt.config.ts`); `warn`/`error` sobrevivem de propósito.

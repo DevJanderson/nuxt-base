@@ -10,7 +10,7 @@ Referências: [SPEC.md](./docs/SPEC.md) (especificação fechada) e [README.md](
 - Reka UI 2 (headless, dependência) + visual portado do Preline (nunca dependência)
 - Pinia 4, VueUse 14, `@nuxtjs/color-mode` (classe `dark` no `<html>`)
 - Vitest 4 + `@nuxt/test-utils` + happy-dom (ambiente `nuxt` global)
-- pnpm 11 (pinado em `packageManager`), ESLint via `@nuxt/eslint` (sem Prettier)
+- pnpm 11 (pinado em `packageManager`), ESLint via `@nuxt/eslint` com `stylistic: true` (formatação pelo ESLint, sem Prettier)
   + regras anti-duplicação do `sonarjs`; `knip` para código morto (`knip.jsonc`);
   `jscpd` para copy-paste (`.jscpd.json`, threshold 0 — clone novo falha o CI)
 - Hooks via `lefthook.yml`: pre-commit lint dos staged; pre-push `pnpm verify`
