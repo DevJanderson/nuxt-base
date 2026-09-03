@@ -33,7 +33,8 @@ poderá ser extraído para uma Nuxt Layer (fase futura, fora deste escopo).
 - **TypeScript estrito** — **pinado em 6.x** (7.x/tsgo quebra `vue-tsc`/`nuxt typecheck`;
   o Renovate bloqueia o major)
 - **Node 24+** — mesma versão em todo lugar: `engines.node`, `.node-version` e o runner do CI
-- **pnpm 11** (pinado em `packageManager`; build scripts liberados via `allowBuilds`)
+- **pnpm 11** (pinado em `packageManager`; build scripts liberados via `allowBuilds`).
+  **Toda dependência em versão exata** (sem `^`/`~`): atualizar é decisão do Renovate com CI verde
 - **SSR ligado por padrão.** Ajuste por tipo de projeto documentado no README
   (dashboard SPA → `ssr: false` ou `routeRules`)
 - **`runtimeConfig` como única fonte de configuração de ambiente**, espelhado num
@@ -59,7 +60,9 @@ poderá ser extraído para uma Nuxt Layer (fase futura, fora deste escopo).
   `novo-componente-ui` e entra no smoke de regressão no mesmo commit.
 - **Documento:** `app.head` no `nuxt.config.ts` fixa `htmlAttrs.lang` (a11y e SEO — sem isso o
   `<html>` sai sem idioma), `title` de fallback e `titleTemplate`.
-- **Módulos:** `@nuxt/icon` (+ `@iconify-json/lucide` local), `@nuxt/fonts`, `@nuxt/image`.
+- **Módulos:** `@nuxt/icon` (+ `@iconify-json/lucide` local) e `@nuxt/fonts`.
+  `@nuxt/image` saiu da base e virou receita no README (o `sharp` do IPX custava ~19 MB
+  de build de servidor para um recurso que nem todo projeto usa).
   A família de fonte é **declarada em `fonts.families`**: o scanner do `@nuxt/fonts` não
   enxerga o token dentro de `@theme inline` (bug upstream nuxt/fonts#638).
 
@@ -97,7 +100,7 @@ Três camadas, todas espelhando o mesmo padrão:
 
 Ferramentas e regras:
 
-- **ESLint** (`@nuxt/eslint`, flat, sem Prettier) + **sonarjs** (duplicação estrutural,
+- **ESLint** (`@nuxt/eslint`, flat, `stylistic: true` — formatação é do lint, sem Prettier) + **sonarjs** (duplicação estrutural,
   complexidade) + **`no-console`** (erro em `server/` — receita pino no README; aviso no
   `app/` com `warn`/`error` liberados).
 - **Editor alinhado por padrão:** `.editorconfig` e `.vscode/` versionados (extensões
@@ -146,8 +149,9 @@ docs/SPEC.md  .env.example  CLAUDE.md  README.md
 ## 10. Fora do escopo (por decisão, não esquecimento)
 
 i18n, ORM/banco, upload de arquivos, filas, e-mail, billing, PWA, admin, e2e Playwright,
-logger estruturado (pino — receita no README). Entram por projeto; padrão que se repetir
-vira receita no README — não código na base.
+logger estruturado (pino — receita no README), otimização de imagens (`@nuxt/image` —
+receita no README; o `sharp` do IPX pesa ~19 MB no build de servidor). Entram por
+projeto; padrão que se repetir vira receita no README — não código na base.
 
 ## 11. Critérios de pronto
 
