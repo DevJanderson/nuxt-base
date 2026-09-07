@@ -11,6 +11,13 @@
  * Nas duas últimas: mesmas requisições, mesmas asserções e a mesma regra de log limpo
  * (o aviso do h3 só aparece em dev; o stack trace do Nitro, só em produção).
  *
+ * Flag `--spa`: para o derivado que roda com `ssr: false` (ver README, "SSR ou SPA"). Sem
+ * render no servidor a rota inexistente devolve **200 com o app shell** — o 404 é do client,
+ * pelo `error.vue` —, então **só as asserções dessa rota mudam**. Rotas de referência, lang,
+ * title, health, teto de peso e a regra de log limpo continuam idênticos: a flag descreve o
+ * modo de render, não afrouxa gate nenhum. Derivado SPA troca o script `smoke` do
+ * `package.json` para `node scripts/smoke.mjs --spa`.
+ *
  * Sem dependência nova de propósito: Node puro (child_process, net, fs, fetch global).
  */
 import { spawn } from 'node:child_process'
@@ -62,6 +69,23 @@ const OFFENSIVE_LINE = /WARN|ERROR|request error|\[nuxt\] \[|VUE_ROUTER/
 const LOG_ALLOWLIST = [
   // (vazia — a baseline da base não produz linha ofensiva nenhuma)
 ]
+
+/**
+ * `--spa`: o app roda com `ssr: false`. Muda só o que o modo de render realmente muda — as
+ * asserções da rota inexistente (200 + app shell, em vez de 404 + página de erro). Nada de
+ * log: `OFFENSIVE_LINE`, a allowlist e a regra estrita de stderr em produção valem igual.
+ */
+const SPA = process.argv.includes('--spa')
+
+/** O ponto de montagem do app no HTML — é ele que prova que veio o shell, e não um erro. */
+const APP_SHELL = /id="__nuxt"/
+
+/**
+ * Marcas da página de erro servida pelo Nitro (`error-500`) e da rota interna de erro do
+ * Nuxt. Em modo SPA a rota inexistente tem de trazer o shell; se vier qualquer uma destas,
+ * o erro vazou para o servidor e o gate reprova.
+ */
+const SERVER_ERROR_PAGE = /Internal server error|This page is temporarily unavailable|__nuxt_error/i
 
 /** Rotas de referência: as três páginas, o healthcheck do Nitro e uma URL inexistente. */
 const ROUTES = ['/', '/components', '/login', '/api/health', '/rota-que-nao-existe']
@@ -264,11 +288,30 @@ function assertResponses(mode, responses) {
   if (health?.status === 'ok') pass('`/api/health` → JSON status "ok"')
   else fail(`[${mode}] \`/api/health\` sem JSON status "ok": ${responses['/api/health'].body.slice(0, 120)}`)
 
-  const notFound = responses['/rota-que-nao-existe']
+  if (SPA) assertNotFoundSpa(mode, responses['/rota-que-nao-existe'])
+  else assertNotFoundSsr(mode, responses['/rota-que-nao-existe'])
+}
+
+/** Padrão (SSR): o servidor renderiza o `error.vue` e responde 404. */
+function assertNotFoundSsr(mode, notFound) {
   if (notFound.status === 404) pass('GET /rota-que-nao-existe → 404')
   else fail(`[${mode}] GET /rota-que-nao-existe → ${notFound.status}, esperado 404`)
   if (notFound.body.includes('Página não encontrada')) pass('404 renderiza a página de erro em pt-BR')
   else fail(`[${mode}] a resposta 404 não contém "Página não encontrada"`)
+}
+
+/**
+ * `--spa`: sem render no servidor, a mesma rota devolve o app shell com 200 e o `error.vue`
+ * entra no client. Exigir shell **e** ausência da página de erro do servidor mantém o rigor:
+ * um erro de verdade no servidor continua reprovando, só que pela marca certa.
+ */
+function assertNotFoundSpa(mode, notFound) {
+  if (notFound.status === 200) pass('GET /rota-que-nao-existe → 200 (app shell do SPA)')
+  else fail(`[${mode}] GET /rota-que-nao-existe → ${notFound.status}, esperado 200 em modo SPA`)
+  if (APP_SHELL.test(notFound.body)) pass('a resposta traz o app shell (id="__nuxt")')
+  else fail(`[${mode}] a resposta de /rota-que-nao-existe não traz o app shell (${APP_SHELL}): ${notFound.body.slice(0, 120)}`)
+  if (!SERVER_ERROR_PAGE.test(notFound.body)) pass('a resposta não é a página de erro do servidor')
+  else fail(`[${mode}] /rota-que-nao-existe caiu na página de erro do servidor (${SERVER_ERROR_PAGE}), não no app shell`)
 }
 
 function assertCleanLog(mode, proc, strictStderr) {
@@ -351,6 +394,7 @@ async function stepDev() {
 
 async function main() {
   const started = Date.now()
+  if (SPA) console.log('modo SPA (--spa): a rota inexistente devolve o app shell; o resto do gate é o mesmo')
   try {
     await stepBuild()
     await stepProduction()
@@ -372,7 +416,7 @@ async function main() {
     process.exitCode = 1
     return
   }
-  console.log(`\n✔ smoke verde em ${elapsed}s (${ROUTES.length} rotas × produção e dev)`)
+  console.log(`\n✔ smoke verde em ${elapsed}s (${ROUTES.length} rotas × produção e dev${SPA ? ', modo SPA' : ''})`)
 }
 
 await main()

@@ -7,9 +7,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import {
+  UiAlert,
   UiBadge,
   UiButton,
   UiCard,
+  UiCheckbox,
   UiInput,
   UiModal,
   UiSelect,
@@ -21,8 +23,11 @@ import {
 const cases: Array<[string, Component, Record<string, unknown>, Record<string, () => unknown>]> = [
   ['UiButton', UiButton, {}, { default: () => 'Ação' }],
   ['UiButton (link)', UiButton, { to: '/' }, { default: () => 'Link' }],
+  ['UiAlert', UiAlert, {}, { default: () => 'Aviso' }],
+  ['UiAlert (erro)', UiAlert, { variant: 'error', title: 'Erro' }, { default: () => 'Falhou' }],
   ['UiBadge', UiBadge, {}, { default: () => 'Novo' }],
   ['UiCard', UiCard, {}, { default: () => 'Conteúdo' }],
+  ['UiCheckbox', UiCheckbox, { label: 'Aceito', modelValue: false }, {}],
   ['UiInput', UiInput, { label: 'Nome', modelValue: '' }, {}],
   ['UiSelect', UiSelect, {
     label: 'Opção',
