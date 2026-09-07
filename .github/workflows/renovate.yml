@@ -32,7 +32,8 @@ jobs:
           # O workflow do template cuida da base e dos derivados listados aqui;
           # cada repo usa o próprio renovate.json
           RENOVATE_REPOSITORIES: DevJanderson/nuxt-base
-          # Autor dos commits do Renovate; sem isto ele usa o e-mail da Mend e
-          # avisa (WARN) a cada run
-          RENOVATE_GIT_AUTHOR: 'renovate[bot] <renovate@nuxt-base.local>'
+          # Autor dos commits do Renovate = o dono do repo: sem isto ele usa o
+          # e-mail da Mend (WARN a cada run) e, com autor diferente de quem faz
+          # o merge, o squash ganha um trailer Co-authored-by indesejado
+          RENOVATE_GIT_AUTHOR: 'Janderson Lira <devjanderlira@gmail.com>'
           LOG_LEVEL: info
