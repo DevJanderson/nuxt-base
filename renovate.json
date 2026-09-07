@@ -4,19 +4,21 @@
     "Sem `schedule` de propósito: no modo self-hosted quem dita o horário é o cron de .github/workflows/renovate.yml.",
     "Uma janela aqui ('before 8am on monday') somava-se ao atraso do cron do GitHub e o run caía fora dela — PR nenhum era aberto."
   ],
-  "extends": [
-    "config:recommended",
-    "group:allNonMajor",
-    ":semanticCommits"
-  ],
+  "extends": ["config:recommended", "group:allNonMajor", ":semanticCommits"],
   "timezone": "America/Manaus",
   "prConcurrentLimit": 5,
   "labels": ["dependencies"],
   "osvVulnerabilityAlerts": true,
   "lockFileMaintenance": {
-    "enabled": true
+    "enabled": true,
+    "schedule": ["at any time"]
   },
   "packageRules": [
+    {
+      "description": "GitHub Actions em grupo próprio: push em .github/workflows exige escopo `workflow` no RENOVATE_TOKEN; sem ele o branch é abortado e não pode levar os updates npm junto",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    },
     {
       "description": "Majors separados e com aprovação manual — exigem leitura de changelog",
       "matchUpdateTypes": ["major"],
