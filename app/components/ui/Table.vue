@@ -16,7 +16,10 @@ defineSlots<{
 </script>
 
 <template>
-  <div class="overflow-x-auto rounded-box border border-border">
+  <div
+    data-slot="table"
+    class="overflow-x-auto rounded-xl border border-border"
+  >
     <table class="min-w-full divide-y divide-border">
       <thead class="bg-muted">
         <tr>

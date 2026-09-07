@@ -29,7 +29,10 @@ const describedBy = computed(() => (props.error || props.hint ? messageId : unde
 </script>
 
 <template>
-  <div class="w-full">
+  <div
+    data-slot="checkbox"
+    class="w-full"
+  >
     <div
       class="flex items-start gap-x-3"
       :class="disabled && 'opacity-50'"
@@ -41,7 +44,7 @@ const describedBy = computed(() => (props.error || props.hint ? messageId : unde
         :disabled="disabled"
         :aria-invalid="error ? 'true' : undefined"
         :aria-describedby="describedBy"
-        class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-selector border bg-card shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground"
+        class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-sm border bg-card shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground"
         :class="error ? 'border-destructive' : 'border-border'"
       >
         <CheckboxIndicator class="flex items-center justify-center text-current">

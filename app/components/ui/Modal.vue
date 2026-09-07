@@ -34,8 +34,11 @@ const open = defineModel<boolean>('open', { default: false })
       <!-- Backdrop do Preline (hs-overlay-backdrop) vira DialogOverlay explícito -->
       <DialogOverlay class="fixed inset-0 z-(--z-overlay) bg-foreground/50 transition-opacity duration-300 starting:opacity-0 dark:bg-background/80" />
 
+      <!-- `data-slot` vai no DialogContent, não no DialogRoot: o Root do Reka é só
+           provider, não renderiza elemento — o atributo se perderia. -->
       <DialogContent
-        class="fixed top-1/2 left-1/2 z-(--z-modal) flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-box border border-border bg-card shadow-2xs transition duration-300 starting:translate-y-[calc(-50%-0.5rem)] starting:opacity-0"
+        data-slot="modal"
+        class="fixed top-1/2 left-1/2 z-(--z-modal) flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl border border-border bg-card shadow-2xs transition duration-300 starting:translate-y-[calc(-50%-0.5rem)] starting:opacity-0"
       >
         <div class="flex items-center justify-between gap-x-2 border-b border-border px-4 py-3">
           <DialogTitle class="font-semibold text-card-foreground">

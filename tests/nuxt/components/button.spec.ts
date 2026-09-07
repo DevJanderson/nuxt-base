@@ -14,20 +14,73 @@ describe('UiButton', () => {
     expect(wrapper.find('button').text()).toBe('Salvar')
   })
 
-  it('usa a variante solid por padrão', async () => {
+  it('usa a variante default no tamanho default', async () => {
     const wrapper = await mountSuspended(UiButton)
 
-    expect(wrapper.find('button').classes()).toContain('bg-primary')
+    const button = wrapper.find('button')
+    expect(button.classes()).toContain('bg-primary')
+    expect(button.classes()).toEqual(expect.arrayContaining(['h-8', 'text-sm']))
   })
 
   it.each([
+    ['default', 'bg-primary'],
     ['outline', 'border-border'],
+    ['secondary', 'bg-secondary'],
     ['ghost', 'text-primary'],
     ['destructive', 'bg-destructive'],
+    ['link', 'underline-offset-4'],
   ] as const)('aplica as classes da variante %s', async (variant, expectedClass) => {
     const wrapper = await mountSuspended(UiButton, { props: { variant } })
 
     expect(wrapper.find('button').classes()).toContain(expectedClass)
+  })
+
+  // Escala densa de alturas: a altura é fixa (`h-*`/`size-*`), não padding vertical.
+  it.each([
+    ['xs', 'h-6'],
+    ['sm', 'h-7'],
+    ['default', 'h-8'],
+    ['lg', 'h-9'],
+    ['icon-xs', 'size-6'],
+    ['icon-sm', 'size-7'],
+    ['icon', 'size-8'],
+    ['icon-lg', 'size-9'],
+  ] as const)('aplica a altura fixa do tamanho %s', async (size, expectedClass) => {
+    const wrapper = await mountSuspended(UiButton, { props: { size } })
+
+    expect(wrapper.find('button').classes()).toContain(expectedClass)
+  })
+
+  it.each([
+    ['xs', 'text-xs'],
+    ['sm', 'text-xs'],
+    ['default', 'text-sm'],
+    ['lg', 'text-sm'],
+  ] as const)('usa %s com %s', async (size, expectedClass) => {
+    const wrapper = await mountSuspended(UiButton, { props: { size } })
+
+    expect(wrapper.find('button').classes()).toContain(expectedClass)
+  })
+
+  // `data-slot` (e `data-variant`/`data-size`) é o gancho estável para estilizar de fora
+  // e para selecionar a raiz nos testes, sem depender de classe utilitária do momento.
+  it('marca a raiz com data-slot, data-variant e data-size', async () => {
+    const wrapper = await mountSuspended(UiButton, { props: { variant: 'ghost', size: 'lg' } })
+
+    const button = wrapper.find('[data-slot="button"]')
+    expect(button.exists()).toBe(true)
+    expect(button.attributes('data-variant')).toBe('ghost')
+    expect(button.attributes('data-size')).toBe('lg')
+  })
+
+  // O `cn()` (twMerge) é o que faz a classe de fora vencer: sem ele sairiam `h-8 h-10`
+  // no atributo e o vencedor dependeria da ordem das regras no CSS gerado.
+  it('funde a prop class, e a de fora vence no mesmo grupo de utility', async () => {
+    const wrapper = await mountSuspended(UiButton, { props: { class: 'h-10 w-full' } })
+
+    const classes = wrapper.find('button').classes()
+    expect(classes).toEqual(expect.arrayContaining(['h-10', 'w-full']))
+    expect(classes).not.toContain('h-8')
   })
 
   it('desabilita o botão nativo com a prop disabled', async () => {
@@ -41,6 +94,7 @@ describe('UiButton', () => {
 
     const link = wrapper.find('a')
     expect(link.attributes('href')).toBe('/login')
+    expect(link.attributes('data-slot')).toBe('button')
     expect(link.classes()).toContain('border-border')
     expect(wrapper.find('button').exists()).toBe(false)
   })

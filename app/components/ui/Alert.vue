@@ -1,31 +1,52 @@
 <script setup lang="ts">
-type AlertVariant = 'info' | 'error'
+import type { HTMLAttributes } from 'vue'
+import { cva } from 'class-variance-authority'
+import { cn } from '~/utils/cn'
 
-withDefaults(defineProps<{
+// Vocabulário do kit, o mesmo do Badge e do Button: `default` e `destructive`.
+type AlertVariant = 'default' | 'destructive'
+
+const props = withDefaults(defineProps<{
   variant?: AlertVariant
   /** Título opcional exibido acima da mensagem */
   title?: string
+  /** Fundido por `cn()`: classe de fora vence a do componente no mesmo grupo. */
+  class?: HTMLAttributes['class']
 }>(), {
-  variant: 'info',
+  variant: 'default',
   title: undefined,
+  class: undefined,
 })
 
-// Mesmo par ícone/cor do Toaster: a mesma mensagem se lê igual no toast e na página.
-const icons: Record<AlertVariant, string> = {
-  info: 'lucide:info',
-  error: 'lucide:circle-alert',
-}
-
 // Visual portado do Preline (alert soft), tokens semânticos da base.
-// O contrato de tokens não tem cor de informação: info usa muted.
-const variantClasses: Record<AlertVariant, string> = {
-  info: 'border-border bg-muted text-foreground',
-  error: 'border-destructive/40 bg-destructive/10 text-foreground',
+// O contrato de tokens não tem cor de informação: a variante default usa muted.
+const alertVariants = cva(
+  'flex items-start gap-x-3 rounded-xl border p-4 text-sm',
+  {
+    variants: {
+      variant: {
+        default: 'border-border bg-muted text-foreground',
+        destructive: 'border-destructive/40 bg-destructive/10 text-foreground',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
+)
+
+const classes = computed(() => cn(alertVariants({ variant: props.variant }), props.class))
+
+// Mesmo par ícone/cor do Toaster: a mesma mensagem se lê igual no toast e na página.
+// Ficam fora do cva porque pintam o ícone, um nó filho — não a raiz.
+const icons: Record<AlertVariant, string> = {
+  default: 'lucide:info',
+  destructive: 'lucide:circle-alert',
 }
 
 const iconClasses: Record<AlertVariant, string> = {
-  info: 'text-muted-foreground',
-  error: 'text-destructive',
+  default: 'text-muted-foreground',
+  destructive: 'text-destructive',
 }
 </script>
 
@@ -35,8 +56,9 @@ const iconClasses: Record<AlertVariant, string> = {
        leitura da página); mensagem que aparece em resposta a uma ação é toast
        (`useToast()`), que já é live region pelo Reka. -->
   <div
-    class="flex items-start gap-x-3 rounded-box border p-4 text-sm"
-    :class="variantClasses[variant]"
+    data-slot="alert"
+    :data-variant="variant"
+    :class="classes"
   >
     <Icon
       :name="icons[variant]"

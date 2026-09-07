@@ -36,11 +36,15 @@ function onOpenChange(open: boolean, id: number) {
     label="Notificação"
     swipe-direction="right"
   >
+    <!-- `data-slot` vai no ToastRoot: o ToastProvider, raiz do componente, é só
+         provider e não renderiza elemento — o atributo se perderia nele. -->
     <ToastRoot
       v-for="toast in toasts"
       :key="toast.id"
       :duration="toast.duration"
-      class="pointer-events-auto flex w-full items-start gap-x-3 rounded-box border border-border bg-card p-4 shadow-2xs transition duration-300 starting:translate-y-2 starting:opacity-0 data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition data-[swipe=end]:translate-x-(--reka-toast-swipe-end-x) data-[swipe=move]:translate-x-(--reka-toast-swipe-move-x) data-[swipe=move]:transition-none"
+      data-slot="toast"
+      :data-variant="toast.variant"
+      class="pointer-events-auto flex w-full items-start gap-x-3 rounded-xl border border-border bg-card p-4 shadow-2xs transition duration-300 starting:translate-y-2 starting:opacity-0 data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition data-[swipe=end]:translate-x-(--reka-toast-swipe-end-x) data-[swipe=move]:translate-x-(--reka-toast-swipe-move-x) data-[swipe=move]:transition-none"
       @update:open="onOpenChange($event, toast.id)"
     >
       <Icon

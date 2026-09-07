@@ -73,6 +73,10 @@ const tableRows = [
       <p class="mt-2 text-muted-foreground">
         Vitrine do kit próprio: comportamento via Reka UI, visual portado
         do Preline, tudo estilizado só com os tokens semânticos da base.
+        As convenções são as de mercado — nomes de variante, escala densa de alturas,
+        <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">cva</code> e
+        <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">data-slot</code> —, a
+        aparência continua sendo a nossa.
       </p>
     </header>
 
@@ -85,30 +89,93 @@ const tableRows = [
         <UiButton variant="outline">
           Cancelar
         </UiButton>
+        <UiButton variant="secondary">
+          Duplicar
+        </UiButton>
         <UiButton variant="ghost">
           Saiba mais
         </UiButton>
         <UiButton variant="destructive">
           Excluir
         </UiButton>
+        <UiButton variant="link">
+          Ver documentação
+        </UiButton>
         <UiButton disabled>
           Desabilitado
         </UiButton>
       </div>
+      <p class="text-sm text-muted-foreground">
+        A escala de altura é a densa: 24px (<code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">xs</code>),
+        28px (<code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">sm</code>),
+        32px (<code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">default</code>) e
+        36px (<code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">lg</code>).
+      </p>
       <div class="flex flex-wrap items-center gap-3">
+        <UiButton size="xs">
+          Extra pequeno
+        </UiButton>
         <UiButton size="sm">
           Pequeno
         </UiButton>
-        <UiButton size="md">
-          Médio
-        </UiButton>
+        <UiButton>Padrão</UiButton>
         <UiButton size="lg">
           Grande
         </UiButton>
       </div>
       <p class="text-sm text-muted-foreground">
-        Com a prop <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">to</code> o
-        botão vira <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">NuxtLink</code>,
+        Os tamanhos <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">icon*</code> são
+        quadrados, com a mesma altura dos tamanhos de texto — para ação sem rótulo, sempre
+        com <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">aria-label</code>.
+      </p>
+      <div class="flex flex-wrap items-center gap-3">
+        <UiButton
+          size="icon-xs"
+          variant="outline"
+          aria-label="Adicionar"
+        >
+          <Icon
+            name="lucide:plus"
+            class="size-3"
+            aria-hidden="true"
+          />
+        </UiButton>
+        <UiButton
+          size="icon-sm"
+          variant="outline"
+          aria-label="Editar"
+        >
+          <Icon
+            name="lucide:pencil"
+            class="size-3.5"
+            aria-hidden="true"
+          />
+        </UiButton>
+        <UiButton
+          size="icon"
+          aria-label="Salvar"
+        >
+          <Icon
+            name="lucide:check"
+            class="size-4"
+            aria-hidden="true"
+          />
+        </UiButton>
+        <UiButton
+          size="icon-lg"
+          variant="destructive"
+          aria-label="Excluir"
+        >
+          <Icon
+            name="lucide:trash-2"
+            class="size-4"
+            aria-hidden="true"
+          />
+        </UiButton>
+      </div>
+      <p class="text-sm text-muted-foreground">
+        Com a prop <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">to</code> o
+        botão vira <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">NuxtLink</code>,
         mantendo variantes e tamanhos.
       </p>
       <div class="flex flex-wrap items-center gap-3">
@@ -185,7 +252,7 @@ const tableRows = [
         />
       </div>
       <p class="text-sm text-muted-foreground">
-        O estado <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">indeterminate</code>
+        O estado <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">indeterminate</code>
         é o do marca-tudo parcial: "Todos os assuntos" acima o assume sozinho quando só
         parte dos assuntos está marcada.
       </p>
@@ -213,10 +280,10 @@ const tableRows = [
         Modal
       </h2>
       <p class="text-sm text-muted-foreground">
-        Informe sempre a <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">description</code>:
+        Informe sempre a <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">description</code>:
         é ela que o leitor de tela anuncia ao abrir o diálogo. Sem ela o componente cai num
         fallback oculto com o título, que é só rede de segurança para o
-        <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">aria-describedby</code>.
+        <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">aria-describedby</code>.
       </p>
       <UiModal
         v-model:open="modalOpen"
@@ -293,9 +360,9 @@ const tableRows = [
         Badge
       </h2>
       <div class="flex flex-wrap items-center gap-3">
-        <UiBadge>Neutro</UiBadge>
-        <UiBadge variant="primary">
-          Primário
+        <UiBadge>Padrão</UiBadge>
+        <UiBadge variant="secondary">
+          Secundário
         </UiBadge>
         <UiBadge variant="destructive">
           Destrutivo
@@ -313,7 +380,7 @@ const tableRows = [
       <p class="text-sm text-muted-foreground">
         Mensagem estática da página (aviso de ambiente, erro de formulário já renderizado).
         Para mensagem que aparece em resposta a uma ação, use
-        <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">useToast()</code>,
+        <code class="rounded-md bg-muted px-1.5 py-0.5 text-xs">useToast()</code>,
         que anuncia em live region.
       </p>
       <div class="grid max-w-3xl gap-4">
@@ -324,11 +391,11 @@ const tableRows = [
           A página vai ao ar automaticamente na data escolhida. Dá para cancelar
           enquanto o status for “agendada”.
         </UiAlert>
-        <UiAlert variant="error">
+        <UiAlert variant="destructive">
           Não foi possível carregar a lista de projetos.
         </UiAlert>
         <UiAlert
-          variant="error"
+          variant="destructive"
           title="Erro ao salvar"
         >
           Verifique os campos destacados e envie o formulário novamente.
@@ -345,7 +412,7 @@ const tableRows = [
         :rows="tableRows"
       >
         <template #cell-status="{ value }">
-          <UiBadge :variant="value === 'Ativo' ? 'primary' : 'neutral'">
+          <UiBadge :variant="value === 'Ativo' ? 'default' : 'secondary'">
             {{ value }}
           </UiBadge>
         </template>

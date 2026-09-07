@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { UiAlert } from '#components'
 
-// Seletor da raiz: `.rounded-box` é a classe do container do alerta e não se repete dentro
-// dele. `find('div')` pegaria o primeiro div qualquer — um wrapper novo em volta quebraria
-// os testes por motivo errado.
-const ROOT = '.rounded-box'
+// Seletor da raiz: `data-slot` é o gancho estável do kit — não depende de classe
+// utilitária, que muda a cada ajuste de visual. `find('div')` pegaria o primeiro div
+// qualquer, e um wrapper novo em volta quebraria os testes por motivo errado.
+const ROOT = '[data-slot="alert"]'
 
 describe('UiAlert', () => {
   it('renderiza o conteúdo do slot', async () => {
@@ -16,15 +16,17 @@ describe('UiAlert', () => {
     expect(wrapper.text()).toContain('Ambiente de demonstração.')
   })
 
-  it('usa a variante info por padrão', async () => {
+  it('usa a variante default por padrão', async () => {
     const wrapper = await mountSuspended(UiAlert)
 
-    expect(wrapper.get(ROOT).classes()).toContain('bg-muted')
+    const root = wrapper.get(ROOT)
+    expect(root.classes()).toContain('bg-muted')
+    expect(root.attributes('data-variant')).toBe('default')
   })
 
   it.each([
-    ['info', 'bg-muted'],
-    ['error', 'bg-destructive/10'],
+    ['default', 'bg-muted'],
+    ['destructive', 'bg-destructive/10'],
   ] as const)('aplica as classes da variante %s', async (variant, expectedClass) => {
     const wrapper = await mountSuspended(UiAlert, { props: { variant } })
 
@@ -33,7 +35,7 @@ describe('UiAlert', () => {
 
   it('exibe o título quando a prop title é informada', async () => {
     const wrapper = await mountSuspended(UiAlert, {
-      props: { title: 'Erro ao salvar', variant: 'error' },
+      props: { title: 'Erro ao salvar', variant: 'destructive' },
       slots: { default: () => 'Verifique os campos destacados.' },
     })
 
