@@ -3,6 +3,10 @@ import sonarjs from 'eslint-plugin-sonarjs'
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
+  // Worktrees do Claude Code (.claude/worktrees/<agente>/) são checkouts inteiros
+  // dentro do repo: sem isto o eslint entra neles, acha outro eslint.config.mjs
+  // e quebra no `.nuxt/` que não existe lá (caso real, 2026-09-07)
+  { ignores: ['.claude/worktrees/**'] },
   // Anti-duplicação e complexidade (subconjunto do sonarjs — o recommended
   // inteiro é ruidoso demais para o dia a dia com Vue/Nuxt)
   {

@@ -27,3 +27,7 @@ logs
 
 # Artefatos de sessão do playwright-cli
 .playwright-cli
+
+# Worktrees que o Claude Code cria dentro do repo (agentes isolados, EnterWorktree):
+# cada um é um checkout completo — fora do git, do lint e do jscpd
+.claude/worktrees
