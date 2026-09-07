@@ -22,23 +22,29 @@ A skill oficial assume Preline instalado como dependência com plugin JS — ess
   `hs-dropdown-open:*` / `hs-overlay-open:*` / etc. → `data-[state=open]:*`,
   `data-[state=checked]:*`, `data-[disabled]:*`, `data-[highlighted]:*` conforme o primitivo.
   Atributos `data-hs-*` são removidos, não copiados.
-- **Somente tokens semânticos do `app/assets/css/main.css`** — nunca cor bruta
-  (`bg-blue-600`, `text-gray-500`, hex) nem os temas/tokens do Preline
+- **Somente tokens semânticos do `app/assets/css/main.css`**, no vocabulário shadcn v4 — nunca
+  cor bruta (`bg-blue-600`, `text-gray-500`, hex) nem os temas/tokens do Preline
   (`default`, `harvest`, `bg-layer`, `bg-navbar`, …). Mapeamento da casa (README, "Tema"):
   - fundos/texto da página → `bg-background` / `text-foreground`
   - superfícies elevadas (card, modal) → `bg-card` / `text-card-foreground`
+  - superfícies flutuantes (dropdown, popover, tooltip) → `bg-popover` / `text-popover-foreground`
   - discretos/secundários → `bg-muted` / `text-muted-foreground`
-  - bordas/divisores → `border-border`
-  - ação principal → `bg-primary` / `hover:bg-primary-hover` / `text-primary-foreground`
+  - ação secundária → `bg-secondary` / `text-secondary-foreground`
+  - realce de hover/item ativo → `bg-accent` / `text-accent-foreground`
+  - bordas/divisores → `border-border`; borda de campo → `border-input`
+  - ação principal → `bg-primary` / `text-primary-foreground` (hover por opacidade,
+    `hover:bg-primary/90` — não existe token `primary-hover`)
   - destrutivo/erro → `bg-destructive` / `text-destructive-foreground`
   - anel de foco → `ring` (`focus-visible:ring-ring`)
-  - raios → `rounded-box` (containers) / `rounded-field` (controles)
+  - raios → escala derivada do `--radius` único: `rounded-sm` (seletores pequenos),
+    `rounded-md` (controles), `rounded-lg`/`rounded-xl` (containers e superfícies)
   - dark mode → já resolvido pelos tokens (`:root`/`.dark`); **não** copiar variantes `dark:*` do Preline.
 - A regra "Trust the returned markup - do not re-verify it" do SKILL.md **não isenta a tradução**:
   o markup retornado é ponto de partida, e todo `data-hs-*`, classe de cor bruta e
   variante `hs-*` deve ser traduzido antes de entrar em `app/components/ui/`.
 - Destino do markup portado: componente Vue próprio em `app/components/ui/`
-  (`<script setup lang="ts">`, primitivo Reka correspondente), nunca HTML solto.
+  (`<script setup lang="ts">`, primitivo Reka correspondente, variantes em `cva` compostas com
+  `cn()` de `~/utils/cn` e `data-slot` nos elementos nomeados), nunca HTML solto.
   Adicionar o novo componente à vitrine em `/components`.
 
 ## O que da skill continua valendo

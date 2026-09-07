@@ -34,6 +34,7 @@ app/                      # código da aplicação (srcDir do Nuxt 4)
   middleware/auth.ts      # esqueleto do middleware de rota (auth é ponto de encaixe)
   pages/                  # index, login (placeholder), components (vitrine do kit)
   stores/app.ts           # store-referência Pinia (setup store)
+  utils/cn.ts             # cn(): merge de classes (clsx + tailwind-merge) usado pelo kit
   error.vue               # página de erro global + 404
 server/
   api/health.get.ts       # rota-referência do Nitro (GET /api/health)
@@ -73,7 +74,7 @@ Em qualquer caminho, a skill `/derivar-projeto <nome>` executa o roteiro complet
 
 1. **Apague os arquivos "só do template"** — a lista, com o porquê de cada item, está logo abaixo em [Atualizar a base no derivado](#atualizar-a-base-no-derivado). É a mesma lista que reaparece como conflito em cada merge futuro.
 2. **Renomeie** em dois lugares: `package.json` → campo `"name"`; `server/api/health.get.ts` → campo `service` (o healthcheck reporta o nome do serviço).
-3. **Tokens** em `app/assets/css/main.css`, apenas os blocos `:root` e `.dark` (e, se quiser, `--font-sans`/`--radius-*`) — ver [Tema](#tema-identidade-visual). Sem identidade definida ainda? Mantenha o padrão e siga: trocar depois é editar só esses dois blocos.
+3. **Tokens** em `app/assets/css/main.css`, apenas os blocos `:root` e `.dark` (e, se quiser, `--font-sans`/`--radius`) — ver [Tema](#tema-identidade-visual). Sem identidade definida ainda? Mantenha o padrão e siga: trocar depois é editar só esses dois blocos.
 4. **Renderização**: site/SEO mantém o SSR padrão; dashboard atrás de login → `ssr: false`; misto → `routeRules` — ver [SSR ou SPA](#ssr-ou-spa). Adotou `ssr: false` global? Troque o script `smoke` do `package.json` por `node scripts/smoke.mjs --spa`: em SPA o servidor entrega o app shell com 200 para URL inexistente, e a flag existe para trocar **só** essa asserção de 404. O resto do gate — inclusive a exigência de log sem WARN/ERROR — fica idêntico. No modo misto (`routeRules`) o gate roda sem flag.
 5. **Auth**, quatro ramos: [receita 1 ou 2](#auth-duas-receitas); **sem login** → remova `app/middleware/auth.ts`, `app/pages/login.vue`, o redirect de 401 no `useApi`, o botão para `/login` em `app/pages/index.vue` e as **duas** citações de `/login` em `scripts/smoke.mjs` (o gate cobra 200 nessa rota e reprova com 404 — esquecer deixa o `pnpm verify` vermelho), tire `NUXT_SESSION_PASSWORD` do `.env.example` no passo 7 e apague as duas menções ao middleware no `CLAUDE.md` ("Auth é ponto de encaixe" e a linha de `app/middleware/auth.ts` na Estrutura); **login futuro** → mantenha os pontos de encaixe como estão e não instale nada.
 6. **Limpe os exemplos**: vitrine `/components` (mantê-la como styleguide interno é válido; se remover, tire o link do header), `app/pages/index.vue`, marca no `app/layouts/default.vue`, `app/stores/app.ts`. Ao final, caça-marca: `grep -ri "nuxt base" app/ server/` — a marca vive também em `error.vue` e nos `useSeoMeta`; zere o resultado.
@@ -137,7 +138,9 @@ A última linha é a exceção da tabela: como o `README.md` continua existindo 
 Os tokens vivem em `app/assets/css/main.css`, em duas camadas:
 
 - **Camada 1** — `:root` (tema claro) e `.dark` (tema escuro) definem os **valores** de cada token semântico. **Trocar a identidade visual do projeto = editar só esses dois blocos.**
-- **Camada 2** — `@theme inline` registra os tokens como utilities do Tailwind (`bg-primary`, `text-foreground`, `rounded-box`, …). Só é editada para criar token novo.
+- **Camada 2** — `@theme inline` registra os tokens como utilities do Tailwind (`bg-primary`, `text-foreground`, `rounded-lg`, …). Só é editada para criar token novo.
+
+O vocabulário é o do **shadcn v4** (`background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive` — cada um com seu `-foreground` — mais `border`, `input` e `ring`), com os **nossos valores**. Não é enfeite: é a camada compartilhada com os outros alvos da mesma identidade — a biblioteca de componentes própria (Vue 3 / Nuxt 4) e os templates Django consomem os mesmos nomes de token, então um tema trocado aqui vale nos três sem tradução.
 
 | Token | Papel |
 |---|---|
@@ -153,6 +156,8 @@ Os tokens vivem em `app/assets/css/main.css`, em duas camadas:
 | `--radius-selector` → `rounded-selector` | raio de seletores pequenos (checkbox, radio, switch) — escala própria porque `rounded-field` num quadrado de 16px vira círculo, e círculo lê como radio |
 | `--font-sans` | tipografia base (trocar aqui **e** em `fonts.families` — ver abaixo) |
 | `--z-overlay` / `--z-modal` / `--z-dropdown` / `--z-toast` / `--z-tooltip` → `z-(--z-modal)` | escala de empilhamento (40/50/60/70/80) — dropdown acima do modal porque o Reka portaliza o `SelectContent` para o `body`; camada nova entra na escala, nunca `z-[n]` solto |
+
+**O raio é um só.** `--radius` define a curvatura da identidade e o `@theme inline` deriva dela a escala do Tailwind: `rounded-sm` (4px a menos), `rounded-md` (2px a menos), `rounded-lg` (o próprio `--radius`) e `rounded-xl` (4px a mais). Na prática: `rounded-sm` em seletores pequenos (checkbox, radio), `rounded-md` em controles (botão, input, select), `rounded-lg`/`rounded-xl` em containers e superfícies (card, modal, popover). Arredondar mais ou menos o projeto inteiro = mudar **uma** linha; raio novo não vira token novo.
 
 Regra da casa: **componentes e páginas usam apenas tokens semânticos** — nunca cor bruta (`bg-blue-600`, hex). Se precisar de uma cor nova, crie um token.
 
@@ -326,6 +331,12 @@ CSP séria (nonce por requisição, `frame-ancestors`, relatórios) é mais do q
 
 O kit vive em `app/components/ui/` e é auto-importado com prefixo `Ui` (`<UiButton>`, `<UiModal>`, …). A vitrine com todos os componentes em uso está em `/components`.
 
+**Padrões do shadcn-vue, visual do Preline.** As convenções do kit são as do shadcn-vue; o markup e a aparência continuam vindo do Preline. Do shadcn vêm três coisas:
+
+- **Os nomes.** `UiButton` tem `variant` `default | outline | secondary | ghost | destructive | link` e `size` `default | xs | sm | lg | icon | icon-xs | icon-sm | icon-lg`; `UiBadge`, `default | secondary | destructive | outline`; `UiAlert`, `default | destructive`. Quem já escreveu shadcn acerta a prop de primeira, e a futura biblioteca de componentes própria fala a mesma língua.
+- **A escala de alturas "Nova"** (a densa): botão `default` com 32px, `xs` 24, `sm` 28, `lg` 36, e os `icon-*` quadrados na altura correspondente. Input e Select são fixos em 32px e **não têm prop de tamanho**: `size` existe só no Button — no shadcn ela aparece apenas em Button, Toggle, Select e Switch, e a base segue o mesmo corte.
+- **A mecânica.** Cada componente declara as variantes com `cva` (`class-variance-authority`) dentro do próprio `.vue` e monta a classe final com `cn()` (`app/utils/cn.ts` — `clsx` + `tailwind-merge`), para a `class` vinda de fora **vencer** a de dentro em vez de empilhar utility conflitante. E todo elemento nomeado carrega um `data-slot` (`data-slot="button"`, `data-slot="card-header"`, …): gancho estável para estilizar de fora sem depender de classe interna.
+
 | Componente | Props essenciais | Slots |
 |---|---|---|
 | `UiButton` | `variant` (`solid` \| `outline` \| `ghost` \| `destructive`), `size` (`sm` \| `md` \| `lg`), `disabled`, `type`, `to` (com `to` renderiza `NuxtLink` no lugar de `<button>`) | default |
@@ -342,7 +353,7 @@ O kit vive em `app/components/ui/` e é auto-importado com prefixo `Ui` (`<UiBut
 
 Toasts são imperativos, via composable: `useToast()` retorna `{ toasts, dismiss, success, error, info }` — ex.: `toast.success('Salvo.', { title: 'Pronto', duration: 8000 })`.
 
-**Regra do copy-and-own** (CLAUDE.md, "Convenções inegociáveis"): o **comportamento** vem do Reka UI (headless — foco, teclado e ARIA resolvidos; esse sim é dependência) e o **visual** é markup portado do Preline UI, adaptado aos nossos tokens. **Preline nunca entra como dependência** — nem o pacote npm, nem o plugin JS; é catálogo de referência e fonte de cópia. Componente novo segue o mesmo caminho: escolher o primitivo Reka, portar o markup do Preline, traduzir variantes `hs-*` para os estados `data-[state=…]` do Reka e usar apenas tokens semânticos. Visual inspirado no [Preline UI](https://preline.co) (MIT).
+**Regra do copy-and-own** (CLAUDE.md, "Convenções inegociáveis"): o **comportamento** vem do Reka UI (headless — foco, teclado e ARIA resolvidos; esse sim é dependência) e o **visual** é markup portado do Preline UI, adaptado aos nossos tokens. **Preline nunca entra como dependência** — nem o pacote npm, nem o plugin JS; é catálogo de referência e fonte de cópia. Componente novo segue o mesmo caminho: escolher o primitivo Reka, portar o markup do Preline, traduzir variantes `hs-*` para os estados `data-[state=…]` do Reka, usar apenas tokens semânticos e vestir as convenções acima (`cva` + `cn()`, `data-slot`, nomes e escala). O shadcn-vue é referência de **convenção**, nunca fonte de cópia de componente — copiar peça pronta de lá contraria o copy-and-own tanto quanto instalar o Preline. Visual inspirado no [Preline UI](https://preline.co) (MIT).
 
 ## Testes
 
