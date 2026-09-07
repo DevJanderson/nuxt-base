@@ -45,7 +45,7 @@
     },
     {
       "prompt": "Terminei de derivar a base. Sobrou algum arquivo de CI do template que eu deveria mexer?",
-      "expected_behavior": "Aponta que .github/workflows/renovate.yml é um dos arquivos \"só do template\" e sai do derivado (lista de repos fixa + secret RENOVATE_TOKEN que só existe na base — copiado, vira run vermelho toda segunda), e mantém o renovate.json, que é a config de update do repositório. Pede para o dono da base incluir o repo novo em RENOVATE_REPOSITORIES no workflow do template. Não sugere criar o secret RENOVATE_TOKEN no derivado, e deixa ci.yml e security.yml intactos.",
+      "expected_behavior": "Aponta que .github/workflows/renovate.yml é um dos arquivos \"só do template\" e sai do derivado (lista de repos fixa + secret RENOVATE_TOKEN que só existe na base — copiado, vira run vermelho toda segunda), e mantém o renovate.json, que é a config de update do repositório. Pede para o dono da base incluir o repo novo em RENOVATE_REPOSITORIES no workflow do template e no Repository access do token fine-grained do RENOVATE_TOKEN. Não sugere criar o secret RENOVATE_TOKEN no derivado, e deixa ci.yml e security.yml intactos.",
       "tags": [
         "ci",
         "renovate",

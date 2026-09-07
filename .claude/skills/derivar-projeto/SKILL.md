@@ -127,9 +127,11 @@ Não instale nada além do que a receita escolhida pedir.
 - `.github/workflows/renovate.yml` já saiu no passo 1 (workflow do template: lista de
   repositórios fixa + secret `RENOVATE_TOKEN` que só existe lá — copiado, seria run vermelho
   toda segunda). O `renovate.json` **fica**: é ele que define as regras de update do repositório.
-- Avise o dono da base para acrescentar o repositório novo em `RENOVATE_REPOSITORIES`
-  no `.github/workflows/renovate.yml` **do template** — uma execução só cuida da base e
-  de todos os derivados listados.
+- Avise o dono da base para acrescentar o repositório novo em **dois** lugares:
+  `RENOVATE_REPOSITORIES` no `.github/workflows/renovate.yml` **do template** (uma execução
+  só cuida da base e de todos os derivados listados) e o *Repository access* do token
+  fine-grained que alimenta o secret `RENOVATE_TOKEN` — sem o segundo, o push do Renovate
+  no derivado volta `Permission denied`.
 - `ci.yml` e `security.yml` continuam como estão: valem para qualquer projeto.
 
 ## 9. Gate final (critérios do SPEC §11)
