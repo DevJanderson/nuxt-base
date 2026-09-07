@@ -148,14 +148,14 @@ O vocabulário é o do **shadcn v4** (`background`, `foreground`, `card`, `popov
 | `card` / `card-foreground` | superfícies elevadas (cards, modais, toasts) |
 | `popover` / `popover-foreground` | camadas flutuantes (dropdown do select, tooltip) — hoje com os mesmos valores de `card`, token à parte para poder divergir |
 | `primary` / `primary-foreground` | ação principal; o hover é `bg-primary/90` (não há token de hover) |
-| `secondary` / `secondary-foreground` | ação e rótulo discretos (botão `secondary`, badge `secondary`) — hoje com os mesmos valores de `muted` |
+| `secondary` / `secondary-foreground` | ação e rótulo discretos (botão `secondary`, badge `secondary`) — fundo de `muted`, texto mais escuro para passar no contraste |
 | `muted` / `muted-foreground` | fundos discretos e texto secundário |
 | `accent` / `accent-foreground` | realce de item em hover/foco — hoje com os mesmos valores de `muted` |
 | `destructive` / `destructive-foreground` | ações destrutivas e erros |
 | `border` | bordas e divisores |
 | `input` | borda de campo de formulário — hoje com o mesmo valor de `border` |
 | `ring` | anel de foco |
-| `--radius` → `rounded-sm` / `rounded-md` / `rounded-lg` / `rounded-xl` | raio único do projeto (`0.625rem`); a escala deriva dele em `@theme inline` (`0.6`/`0.8`/`1`/`1.4`). Uso na casa: `rounded-xl` em containers (card, modal, toast, table, alert), `rounded-md`/`rounded-lg` em controles (botão, input, select) e `rounded-sm` no checkbox — raio grande num quadrado de 16px vira círculo, e círculo lê como radio |
+| `--radius` → `rounded-sm` / `rounded-md` / `rounded-lg` / `rounded-xl` | raio único do projeto (`0.625rem`); a escala deriva dele em `@theme inline` (`0.6`/`0.8`/`1`/`1.4`). Uso na casa: `rounded-xl` em containers (card, modal, toast, table, alert), `rounded-lg` em superfícies flutuantes (dropdown do select), `rounded-md` em controles (botão, input, select) e `rounded-sm` no checkbox — raio grande num quadrado de 16px vira círculo, e círculo lê como radio |
 | `--font-sans` | tipografia base (trocar aqui **e** em `fonts.families` — ver abaixo) |
 | `--z-overlay` / `--z-modal` / `--z-dropdown` / `--z-toast` / `--z-tooltip` → `z-(--z-modal)` | escala de empilhamento (40/50/60/70/80) — dropdown acima do modal porque o Reka portaliza o `SelectContent` para o `body`; camada nova entra na escala, nunca `z-[n]` solto |
 
@@ -337,7 +337,7 @@ O kit vive em `app/components/ui/` e é auto-importado com prefixo `Ui` (`<UiBut
 
 - **Os nomes.** `UiButton` tem `variant` `default | outline | secondary | ghost | destructive | link` e `size` `default | xs | sm | lg | icon | icon-xs | icon-sm | icon-lg`; `UiBadge`, `default | secondary | destructive | outline`; `UiAlert`, `default | destructive`. Quem já escreveu shadcn acerta a prop de primeira, e a futura biblioteca de componentes própria fala a mesma língua.
 - **A escala de alturas "Nova"** (a densa): botão `default` com 32px, `xs` 24, `sm` 28, `lg` 36, e os `icon-*` quadrados na altura correspondente. Input e Select são fixos em 32px e **não têm prop de tamanho**: `size` existe só no Button — no shadcn ela aparece apenas em Button, Toggle, Select e Switch, e a base segue o mesmo corte.
-- **A mecânica.** Cada componente declara as variantes com `cva` (`class-variance-authority`) dentro do próprio `.vue` e monta a classe final com `cn()` (`app/utils/cn.ts` — `clsx` + `tailwind-merge`), para a `class` vinda de fora **vencer** a de dentro em vez de empilhar utility conflitante. E todo elemento nomeado carrega um `data-slot` (`data-slot="button"`, `data-slot="card-header"`, …): gancho estável para estilizar de fora sem depender de classe interna.
+- **A mecânica.** Cada componente declara as variantes com `cva` (`class-variance-authority`) dentro do próprio `.vue` e monta a classe final com `cn()` (`app/utils/cn.ts` — `clsx` + `tailwind-merge`), para a `class` vinda de fora **vencer** a de dentro em vez de empilhar utility conflitante. E cada componente carrega um `data-slot` na raiz (`data-slot="button"`, `data-slot="checkbox"`, …), com sub-slots só quando o componente for composto: gancho estável para estilizar de fora sem depender de classe interna.
 
 | Componente | Props essenciais | Slots |
 |---|---|---|

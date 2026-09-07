@@ -85,4 +85,10 @@ export default defineNuxtConfig({
       { name: 'Inter', provider: 'google', global: true },
     ],
   },
+
+  // O CSS do @nuxt/icon (`.iconify { width: 1em; height: 1em }`) nasce fora de camada e
+  // vencia toda utility `size-*` do Tailwind: o ícone virava 1em do contexto (16px no
+  // checkbox, 14px no botão). Na camada `components` ele fica abaixo de `utilities`,
+  // e `size-3` volta a valer (caso real, 2026-09-07).
+  icon: { cssLayer: 'components' },
 })

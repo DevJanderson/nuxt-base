@@ -48,6 +48,7 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground hover:text-foreground',
         ghost: 'text-primary hover:bg-primary/10',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        // Convenção do shadcn (nome e comportamento); o visual é o link de texto do próprio kit
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {

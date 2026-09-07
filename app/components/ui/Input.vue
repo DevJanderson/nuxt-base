@@ -57,7 +57,7 @@ const describedBy = computed(() => {
       class="block h-8 w-full rounded-md border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:ring-1 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
       :class="error
         ? 'border-destructive focus:border-destructive focus:ring-destructive'
-        : 'border-border focus:border-ring focus:ring-ring'"
+        : 'border-input focus:border-ring focus:ring-ring'"
     >
 
     <p

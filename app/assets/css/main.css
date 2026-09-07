@@ -31,7 +31,7 @@
   --primary-foreground: var(--color-zinc-50);
 
   --secondary: var(--color-zinc-100);
-  --secondary-foreground: var(--color-zinc-500);
+  --secondary-foreground: var(--color-zinc-700); /* zinc-500 dava 4,4:1 sobre zinc-100; texto de botão pede 4,5:1 */
 
   --muted: var(--color-zinc-100);
   --muted-foreground: var(--color-zinc-500);
@@ -122,9 +122,9 @@
   /* Escala de raio derivada de --radius (0.625rem): sobrescreve a escala nativa do
      Tailwind para que `rounded-md`/`rounded-lg`/`rounded-xl` sigam o token da base.
      Uso na casa: `rounded-xl` em containers (card, modal, toast, table, alert),
-     `rounded-md`/`rounded-lg` em controles (botão, input, select) e `rounded-sm` em
-     seletores pequenos (checkbox) — quadrado de 16px com raio grande vira círculo,
-     e círculo lê como radio, não como checkbox. */
+     `rounded-lg` em superfícies flutuantes (dropdown do select), `rounded-md` em
+     controles (botão, input, select). O checkbox usa 4px fixos (`rounded-[4px]`):
+     num quadrado de 16px o `rounded-sm` derivado (6px) lê como radio. */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);

@@ -64,7 +64,7 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
         class="flex h-8 w-full items-center justify-between gap-x-2 rounded-md border bg-card px-3 text-start text-sm text-foreground focus:ring-1 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-[placeholder]:text-muted-foreground"
         :class="error
           ? 'border-destructive focus:border-destructive focus:ring-destructive'
-          : 'border-border focus:border-ring focus:ring-ring'"
+          : 'border-input focus:border-ring focus:ring-ring'"
       >
         <SelectValue
           class="truncate"
@@ -91,7 +91,7 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
               :key="item.value"
               :value="item.value"
               :disabled="item.disabled"
-              class="flex w-full cursor-pointer items-center justify-between gap-x-2 rounded-md px-3 py-2 text-sm text-foreground select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-muted data-[highlighted]:outline-hidden"
+              class="flex w-full cursor-pointer items-center justify-between gap-x-2 rounded-md px-3 py-2 text-sm text-foreground select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[highlighted]:outline-hidden"
             >
               <SelectItemText>{{ item.label }}</SelectItemText>
               <SelectItemIndicator>

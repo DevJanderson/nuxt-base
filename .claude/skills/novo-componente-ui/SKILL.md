@@ -69,9 +69,9 @@ Aplicando o mapeamento completo de `.claude/skills/preline-mcp/PROJECT-NOTES.md`
      (`x` / `x-foreground`); `--border`, `--ring` e afins não têm par.
   3. (Só cor) Valide o contraste do par nos dois temas (mínimo 4,5:1 para texto normal;
      3:1 só vale para texto grande). Cite os números na resposta.
-  4. Token de **cor** vai nas três camadas (`:root`, `.dark`, `@theme inline`); token
-     **direto** (`--radius`, `--z-*`) entra só em `@theme inline`, no bloco "Tokens
-     diretos", junto dos vizinhos — sem indireção por tema. **Raio não vira token novo**:
+  4. Token de **cor** vai nas três camadas (`:root`, `.dark`, `@theme inline`); `--z-*`
+     entra só em `@theme inline`, no bloco "Tokens diretos"; `--radius` mora no `:root`
+     (é identidade) e só as derivações `--radius-sm/md/lg/xl` ficam no `@theme inline`. **Raio não vira token novo**:
      use a escala derivada do `--radius` único (`rounded-sm/md/lg/xl`).
   5. **Documente na tabela de tokens do README** ("Tema") — token sem doc é pior que
      token nenhum.
@@ -103,12 +103,15 @@ Modelo: `app/components/ui/Select.vue`. Em resumo:
 - **Variantes com `cva`**: declare `const xVariants = cva('classes base', { variants, defaultVariants })`
   no próprio `.vue` e componha a classe final com `cn(xVariants({ variant, size }), props.class)`.
   O `cn` vem de `~/utils/cn` (`clsx` + `tailwind-merge`, para a classe de fora vencer a de dentro).
-  Componente sem variante não precisa de `cva`, mas usa `cn()` do mesmo jeito.
-- **`data-slot` em todo elemento nomeado** (`data-slot="button"`, `"card-header"`,
-  `"select-trigger"`, …): é o gancho estável para estilizar de fora sem depender de classe interna.
+  Componente sem variante não precisa de `cva` nem de `cn()`: basta o `data-slot` na raiz.
+- **`data-slot` na raiz de todo componente** (`data-slot="button"`, `"checkbox"`, `"alert"`, …),
+  e sub-slots só em componente composto: é o gancho estável para estilizar de fora sem
+  depender de classe interna.
 - **Nomes no vocabulário do shadcn-vue**, nunca inventados: `default | outline | secondary |
   ghost | destructive | link` no Button, `default | secondary | destructive | outline` no Badge,
-  `default | destructive` no Alert. Nada de `solid`, `neutral`, `info` ou `error`.
+  `default | destructive` no Alert. Nada de `solid`, `neutral`, `info` ou `error` no
+  `variant` visual desses componentes; o tipo de mensagem do `useToast` (`success|error|info`)
+  é outro eixo e fica.
 - **Escala de alturas "Nova"** (a densa do shadcn-vue): botão `default` 32px (`h-8`), `xs` 24
   (`h-6`), `sm` 28 (`h-7`), `lg` 36 (`h-9`), mais `icon`/`icon-xs`/`icon-sm`/`icon-lg` (quadrados
   na altura correspondente). Input e Select são fixos em 32px: **`size` só existe no Button** —

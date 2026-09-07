@@ -37,6 +37,8 @@ const describedBy = computed(() => (props.error || props.hint ? messageId : unde
       class="flex items-start gap-x-3"
       :class="disabled && 'opacity-50'"
     >
+      <!-- rounded-[4px] e não rounded-sm: a escala derivada de --radius dá 6px, e num
+           quadrado de 16px isso lê como radio. 4px é o raio do checkbox do Preline. -->
       <CheckboxRoot
         :id="id"
         v-model="model"
@@ -44,7 +46,7 @@ const describedBy = computed(() => (props.error || props.hint ? messageId : unde
         :disabled="disabled"
         :aria-invalid="error ? 'true' : undefined"
         :aria-describedby="describedBy"
-        class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-sm border bg-card shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground"
+        class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-[4px] border bg-card shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground"
         :class="error ? 'border-destructive' : 'border-border'"
       >
         <CheckboxIndicator class="flex items-center justify-center text-current">

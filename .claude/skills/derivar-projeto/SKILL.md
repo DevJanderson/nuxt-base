@@ -87,8 +87,8 @@ passo 10, para continuar consultável até o fim da derivação.
 ## 3. Identidade visual
 
 Edite os tokens em `app/assets/css/main.css`, **somente** os blocos `:root` (claro) e
-`.dark` (escuro) — e, se quiser, `--font-sans` e o `--radius` único (a curvatura do projeto
-inteiro; `rounded-sm/md/lg/xl` derivam dele) no `@theme inline`.
+`.dark` (escuro) — e, se quiser, o `--radius` único no `:root` (a curvatura do projeto
+inteiro; `rounded-sm/md/lg/xl` derivam dele no `@theme inline`) e `--font-sans`.
 A tabela com o papel de cada token está no README.md, seção "Tema (identidade visual)".
 Nunca espalhe cor pelo código: componentes e páginas usam só tokens semânticos.
 Sem identidade visual definida no pedido? Mantenha os tokens padrão e siga adiante —
