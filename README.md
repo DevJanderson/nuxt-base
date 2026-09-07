@@ -55,7 +55,7 @@ docs/SPEC.md              # especificação do template (não viaja para o deriv
 
 ```bash
 gh repo create meu-projeto --private     # repositório VAZIO: sem --template, sem --add-readme
-git clone git@github.com:DevJanderson/nuxt-base.git meu-projeto
+git clone https://github.com/DevJanderson/nuxt-base.git meu-projeto   # público: HTTPS serve para qualquer conta (SSH também, se tiver chave)
 cd meu-projeto
 git remote rename origin template        # a base vira remoto de leitura
 git remote add origin git@github.com:<owner>/meu-projeto.git
@@ -78,14 +78,16 @@ Em qualquer caminho, a skill `/derivar-projeto <nome>` executa o roteiro complet
 5. **Auth**, quatro ramos: [receita 1 ou 2](#auth-duas-receitas); **sem login** → remova `app/middleware/auth.ts`, `app/pages/login.vue` e o redirect de 401 no `useApi`; **login futuro** → mantenha os pontos de encaixe como estão e não instale nada.
 6. **Limpe os exemplos**: vitrine `/components` (mantê-la como styleguide interno é válido; se remover, tire o link do header), `app/pages/index.vue`, marca no `app/layouts/default.vue`, `app/stores/app.ts`. Ao final, caça-marca: `grep -ri "nuxt base" app/ server/` — a marca vive também em `error.vue` e nos `useSeoMeta`; zere o resultado.
 7. **Docs e ambiente**: título/descrição de README e CLAUDE.md (as convenções continuam valendo), remova **esta** seção (já cumprida) e mantenha a próxima, `.env.example` só com as variáveis reais do projeto (fora as das receitas não adotadas) e copie para `.env`.
-8. **CI do derivado**: `renovate.yml` já saiu no passo 1; peça ao dono da base para incluir o repositório novo em dois lugares: `RENOVATE_REPOSITORIES`, no workflow do template, **e** no *Repository access* do token fine-grained que alimenta o `RENOVATE_TOKEN` (sem isso o push do Renovate no derivado é negado). O `renovate.json` fica, e `ci.yml`/`security.yml` seguem valendo como estão.
+8. **CI do derivado**: `renovate.yml` já saiu no passo 1; `ci.yml` e `security.yml` seguem valendo como estão, sem secret nenhum, e o `renovate.json` fica. Para o Renovate cuidar do projeto novo, depende de quem é o dono:
+   - **Repositório do dono da base**: incluir o repositório novo em dois lugares — `RENOVATE_REPOSITORIES`, no workflow do template, **e** no *Repository access* do token fine-grained que alimenta o `RENOVATE_TOKEN` (sem isso o push do Renovate no derivado é negado).
+   - **Repositório de outra conta**: o hub do template não alcança o seu repo; monte o **seu próprio Renovate**. O caminho curto é instalar o [app do Renovate (Mend)](https://github.com/apps/renovate) só nesse repositório — o `renovate.json` herdado já configura tudo. O caminho self-hosted é copiar o `renovate.yml` da base, trocar `RENOVATE_REPOSITORIES` pelo seu repo e criar o secret `RENOVATE_TOKEN` com um token fine-grained seu (Contents, Issues, Pull requests, Workflows e Commit statuses em *read and write*). Nunca os dois ao mesmo tempo.
 9. **Valide**: `pnpm install && pnpm dev` sem erro e sem warning — se a porta 3000 estiver ocupada o Nuxt escolhe outra, confira no log — e `/api/health` reportando o nome novo; `pnpm verify` inteiro verde. Feche com o commit inicial.
 
 A suíte herdada continua valendo no projeto novo: os testes de referência (componente e composable), o smoke de regressão do kit e o teste-inventário de tokens.
 
 ## Atualizar a base no derivado
 
-**Esta seção permanece no projeto derivado** — é a receita de trazer as evoluções da base, e a tabela "só do template" abaixo é a fonte canônica da lista. Só funciona no caminho 1 (clone com histórico), que é o que dá ancestral comum; confira com `git remote -v` e, se faltar o remoto, `git remote add template git@github.com:DevJanderson/nuxt-base.git`.
+**Esta seção permanece no projeto derivado** — é a receita de trazer as evoluções da base, e a tabela "só do template" abaixo é a fonte canônica da lista. Só funciona no caminho 1 (clone com histórico), que é o que dá ancestral comum; confira com `git remote -v` e, se faltar o remoto, `git remote add template https://github.com/DevJanderson/nuxt-base.git`.
 
 ```bash
 git switch -c chore/atualizar-base   # nunca direto na main: o merge pode dar trabalho

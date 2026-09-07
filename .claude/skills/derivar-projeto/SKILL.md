@@ -26,7 +26,7 @@ novo tem de nascer **vazio**: qualquer commit inicial criado pelo GitHub (README
 
 ```bash
 gh repo create <nome> --private          # VAZIO: sem --template, sem --add-readme
-git clone git@github.com:DevJanderson/nuxt-base.git <nome>
+git clone https://github.com/DevJanderson/nuxt-base.git <nome>   # público: HTTPS vale para qualquer conta
 cd <nome>
 git remote rename origin template        # a base vira remoto de leitura
 git remote add origin git@github.com:<owner>/<nome>.git
@@ -127,12 +127,19 @@ Não instale nada além do que a receita escolhida pedir.
 - `.github/workflows/renovate.yml` já saiu no passo 1 (workflow do template: lista de
   repositórios fixa + secret `RENOVATE_TOKEN` que só existe lá — copiado, seria run vermelho
   toda segunda). O `renovate.json` **fica**: é ele que define as regras de update do repositório.
-- Avise o dono da base para acrescentar o repositório novo em **dois** lugares:
-  `RENOVATE_REPOSITORIES` no `.github/workflows/renovate.yml` **do template** (uma execução
-  só cuida da base e de todos os derivados listados) e o *Repository access* do token
-  fine-grained que alimenta o secret `RENOVATE_TOKEN` — sem o segundo, o push do Renovate
-  no derivado volta `Permission denied`.
-- `ci.yml` e `security.yml` continuam como estão: valem para qualquer projeto.
+- Pergunte (ou deduza pelo `owner` do remoto `origin`) de quem é o repositório novo:
+  - **Do dono da base (DevJanderson)**: avise-o para acrescentar o repositório em **dois**
+    lugares: `RENOVATE_REPOSITORIES` no `.github/workflows/renovate.yml` **do template**
+    (uma execução só cuida da base e de todos os derivados listados) e o *Repository access*
+    do token fine-grained que alimenta o secret `RENOVATE_TOKEN` — sem o segundo, o push do
+    Renovate no derivado volta `Permission denied`.
+  - **De outra conta**: o hub do template não alcança esse repo. Oriente a montar o próprio
+    Renovate: instalar o app do Renovate (Mend) só nesse repositório (o `renovate.json`
+    herdado já configura tudo) **ou** copiar o `renovate.yml` da base com `RENOVATE_REPOSITORIES`
+    apontando para o repo novo e um secret `RENOVATE_TOKEN` próprio (token fine-grained com
+    Contents, Issues, Pull requests, Workflows e Commit statuses em read-write). Nunca os dois
+    juntos: dois Renovates no mesmo repo duplicam dashboard e bloqueiam os PRs um do outro.
+- `ci.yml` e `security.yml` continuam como estão: valem para qualquer projeto e não usam secret.
 
 ## 9. Gate final (critérios do SPEC §11)
 
