@@ -11,7 +11,9 @@ Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualiz
 
 - Nuxt 4.5 (estrutura `app/`, SSR ligado) + Vue 3.5 + TypeScript estrito
 - Tailwind 4 CSS-first via `@tailwindcss/vite` (tokens em `app/assets/css/main.css`)
-- Reka UI 2 (headless, dependência) + visual portado do Preline (nunca dependência)
+- Reka UI 2 (headless, dependência) + visual portado do Preline (nunca dependência), nas
+  convenções do shadcn-vue: variantes com `cva` (`class-variance-authority`), classes por
+  `cn()` (`clsx` + `tailwind-merge`), tokens no vocabulário v4 e nomes de variante/tamanho dele
 - Pinia 4, VueUse 14, `@nuxtjs/color-mode` (classe `dark` no `<html>`)
 - Vitest 4 + `@nuxt/test-utils` + happy-dom (ambiente `nuxt` global)
 - pnpm 11 (pinado em `packageManager`), ESLint via `@nuxt/eslint` com `stylistic: true` (formatação pelo ESLint, sem Prettier)
@@ -35,11 +37,21 @@ Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualiz
 - **Reuso antes de criar**: confira `app/components/ui/` (e a vitrine `/components`) e
   `app/composables/` antes de criar componente ou composable — estender vence duplicar.
 - Identificadores (variáveis, funções, tipos, rotas de API) em inglês; textos de UI em pt-BR.
-- **Apenas tokens semânticos** (`bg-primary`, `text-muted-foreground`, `rounded-md`, …).
-  Nunca cor bruta (`bg-blue-600`, hex). Cor nova = token novo em `main.css` (`:root`/`.dark` + `@theme inline`).
+- **Apenas tokens semânticos** no vocabulário shadcn v4 (`bg-primary`, `text-muted-foreground`,
+  `bg-secondary`, `bg-accent`, `border-input`, `rounded-lg`, …). Nunca cor bruta (`bg-blue-600`, hex).
+  Cor nova = token novo em `main.css` (`:root`/`.dark` + `@theme inline`); raio nunca é token novo —
+  sai da escala `rounded-sm/md/lg/xl`, derivada do `--radius` único.
 - Componentes novos de UI seguem o padrão do kit: comportamento de primitivo Reka UI,
-  markup portado do Preline traduzindo `hs-*` para `data-[state=…]`. **Preline jamais vira
-  dependência** (nem pacote npm, nem plugin JS) — é só catálogo de cópia.
+  markup portado do Preline traduzindo `hs-*` para `data-[state=…]`, variantes declaradas com
+  `cva` no próprio `.vue`, classe final por `cn()` (`app/utils/cn.ts`) e `data-slot` em cada
+  elemento nomeado. **Preline jamais vira dependência** (nem pacote npm, nem plugin JS) — é só
+  catálogo de cópia; o shadcn-vue entra como **convenção** (nomes, escala, mecânica), nunca
+  como fonte de cópia de componente.
+- Nomes e tamanhos são os do shadcn-vue: `UiButton` `default | outline | secondary | ghost |
+  destructive | link` × `default | xs | sm | lg | icon | icon-xs | icon-sm | icon-lg`;
+  `UiBadge` `default | secondary | destructive | outline`; `UiAlert` `default | destructive`.
+  Alturas na escala "Nova" (densa): botão `default` 32px, `xs` 24, `sm` 28, `lg` 36; Input e
+  Select fixos em 32px — **só o Button tem `size`**.
 - Pinia: setup stores (modelo em `app/stores/app.ts`).
 - Toda chamada HTTP sai por `useApi`/`useApiData` (`app/composables/useApi.ts`);
   erros no formato `ApiError { statusCode, statusMessage, data }`.
@@ -83,6 +95,7 @@ Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualiz
 - `app/assets/css/main.css` — tokens (trocar identidade visual = editar `:root`/`.dark`)
 - `app/components/ui/` — kit próprio, auto-import `<UiX>`; vitrine em `/components`
 - `app/composables/` — `useApi`/`useApiData`, `useToast`
+- `app/utils/cn.ts` — `cn()` (`clsx` + `tailwind-merge`), usado por todo componente do kit
 - `app/middleware/auth.ts` — esqueleto nomeado (`definePageMeta({ middleware: 'auth' })`)
 - `app/pages/`, `app/layouts/default.vue`, `app/stores/`, `app/error.vue`
 - `server/api/health.get.ts` — rota-referência Nitro (`<nome>.<método>.ts`, retorno tipado)

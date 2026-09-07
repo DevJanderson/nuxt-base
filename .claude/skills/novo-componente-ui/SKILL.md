@@ -46,14 +46,18 @@ todo o padrão: `app/components/ui/Select.vue`.
 - **Evidência obrigatória**: cite a URL do catálogo que você abriu, ou diga explicitamente
   que a fonte foi um componente já existente do kit — e qual. "Copiei do Preline" sem URL
   não é evidência.
+- **A fronteira com o shadcn-vue**: dele vêm só as convenções do passo 5 (nomes de variante e
+  tamanho, escala de alturas, `cva`/`cn()`/`data-slot`, vocabulário de tokens). Markup e
+  aparência continuam saindo do Preline — **não copie componente do shadcn**.
 
 ## 4. Traduzir o markup copiado
 
 Aplicando o mapeamento completo de `.claude/skills/preline-mcp/PROJECT-NOTES.md`:
 
-- Cores/temas do Preline → **somente tokens semânticos** de `app/assets/css/main.css`
-  (`bg-card`, `text-muted-foreground`, `border-border`, `bg-primary`, …).
-  Nunca cor bruta (`bg-blue-600`, hex).
+- Cores/temas do Preline → **somente tokens semânticos** de `app/assets/css/main.css`, no
+  vocabulário shadcn v4 (`bg-card`, `bg-popover`, `bg-secondary`, `bg-accent`,
+  `text-muted-foreground`, `border-border`, `border-input`, `bg-primary`, `ring-ring`, …).
+  Nunca cor bruta (`bg-blue-600`, hex). Mapeamento completo no `PROJECT-NOTES.md`.
 
   **Precisa de token novo (cor, raio, camada)?** `app/assets/css/main.css` é o arquivo
   de identidade que todo projeto derivado herda — token novo não é detalhe de
@@ -66,8 +70,9 @@ Aplicando o mapeamento completo de `.claude/skills/preline-mcp/PROJECT-NOTES.md`
   3. (Só cor) Valide o contraste do par nos dois temas (mínimo 4,5:1 para texto normal;
      3:1 só vale para texto grande). Cite os números na resposta.
   4. Token de **cor** vai nas três camadas (`:root`, `.dark`, `@theme inline`); token
-     **direto** (`--radius-*`, `--z-*`) entra só em `@theme inline`, no bloco "Tokens
-     diretos", junto dos vizinhos — sem indireção por tema.
+     **direto** (`--radius`, `--z-*`) entra só em `@theme inline`, no bloco "Tokens
+     diretos", junto dos vizinhos — sem indireção por tema. **Raio não vira token novo**:
+     use a escala derivada do `--radius` único (`rounded-sm/md/lg/xl`).
   5. **Documente na tabela de tokens do README** ("Tema") — token sem doc é pior que
      token nenhum.
   6. (Só cor) Confirme no CSS do build que a utility saiu
@@ -92,7 +97,22 @@ Modelo: `app/components/ui/Select.vue`. Em resumo:
   elementos acionáveis (`Button`, botão de fechar do `Modal`/`Toaster`) usam
   `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`.
   Não invente um terceiro.
-- Raios: `rounded-field` (controles) e `rounded-box` (containers).
+- Raios pela escala derivada do `--radius` único: `rounded-sm` (seletores pequenos —
+  checkbox, radio), `rounded-md` (controles — botão, input, select), `rounded-lg`/`rounded-xl`
+  (containers e superfícies — card, modal, popover).
+- **Variantes com `cva`**: declare `const xVariants = cva('classes base', { variants, defaultVariants })`
+  no próprio `.vue` e componha a classe final com `cn(xVariants({ variant, size }), props.class)`.
+  O `cn` vem de `~/utils/cn` (`clsx` + `tailwind-merge`, para a classe de fora vencer a de dentro).
+  Componente sem variante não precisa de `cva`, mas usa `cn()` do mesmo jeito.
+- **`data-slot` em todo elemento nomeado** (`data-slot="button"`, `"card-header"`,
+  `"select-trigger"`, …): é o gancho estável para estilizar de fora sem depender de classe interna.
+- **Nomes no vocabulário do shadcn-vue**, nunca inventados: `default | outline | secondary |
+  ghost | destructive | link` no Button, `default | secondary | destructive | outline` no Badge,
+  `default | destructive` no Alert. Nada de `solid`, `neutral`, `info` ou `error`.
+- **Escala de alturas "Nova"** (a densa do shadcn-vue): botão `default` 32px (`h-8`), `xs` 24
+  (`h-6`), `sm` 28 (`h-7`), `lg` 36 (`h-9`), mais `icon`/`icon-xs`/`icon-sm`/`icon-lg` (quadrados
+  na altura correspondente). Input e Select são fixos em 32px: **`size` só existe no Button** —
+  componente novo só ganha a prop se o shadcn também der (Toggle, Select, Switch).
 - Checklist objetivo de acessibilidade: `references/checklist-a11y.md` (desta skill).
 
 ## 6. Registrar nos quatro pontos

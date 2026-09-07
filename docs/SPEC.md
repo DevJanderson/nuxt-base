@@ -201,3 +201,29 @@ A partir de um clone limpo:
 9. **Derivado consegue fazer merge de uma tag nova da base:** `git fetch template --tags &&
    git merge vX.Y.Z` produz só os conflitos previstos no README, e `pnpm install && pnpm verify`
    fecham verdes antes do commit de merge
+
+## Adendo 2026-09-07 — convenções do shadcn-vue no kit
+
+Registro de decisão posterior ao fechamento do documento; o que está acima **não** foi reescrito.
+
+O kit de UI (§4) passa a adotar os **padrões** do shadcn-vue na camada de convenções:
+
+- **Escala de alturas "Nova"** (a densa): botão `default` 32px, `xs` 24, `sm` 28, `lg` 36, mais
+  `icon`/`icon-xs`/`icon-sm`/`icon-lg`; Input e Select fixos em 32px, sem prop de tamanho —
+  `size` só existe no Button.
+- **Nomes de variante do shadcn**: Button `default | outline | secondary | ghost | destructive |
+  link`, Badge `default | secondary | destructive | outline`, Alert `default | destructive`.
+- **Tokens no vocabulário shadcn v4** — `background`, `foreground`, `card`, `popover`, `primary`,
+  `secondary`, `muted`, `accent`, `destructive` (com `-foreground`), `border`, `input`, `ring` —
+  com os valores da casa, e **raio único `--radius`** derivando `rounded-sm/md/lg/xl`
+  (saem `--primary-hover` e `--radius-box/field/selector`).
+- **Mecânica**: `class-variance-authority`, `clsx` e `tailwind-merge` viram dependências;
+  `cn()` em `app/utils/cn.ts`; variantes declaradas com `cva`; `data-slot` em cada elemento nomeado.
+
+**O Preline continua sendo a referência visual**: markup e aparência saem do catálogo dele,
+traduzidos para os tokens, e ele segue fora das dependências. O shadcn-vue entra como convenção
+(nomes, escala, mecânica, vocabulário de tokens) e **não** é fonte de cópia de componente.
+
+**Motivo:** o dono vai manter uma biblioteca de componentes própria para Vue 3, Nuxt 4 e Django
+alinhada ao shadcn; os tokens são a camada que os templates Django também consomem, então nome
+de token e de variante precisam ser os mesmos nos três alvos.
