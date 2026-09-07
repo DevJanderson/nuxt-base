@@ -22,10 +22,12 @@ import {
 
 const cases: Array<[string, Component, Record<string, unknown>, Record<string, () => unknown>]> = [
   ['UiButton', UiButton, {}, { default: () => 'Ação' }],
+  ['UiButton (ícone)', UiButton, { 'size': 'icon', 'aria-label': 'Salvar' }, { default: () => 'i' }],
   ['UiButton (link)', UiButton, { to: '/' }, { default: () => 'Link' }],
   ['UiAlert', UiAlert, {}, { default: () => 'Aviso' }],
-  ['UiAlert (erro)', UiAlert, { variant: 'error', title: 'Erro' }, { default: () => 'Falhou' }],
+  ['UiAlert (destructive)', UiAlert, { variant: 'destructive', title: 'Erro' }, { default: () => 'Falhou' }],
   ['UiBadge', UiBadge, {}, { default: () => 'Novo' }],
+  ['UiBadge (secondary)', UiBadge, { variant: 'secondary' }, { default: () => 'Rascunho' }],
   ['UiCard', UiCard, {}, { default: () => 'Conteúdo' }],
   ['UiCheckbox', UiCheckbox, { label: 'Aceito', modelValue: false }, {}],
   ['UiInput', UiInput, { label: 'Nome', modelValue: '' }, {}],

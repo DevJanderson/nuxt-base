@@ -7,7 +7,10 @@ defineSlots<{
 </script>
 
 <template>
-  <div class="flex flex-col rounded-box border border-border bg-card text-card-foreground shadow-2xs">
+  <div
+    data-slot="card"
+    class="flex flex-col rounded-xl border border-border bg-card text-card-foreground shadow-2xs"
+  >
     <div
       v-if="$slots.header"
       class="border-b border-border px-4 py-3 sm:px-5"

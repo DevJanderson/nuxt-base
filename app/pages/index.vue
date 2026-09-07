@@ -55,9 +55,9 @@ const highlights = [
       <div
         v-for="item in highlights"
         :key="item.title"
-        class="flex flex-col rounded-box border border-border bg-card p-6 shadow-2xs"
+        class="flex flex-col rounded-xl border border-border bg-card p-6 shadow-2xs"
       >
-        <span class="inline-flex size-10 items-center justify-center rounded-field bg-muted text-primary">
+        <span class="inline-flex size-10 items-center justify-center rounded-md bg-muted text-primary">
           <Icon
             :name="item.icon"
             class="size-5"

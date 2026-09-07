@@ -41,7 +41,10 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
 </script>
 
 <template>
-  <div class="w-full">
+  <div
+    data-slot="select"
+    class="w-full"
+  >
     <label
       v-if="label"
       :for="id"
@@ -58,7 +61,7 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
         :id="id"
         :aria-invalid="error ? 'true' : undefined"
         :aria-describedby="describedBy"
-        class="flex w-full items-center justify-between gap-x-2 rounded-field border bg-card px-4 py-2.5 text-start text-foreground focus:ring-1 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-[placeholder]:text-muted-foreground sm:py-3 sm:text-sm"
+        class="flex h-8 w-full items-center justify-between gap-x-2 rounded-md border bg-card px-3 text-start text-sm text-foreground focus:ring-1 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-[placeholder]:text-muted-foreground"
         :class="error
           ? 'border-destructive focus:border-destructive focus:ring-destructive'
           : 'border-border focus:border-ring focus:ring-ring'"
@@ -80,7 +83,7 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
         <SelectContent
           position="popper"
           :side-offset="4"
-          class="z-(--z-dropdown) max-h-(--reka-select-content-available-height) w-(--reka-select-trigger-width) overflow-hidden rounded-field border border-border bg-card shadow-md"
+          class="z-(--z-dropdown) max-h-(--reka-select-content-available-height) w-(--reka-select-trigger-width) overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-md"
         >
           <SelectViewport class="p-1">
             <SelectItem
@@ -88,7 +91,7 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
               :key="item.value"
               :value="item.value"
               :disabled="item.disabled"
-              class="flex w-full cursor-pointer items-center justify-between gap-x-2 rounded-field px-3 py-2 text-sm text-foreground select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-muted data-[highlighted]:outline-hidden"
+              class="flex w-full cursor-pointer items-center justify-between gap-x-2 rounded-md px-3 py-2 text-sm text-foreground select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-muted data-[highlighted]:outline-hidden"
             >
               <SelectItemText>{{ item.label }}</SelectItemText>
               <SelectItemIndicator>

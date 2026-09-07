@@ -35,7 +35,7 @@ Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualiz
 - **Reuso antes de criar**: confira `app/components/ui/` (e a vitrine `/components`) e
   `app/composables/` antes de criar componente ou composable — estender vence duplicar.
 - Identificadores (variáveis, funções, tipos, rotas de API) em inglês; textos de UI em pt-BR.
-- **Apenas tokens semânticos** (`bg-primary`, `text-muted-foreground`, `rounded-field`, …).
+- **Apenas tokens semânticos** (`bg-primary`, `text-muted-foreground`, `rounded-md`, …).
   Nunca cor bruta (`bg-blue-600`, hex). Cor nova = token novo em `main.css` (`:root`/`.dark` + `@theme inline`).
 - Componentes novos de UI seguem o padrão do kit: comportamento de primitivo Reka UI,
   markup portado do Preline traduzindo `hs-*` para `data-[state=…]`. **Preline jamais vira

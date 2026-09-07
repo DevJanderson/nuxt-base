@@ -137,20 +137,22 @@ A última linha é a exceção da tabela: como o `README.md` continua existindo 
 Os tokens vivem em `app/assets/css/main.css`, em duas camadas:
 
 - **Camada 1** — `:root` (tema claro) e `.dark` (tema escuro) definem os **valores** de cada token semântico. **Trocar a identidade visual do projeto = editar só esses dois blocos.**
-- **Camada 2** — `@theme inline` registra os tokens como utilities do Tailwind (`bg-primary`, `text-foreground`, `rounded-box`, …). Só é editada para criar token novo.
+- **Camada 2** — `@theme inline` registra os tokens como utilities do Tailwind (`bg-primary`, `text-foreground`, `rounded-xl`, …). Só é editada para criar token novo.
 
 | Token | Papel |
 |---|---|
 | `background` / `foreground` | fundo e texto da página |
-| `card` / `card-foreground` | superfícies elevadas (cards, modais) |
+| `card` / `card-foreground` | superfícies elevadas (cards, modais, toasts) |
+| `popover` / `popover-foreground` | camadas flutuantes (dropdown do select, tooltip) — hoje com os mesmos valores de `card`, token à parte para poder divergir |
+| `primary` / `primary-foreground` | ação principal; o hover é `bg-primary/90` (não há token de hover) |
+| `secondary` / `secondary-foreground` | ação e rótulo discretos (botão `secondary`, badge `secondary`) — hoje com os mesmos valores de `muted` |
 | `muted` / `muted-foreground` | fundos discretos e texto secundário |
-| `border` | bordas e divisores |
-| `primary` / `primary-hover` / `primary-foreground` | ação principal |
+| `accent` / `accent-foreground` | realce de item em hover/foco — hoje com os mesmos valores de `muted` |
 | `destructive` / `destructive-foreground` | ações destrutivas e erros |
+| `border` | bordas e divisores |
+| `input` | borda de campo de formulário — hoje com o mesmo valor de `border` |
 | `ring` | anel de foco |
-| `--radius-box` → `rounded-box` | raio de containers (cards, modais) |
-| `--radius-field` → `rounded-field` | raio de controles (botões, inputs) |
-| `--radius-selector` → `rounded-selector` | raio de seletores pequenos (checkbox, radio, switch) — escala própria porque `rounded-field` num quadrado de 16px vira círculo, e círculo lê como radio |
+| `--radius` → `rounded-sm` / `rounded-md` / `rounded-lg` / `rounded-xl` | raio único do projeto (`0.625rem`); a escala deriva dele em `@theme inline` (`0.6`/`0.8`/`1`/`1.4`). Uso na casa: `rounded-xl` em containers (card, modal, toast, table, alert), `rounded-md`/`rounded-lg` em controles (botão, input, select) e `rounded-sm` no checkbox — raio grande num quadrado de 16px vira círculo, e círculo lê como radio |
 | `--font-sans` | tipografia base (trocar aqui **e** em `fonts.families` — ver abaixo) |
 | `--z-overlay` / `--z-modal` / `--z-dropdown` / `--z-toast` / `--z-tooltip` → `z-(--z-modal)` | escala de empilhamento (40/50/60/70/80) — dropdown acima do modal porque o Reka portaliza o `SelectContent` para o `body`; camada nova entra na escala, nunca `z-[n]` solto |
 
@@ -328,14 +330,14 @@ O kit vive em `app/components/ui/` e é auto-importado com prefixo `Ui` (`<UiBut
 
 | Componente | Props essenciais | Slots |
 |---|---|---|
-| `UiButton` | `variant` (`solid` \| `outline` \| `ghost` \| `destructive`), `size` (`sm` \| `md` \| `lg`), `disabled`, `type`, `to` (com `to` renderiza `NuxtLink` no lugar de `<button>`) | default |
-| `UiInput` | `v-model`, `label`, `hint`, `error`, `type`, `placeholder`, `disabled` | — |
-| `UiSelect` | `v-model`, `items: { label, value, disabled? }[]`, `label`, `placeholder`, `error`, `disabled` | — |
+| `UiButton` | `variant` (`default` \| `outline` \| `secondary` \| `ghost` \| `destructive` \| `link`), `size` (`default` \| `xs` \| `sm` \| `lg` \| `icon` \| `icon-xs` \| `icon-sm` \| `icon-lg` — alturas 32/24/28/36px, os `icon*` quadrados na mesma escala), `disabled`, `type`, `to` (com `to` renderiza `NuxtLink` no lugar de `<button>`), `class` (fundida por `cn()`: a de fora vence) | default |
+| `UiInput` | `v-model`, `label`, `hint`, `error`, `type`, `placeholder`, `disabled` — altura fixa de 32px, sem prop de tamanho | — |
+| `UiSelect` | `v-model`, `items: { label, value, disabled? }[]`, `label`, `placeholder`, `error`, `disabled` — gatilho de 32px, sem prop de tamanho | — |
 | `UiCheckbox` | `v-model` (`boolean` \| `'indeterminate'`), `label` (sem ela, passe `aria-label`), `hint`, `error`, `disabled` | — |
 | `UiModal` | `v-model:open`, `title` (obrigatória), `description` (informe sempre — sem ela o componente cai num fallback oculto com o título, rede de segurança só para o `aria-describedby`) | `trigger`, default, `footer` |
 | `UiCard` | — | `header`, default, `footer` |
-| `UiBadge` | `variant` (`neutral` \| `primary` \| `destructive` \| `outline`) | default |
-| `UiAlert` | `variant` (`info` \| `error`), `title` (opcional) — mensagem **estática** da página; a que aparece em resposta a uma ação é toast | default |
+| `UiBadge` | `variant` (`default` \| `secondary` \| `destructive` \| `outline`), `class` | default |
+| `UiAlert` | `variant` (`default` \| `destructive`), `title` (opcional), `class` — mensagem **estática** da página; a que aparece em resposta a uma ação é toast | default |
 | `UiTable` | `columns: { key, label }[]`, `rows` | `#cell-[key]` recebe `{ row, value }` |
 | `UiToaster` | montado uma única vez no layout default | — |
 | `UiTooltip` | `text` (obrigatória), `side` (`top` \| `right` \| `bottom` \| `left`), `delayDuration` (ms), `defaultOpen` | default (o elemento que dispara a dica) |

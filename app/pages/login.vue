@@ -12,7 +12,7 @@ useSeoMeta({
 
 <template>
   <div class="flex min-h-[60vh] items-center justify-center">
-    <div class="w-full max-w-md rounded-box border border-border bg-card p-8 text-center shadow-2xs">
+    <div class="w-full max-w-md rounded-xl border border-border bg-card p-8 text-center shadow-2xs">
       <span class="mx-auto inline-flex size-12 items-center justify-center rounded-full bg-muted text-primary">
         <Icon
           name="lucide:lock"

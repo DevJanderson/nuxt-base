@@ -5,7 +5,17 @@
 
 /*
  * Camada 1 — valores por tema.
- * Trocar a identidade visual do projeto = editar apenas este bloco.
+ * Trocar a identidade visual do projeto = editar apenas este bloco (e o `.dark` abaixo).
+ *
+ * O vocabulário de nomes é o de mercado para tema em Tailwind 4 (background/foreground,
+ * card, popover, primary, secondary, muted, accent, destructive, border, input, ring);
+ * os VALORES são os nossos — a paleta monocromática zinc da base, inalterada. Nome
+ * emprestado, identidade nossa: quem chega de outro kit já sabe onde mexer, e quem
+ * deriva a base continua trocando a identidade nestes dois blocos.
+ *
+ * Pares que hoje compartilham valor de propósito (a paleta é monocromática):
+ * `popover` = `card`, `secondary` = `accent` = `muted`, `input` = `border`. São tokens
+ * distintos para poder divergir depois sem caçar classe em componente.
  */
 :root {
   --background: var(--color-white);
@@ -14,19 +24,32 @@
   --card: var(--color-white);
   --card-foreground: var(--color-zinc-900);
 
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-zinc-900);
+
+  --primary: var(--color-zinc-900);
+  --primary-foreground: var(--color-zinc-50);
+
+  --secondary: var(--color-zinc-100);
+  --secondary-foreground: var(--color-zinc-500);
+
   --muted: var(--color-zinc-100);
   --muted-foreground: var(--color-zinc-500);
 
-  --border: var(--color-zinc-200);
-
-  --primary: var(--color-zinc-900);
-  --primary-hover: var(--color-zinc-800);
-  --primary-foreground: var(--color-zinc-50);
+  --accent: var(--color-zinc-100);
+  --accent-foreground: var(--color-zinc-500);
 
   --destructive: var(--color-red-600);
   --destructive-foreground: var(--color-white);
 
+  --border: var(--color-zinc-200);
+  --input: var(--color-zinc-200);
   --ring: var(--color-zinc-400);
+
+  /* Raio único: toda a escala de `@theme inline` deriva daqui, então arredondar mais ou
+     menos o projeto inteiro é mudar este número. Não é valor por tema (o `.dark` não o
+     redefine) — mora aqui porque é identidade visual, e identidade se edita no `:root`. */
+  --radius: 0.625rem;
 }
 
 .dark {
@@ -36,18 +59,26 @@
   --card: var(--color-zinc-900);
   --card-foreground: var(--color-zinc-200);
 
+  --popover: var(--color-zinc-900);
+  --popover-foreground: var(--color-zinc-200);
+
+  --primary: var(--color-zinc-50);
+  --primary-foreground: var(--color-zinc-900);
+
+  --secondary: var(--color-zinc-800);
+  --secondary-foreground: var(--color-zinc-400);
+
   --muted: var(--color-zinc-800);
   --muted-foreground: var(--color-zinc-400);
 
-  --border: var(--color-zinc-800);
-
-  --primary: var(--color-zinc-50);
-  --primary-hover: var(--color-zinc-300);
-  --primary-foreground: var(--color-zinc-900);
+  --accent: var(--color-zinc-800);
+  --accent-foreground: var(--color-zinc-400);
 
   --destructive: var(--color-red-500);
   --destructive-foreground: var(--color-white);
 
+  --border: var(--color-zinc-800);
+  --input: var(--color-zinc-800);
   --ring: var(--color-zinc-500);
 }
 
@@ -63,28 +94,41 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
 
-  --color-border: var(--border);
-
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
+  --color-border: var(--border);
+  --color-input: var(--input);
   --color-ring: var(--ring);
 
   /* Tokens diretos (sem indireção por tema) */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-box: 0.75rem; /* containers: cards, modais, overlays */
-  --radius-field: 0.5rem; /* controles: botões, inputs, selects */
-  /* seletores pequenos: checkbox, radio, switch. Escala própria porque `rounded-field`
-     num quadrado de 16px vira círculo — e círculo lê como radio, não como checkbox. */
-  --radius-selector: 0.25rem;
+  /* Escala de raio derivada de --radius (0.625rem): sobrescreve a escala nativa do
+     Tailwind para que `rounded-md`/`rounded-lg`/`rounded-xl` sigam o token da base.
+     Uso na casa: `rounded-xl` em containers (card, modal, toast, table, alert),
+     `rounded-md`/`rounded-lg` em controles (botão, input, select) e `rounded-sm` em
+     seletores pequenos (checkbox) — quadrado de 16px com raio grande vira círculo,
+     e círculo lê como radio, não como checkbox. */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
 
   /* Escala de empilhamento — usar via z-(--z-modal); camada nova entra aqui, nunca z-[n] solto.
      Dropdown acima do modal: o Reka portaliza o SelectContent para o body, então um select
