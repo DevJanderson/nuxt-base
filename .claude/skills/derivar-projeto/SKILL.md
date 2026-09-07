@@ -122,7 +122,8 @@ A base não implementa auth — escolha no README.md, seção "Auth: duas receit
   tire `/login` também de `scripts/smoke.mjs` (**duas** ocorrências: a lista `ROUTES` e a
   asserção de 200) e o botão em `app/pages/index.vue` — sem isso o gate de runtime recebe 404
   onde exige 200 e o `pnpm verify` fecha vermelho. `NUXT_SESSION_PASSWORD` sai do
-  `.env.example` no passo 7.
+  `.env.example` no passo 7, e o `CLAUDE.md` perde as duas menções ao middleware (a convenção
+  "Auth é ponto de encaixe" e a linha de `app/middleware/auth.ts` na Estrutura).
 - **Login futuro (ainda sem receita escolhida)?** Mantenha os pontos de encaixe como
   estão e não instale nada — eles são inertes até serem usados.
 

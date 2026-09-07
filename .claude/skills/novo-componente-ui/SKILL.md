@@ -61,13 +61,16 @@ Aplicando o mapeamento completo de `.claude/skills/preline-mcp/PROJECT-NOTES.md`
   1. Confirme que não dá para resolver com token existente ou com modificador de
      opacidade sobre um deles (`bg-destructive/10`, padrão que o `Button` já usa).
   2. **Proponha ao usuário e espere o aval** — diga o nome, os valores claro/escuro e
-     o porquê. Token de cor entra sempre em par (`x` / `x-foreground`).
-  3. Valide o contraste do par nos dois temas (mínimo 4,5:1 para texto normal;
+     o porquê. Token de cor que é superfície com texto por cima entra em par
+     (`x` / `x-foreground`); `--border`, `--ring` e afins não têm par.
+  3. (Só cor) Valide o contraste do par nos dois temas (mínimo 4,5:1 para texto normal;
      3:1 só vale para texto grande). Cite os números na resposta.
-  4. Escreva nas três camadas: `:root`, `.dark` e `@theme inline`.
+  4. Token de **cor** vai nas três camadas (`:root`, `.dark`, `@theme inline`); token
+     **direto** (`--radius-*`, `--z-*`) entra só em `@theme inline`, no bloco "Tokens
+     diretos", junto dos vizinhos — sem indireção por tema.
   5. **Documente na tabela de tokens do README** ("Tema") — token sem doc é pior que
      token nenhum.
-  6. Confirme no CSS do build que a utility saiu
+  6. (Só cor) Confirme no CSS do build que a utility saiu
      (`pnpm build && grep -o '\.bg-seu-token{[^}]*}' .output/public/_nuxt/*.css`).
 - Variantes `hs-*` (`hs-dropdown-open:*`, `hs-overlay-open:*`, …) → estados do Reka:
   `data-[state=open]:*`, `data-[state=checked]:*`, `data-[disabled]:*`, `data-[highlighted]:*`.

@@ -29,7 +29,7 @@ const topics = [
   { label: 'Comunidade', value: 'community' },
 ]
 
-const selectedTopics = reactive<Record<string, boolean>>({
+const selectedTopics = reactive<Record<string, boolean | 'indeterminate'>>({
   releases: true,
   security: false,
   community: false,

@@ -77,7 +77,10 @@ const LOG_ALLOWLIST = [
  */
 const SPA = process.argv.includes('--spa')
 
-/** O ponto de montagem do app no HTML — é ele que prova que veio o shell, e não um erro. */
+/**
+ * O ponto de montagem do app no HTML — é ele que prova que veio o shell, e não um erro.
+ * Derivado que mudar `app.rootId` no `nuxt.config.ts` ajusta este regex junto.
+ */
 const APP_SHELL = /id="__nuxt"/
 
 /**

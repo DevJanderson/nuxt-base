@@ -15,7 +15,7 @@ e reprova log com WARN/ERROR. A regra da casa:
 Para o que roda em runtime há uma regra a mais: **afirmação de validação só vale com o
 log colado** — cole a saída do `pnpm smoke`, não o resumo dela. E cole a saída **relida da
 fonte** (arquivo de log ou terminal): resumo de comando longo/em background já veio errado
-(caso real: "2 arquivos / 9 testes" quando a suíte tem 12 e 49) — número inventado em
+(caso real: "2 arquivos / 9 testes" num relatório, quando a suíte tinha 12 arquivos e 49 testes) — número inventado em
 relatório de validação é falha grave, não detalhe.
 
 ## Prevenir (antes do push)
