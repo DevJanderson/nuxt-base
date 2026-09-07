@@ -2,7 +2,7 @@
   "test_cases": [
     {
       "prompt": "o CI falhou no meu último push, dá uma olhada e resolve",
-      "expected_behavior": "Usa gh run list/gh run view --log-failed para identificar o step vermelho, reproduz localmente com o comando equivalente do step, corrige a causa (sem desabilitar o step), roda pnpm verify, faz push e acompanha com gh run watch --exit-status sem pipe, confirmando a conclusão com gh run view.",
+      "expected_behavior": "Usa gh run list/gh run view --log-failed para checar a premissa. Se o run do último push estiver verde, diz isso com o log colado, identifica qual workflow o usuário viu vermelho e NÃO altera nada, descrevendo o que faria se houvesse falha. Havendo falha real: reproduz local com o comando do step, corrige a causa (sem desabilitar step), roda pnpm verify, push e acompanha com gh run watch --exit-status sem pipe, confirmando com gh run view.",
       "tags": ["diagnostico", "gh"]
     },
     {
@@ -12,12 +12,12 @@
     },
     {
       "prompt": "no meu pc funciona, mas no CI dá 'vitest: not found'",
-      "expected_behavior": "Reconhece o padrão de dependência implícita do catálogo de falhas conhecidas (peer auto-instalado local, ausente no CI) e declara o pacote explicitamente em devDependencies; não desabilita o step nem re-roda o CI sem mudança.",
+      "expected_behavior": "Reconhece a classe de dependência implícita do catálogo e aponta a correção (declarar em devDependencies + commitar o lockfile). Se no repositório o pacote já estiver declarado e o CI verde, verifica com install limpo (rm -rf node_modules && pnpm install --frozen-lockfile), reporta que a base não reproduz e pede repo/branch do usuário. Nunca desabilita o step nem re-roda o CI sem mudança.",
       "tags": ["falha-conhecida", "dependencias"]
     },
     {
       "prompt": "tem um teste de data que só quebra no CI, roda de novo lá que deve passar",
-      "expected_behavior": "Recusa re-rodar o CI sem mudança; identifica a diferença de fuso (CI roda TZ=UTC), reproduz localmente com TZ=UTC pnpm test e corrige o teste/código para ser imune a fuso, registrando o caso no catálogo se for inédito.",
+      "expected_behavior": "Recusa re-rodar sem mudança e explica o porquê (sem oferecer o comando de rerun); verifica se existe teste sensível a fuso; reproduz com TZ=UTC pnpm test colando a saída. Se houver teste de data quebrando, corrige (datas em ISO/UTC) e registra no catálogo se inédito; se não houver, reporta a ausência com evidência em vez de inventar correção.",
       "tags": ["falha-conhecida", "timezone", "anti-rerun"]
     }
   ]

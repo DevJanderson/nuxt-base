@@ -2,7 +2,7 @@
   "test_cases": [
     {
       "prompt": "Quero começar o projeto 'painel-vendas' a partir do nuxt-base. Como crio o repositório?",
-      "expected_behavior": "Recomenda o clone com histórico em vez de \"Use this template\": cria o repositório novo VAZIO (gh repo create painel-vendas --private, sem --template e sem --add-readme), clona a base, renomeia o remoto origin para template, adiciona o origin próprio e faz git push -u origin main. Justifica: é o único caminho que preserva ancestral comum, então o derivado atualiza depois com git fetch template --tags && git merge vX.Y.Z; um commit inicial criado pelo GitHub quebraria o merge com \"refusing to merge unrelated histories\". Cita \"Use this template\" apenas como alternativa explícita, sem atualizações futuras.",
+      "expected_behavior": "Recomenda o clone com histórico em vez de \"Use this template\": cria o repositório novo VAZIO (gh repo create painel-vendas --private, sem --template e sem --add-readme), clona a base, renomeia o remoto origin para template, adiciona o origin próprio e faz git push -u origin main. Justifica: é o único caminho que preserva ancestral comum, então o derivado atualiza depois com git fetch template --tags && git merge vX.Y.Z; um commit inicial criado pelo GitHub quebraria o merge com \"refusing to merge unrelated histories\". Cita \"Use this template\" apenas como alternativa explícita, sem atualizações futuras. O ambiente da avaliação é o próprio template: NÃO executar gh repo create/clone/push é o comportamento correto — o esperado é a receita descrita, com a premissa verificada e declarada.",
       "tags": [
         "clone-com-historico",
         "remoto-template",
@@ -11,7 +11,7 @@
     },
     {
       "prompt": "Acabei de copiar o nuxt-base. Transforma isso no projeto 'painel-vendas', por favor.",
-      "expected_behavior": "Renomeia o campo name do package.json para painel-vendas e o campo service de server/api/health.get.ts para o mesmo nome; aponta que a identidade visual se troca editando apenas os blocos :root/.dark de app/assets/css/main.css; revisa os exemplos (vitrine /components, index, marca no layout) e finaliza rodando pnpm lint && pnpm typecheck && pnpm test com os três passando.",
+      "expected_behavior": "Renomeia o campo name do package.json para painel-vendas e o campo service de server/api/health.get.ts para o mesmo nome; aponta que a identidade visual se troca editando apenas os blocos :root/.dark de app/assets/css/main.css; revisa os exemplos (vitrine /components, index, marca no layout, error.vue e os useSeoMeta) e finaliza com pnpm verify inteiro verde — com a saída do smoke colada — mais a conferência manual de /api/health reportando o nome novo, que o smoke não cobre. Não instala pacote nenhum e não commita. Se o checkout ainda for a base (origin = nuxt-base), avisa antes de agir.",
       "tags": [
         "renomear",
         "tokens",
@@ -20,7 +20,7 @@
     },
     {
       "prompt": "Estou derivando a base. Tem algum arquivo do template que não deveria vir junto?",
-      "expected_behavior": "Aponta a lista \"só do template\" cuja fonte canônica é a seção \"Atualizar a base no derivado\" do README: docs/SPEC.md, .github/workflows/renovate.yml, .claude/skills/derivar-projeto/, os .claude/skills/*/evals/ e a seção \"Como virar um projeto novo\" do README. Remove com git rm e tira as referências penduradas (link do SPEC no README e a linha \"Só do template\" do CLAUDE.md). NÃO remove a seção \"Atualizar a base no derivado\" (ela permanece no derivado) nem trata app/pages/components.vue como só-do-template (é opcional).",
+      "expected_behavior": "Aponta a lista \"só do template\" cuja fonte canônica é a seção \"Atualizar a base no derivado\" do README: docs/SPEC.md, .github/workflows/renovate.yml, .claude/skills/derivar-projeto/, os .claude/skills/*/evals/ e a seção \"Como virar um projeto novo\" do README. Remove com git rm e tira as referências penduradas (link do SPEC no README e a linha \"Só do template\" do CLAUDE.md). NÃO remove a seção \"Atualizar a base no derivado\" (ela permanece no derivado) nem trata app/pages/components.vue como só-do-template (é opcional). O ambiente da avaliação é o próprio template: não apagar arquivo algum é o comportamento correto — o esperado é a lista descrita, com a premissa verificada e declarada.",
       "tags": [
         "so-do-template",
         "lista-canonica",
@@ -29,7 +29,7 @@
     },
     {
       "prompt": "Esse projeto derivado vai ser um dashboard interno, tudo atrás de login, sem nenhuma página pública.",
-      "expected_behavior": "Recomenda o modo SPA conforme a receita 'SSR ou SPA' do README.md: ssr: false global no nuxt.config.ts (ou routeRules com '/app/**': { ssr: false } se houver área mista) — sem inventar configuração fora do README, e cita que o padrão SSR da base é para sites com SEO.",
+      "expected_behavior": "Recomenda o modo SPA conforme a receita 'SSR ou SPA' do README: ssr: false global no nuxt.config.ts (ou routeRules com '/app/**': { ssr: false } se houver área mista), e cita que o padrão SSR da base é para sites com SEO. Mantém o middleware auth nomeado — trocar por global é proposta ao time, não ação. Aponta que ssr: false faz a URL inexistente voltar 200 (app shell) e derrubar as asserções de 404 do scripts/smoke.mjs, resolvidas no derivado pelo modo SPA do gate (node scripts/smoke.mjs --spa), e trata isso como ajuste do derivado: não altera o gate nem a documentação de auth da base.",
       "tags": [
         "ssr-spa",
         "receita-readme"
@@ -37,7 +37,7 @@
     },
     {
       "prompt": "O projeto novo não vai ter login nenhum, é um site totalmente público.",
-      "expected_behavior": "Sugere remover os pontos de encaixe de auth em vez de implementar algo: apagar app/middleware/auth.ts e app/pages/login.vue e retirar o redirect de 401 para /login em app/composables/useApi.ts. Não instala nenhum pacote de auth (nem nuxt-auth-utils).",
+      "expected_behavior": "Sugere remover os pontos de encaixe de auth em vez de implementar algo: apagar app/middleware/auth.ts e app/pages/login.vue, tirar o redirect de 401 no app/composables/useApi.ts, tirar /login das duas listas de scripts/smoke.mjs e o botão em app/pages/index.vue (senão o pnpm verify fecha vermelho), e tirar NUXT_SESSION_PASSWORD do .env.example. Não instala nenhum pacote de auth. Se o checkout for o próprio template, não executa: entrega o checklist/patch e explica que arrancar auth da base violaria o contrato de ponto de encaixe.",
       "tags": [
         "sem-auth",
         "pontos-de-encaixe"
@@ -45,7 +45,7 @@
     },
     {
       "prompt": "Terminei de derivar a base. Sobrou algum arquivo de CI do template que eu deveria mexer?",
-      "expected_behavior": "Aponta que .github/workflows/renovate.yml é um dos arquivos \"só do template\" e sai do derivado (lista de repos fixa + secret RENOVATE_TOKEN que só existe na base — copiado, vira run vermelho toda segunda), e mantém o renovate.json, que é a config de update do repositório. Distingue o dono: se o repo novo é do dono da base, pede para incluí-lo em RENOVATE_REPOSITORIES no workflow do template e no Repository access do token fine-grained do RENOVATE_TOKEN; se é de outra conta, orienta a montar o próprio Renovate (app da Mend no repo, ou renovate.yml copiado com token e secret próprios), nunca os dois juntos. Não sugere criar o secret RENOVATE_TOKEN no derivado, e deixa ci.yml e security.yml intactos.",
+      "expected_behavior": "Aponta que .github/workflows/renovate.yml é um dos arquivos \"só do template\" e sai do derivado (lista de repos fixa + secret RENOVATE_TOKEN que só existe na base — copiado, vira run vermelho toda segunda), e mantém o renovate.json, que é a config de update do repositório. Distingue o dono: se o repo novo é do dono da base, pede para incluí-lo em RENOVATE_REPOSITORIES no workflow do template e no Repository access do token fine-grained do RENOVATE_TOKEN; se é de outra conta, orienta a montar o próprio Renovate (app da Mend no repo, ou renovate.yml copiado com token e secret próprios), nunca os dois juntos. Não sugere criar o secret RENOVATE_TOKEN no derivado, e deixa ci.yml e security.yml intactos. O ambiente da avaliação é o próprio template, onde o renovate.yml tem de ficar: não apagar arquivo algum é o comportamento correto — o esperado é a orientação descrita, com a premissa verificada e declarada.",
       "tags": [
         "ci",
         "renovate",
@@ -54,7 +54,7 @@
     },
     {
       "prompt": "A base ganhou a tag v1.2.0. Como trago essas mudanças para o meu projeto derivado?",
-      "expected_behavior": "Segue a receita \"Atualizar a base no derivado\" do README: branch dedicada, git fetch template --tags, git merge v1.2.0, resolve os conflitos previstos (valores de :root/.dark seus e @theme inline da base, marca/conteúdo seus, convenções novas da base no README/CLAUDE.md) e resolve os conflitos modify/delete dos arquivos só-do-template com git rm. Roda pnpm install e pnpm verify ANTES de fechar o commit de merge. Se não houver remoto template (repo veio de \"Use this template\"), avisa que não há ancestral comum e o merge não é possível.",
+      "expected_behavior": "Segue a receita \"Atualizar a base no derivado\" do README: branch dedicada, git fetch template --tags, git merge v1.2.0, resolve os conflitos previstos (valores de :root/.dark seus e @theme inline da base, marca/conteúdo seus, convenções novas da base no README/CLAUDE.md) e resolve os conflitos modify/delete dos arquivos só-do-template com git rm. Roda pnpm install e pnpm verify ANTES de fechar o commit de merge. Distingue os dois motivos de o merge não andar: remoto template ausente (conserta com git remote add) e história não relacionada (repo de 'Use this template' — git remote add não resolve, o merge morre em 'refusing to merge unrelated histories' e atualizar vira cópia à mão). Não invocar a skill é aceitável: a própria SKILL.md remete ao README.",
       "tags": [
         "atualizar",
         "merge",
