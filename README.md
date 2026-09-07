@@ -74,11 +74,11 @@ Em qualquer caminho, a skill `/derivar-projeto <nome>` executa o roteiro complet
 1. **Apague os arquivos "só do template"** — a lista, com o porquê de cada item, está logo abaixo em [Atualizar a base no derivado](#atualizar-a-base-no-derivado). É a mesma lista que reaparece como conflito em cada merge futuro.
 2. **Renomeie** em dois lugares: `package.json` → campo `"name"`; `server/api/health.get.ts` → campo `service` (o healthcheck reporta o nome do serviço).
 3. **Tokens** em `app/assets/css/main.css`, apenas os blocos `:root` e `.dark` (e, se quiser, `--font-sans`/`--radius-*`) — ver [Tema](#tema-identidade-visual). Sem identidade definida ainda? Mantenha o padrão e siga: trocar depois é editar só esses dois blocos.
-4. **Renderização**: site/SEO mantém o SSR padrão; dashboard atrás de login → `ssr: false`; misto → `routeRules` — ver [SSR ou SPA](#ssr-ou-spa).
-5. **Auth**, quatro ramos: [receita 1 ou 2](#auth-duas-receitas); **sem login** → remova `app/middleware/auth.ts`, `app/pages/login.vue` e o redirect de 401 no `useApi`; **login futuro** → mantenha os pontos de encaixe como estão e não instale nada.
+4. **Renderização**: site/SEO mantém o SSR padrão; dashboard atrás de login → `ssr: false`; misto → `routeRules` — ver [SSR ou SPA](#ssr-ou-spa). Adotou `ssr: false` global? Troque o script `smoke` do `package.json` por `node scripts/smoke.mjs --spa`: em SPA o servidor entrega o app shell com 200 para URL inexistente, e a flag existe para trocar **só** essa asserção de 404. O resto do gate — inclusive a exigência de log sem WARN/ERROR — fica idêntico. No modo misto (`routeRules`) o gate roda sem flag.
+5. **Auth**, quatro ramos: [receita 1 ou 2](#auth-duas-receitas); **sem login** → remova `app/middleware/auth.ts`, `app/pages/login.vue`, o redirect de 401 no `useApi`, o botão para `/login` em `app/pages/index.vue` e as **duas** citações de `/login` em `scripts/smoke.mjs` (o gate cobra 200 nessa rota e reprova com 404 — esquecer deixa o `pnpm verify` vermelho), e tire `NUXT_SESSION_PASSWORD` do `.env.example` no passo 7; **login futuro** → mantenha os pontos de encaixe como estão e não instale nada.
 6. **Limpe os exemplos**: vitrine `/components` (mantê-la como styleguide interno é válido; se remover, tire o link do header), `app/pages/index.vue`, marca no `app/layouts/default.vue`, `app/stores/app.ts`. Ao final, caça-marca: `grep -ri "nuxt base" app/ server/` — a marca vive também em `error.vue` e nos `useSeoMeta`; zere o resultado.
 7. **Docs e ambiente**: título/descrição de README e CLAUDE.md (as convenções continuam valendo), remova **esta** seção (já cumprida) e mantenha a próxima, `.env.example` só com as variáveis reais do projeto (fora as das receitas não adotadas) e copie para `.env`.
-8. **CI do derivado**: `renovate.yml` já saiu no passo 1; `ci.yml` e `security.yml` seguem valendo como estão, sem secret nenhum, e o `renovate.json` fica. Para o Renovate cuidar do projeto novo, depende de quem é o dono:
+8. **CI do derivado**: `renovate.yml` já saiu no passo 1; `ci.yml` e `security.yml` seguem valendo como estão — sem secret nenhum **em conta pessoal**, mas em repositório dentro de uma **organização** o job `gitleaks` exige o secret `GITLEAKS_LICENSE` e falha logo no primeiro push sem ele — e o `renovate.json` fica. Para o Renovate cuidar do projeto novo, depende de quem é o dono:
    - **Repositório do dono da base**: incluir o repositório novo em dois lugares — `RENOVATE_REPOSITORIES`, no workflow do template, **e** no *Repository access* do token fine-grained que alimenta o `RENOVATE_TOKEN` (sem isso o push do Renovate no derivado é negado).
    - **Repositório de outra conta**: o hub do template não alcança o seu repo; monte o **seu próprio Renovate**. O caminho curto é instalar o [app do Renovate (Mend)](https://github.com/apps/renovate) só nesse repositório — o `renovate.json` herdado já configura tudo. O caminho self-hosted é copiar o `renovate.yml` da base, trocar `RENOVATE_REPOSITORIES` pelo seu repo e criar o secret `RENOVATE_TOKEN` com um token fine-grained seu (Contents, Issues, Pull requests, Workflows e Commit statuses em *read and write*). Nunca os dois ao mesmo tempo.
 9. **Valide**: `pnpm install && pnpm dev` sem erro e sem warning — se a porta 3000 estiver ocupada o Nuxt escolhe outra, confira no log — e `/api/health` reportando o nome novo; `pnpm verify` inteiro verde. Feche com o commit inicial.
@@ -87,7 +87,7 @@ A suíte herdada continua valendo no projeto novo: os testes de referência (com
 
 ## Atualizar a base no derivado
 
-**Esta seção permanece no projeto derivado** — é a receita de trazer as evoluções da base, e a tabela "só do template" abaixo é a fonte canônica da lista. Só funciona no caminho 1 (clone com histórico), que é o que dá ancestral comum; confira com `git remote -v` e, se faltar o remoto, `git remote add template https://github.com/DevJanderson/nuxt-base.git`.
+**Esta seção permanece no projeto derivado** — é a receita de trazer as evoluções da base, e a tabela "só do template" abaixo é a fonte canônica da lista. Só funciona no caminho 1 (clone com histórico), que é o que dá ancestral comum; confira com `git remote -v`. **Remoto ausente e história não relacionada são problemas diferentes:** faltando só o remoto, `git remote add template https://github.com/DevJanderson/nuxt-base.git` resolve; se o repositório nasceu pelo caminho 2 ("Use this template" ou cópia manual), acrescentar o remoto **não** cria ancestral comum — o `git merge` morre em `refusing to merge unrelated histories` e trazer a novidade da base continua sendo cópia de arquivo à mão.
 
 ```bash
 git switch -c chore/atualizar-base   # nunca direto na main: o merge pode dar trabalho
@@ -95,7 +95,7 @@ git fetch template --tags            # --tags é essencial: é por tag que se es
 git merge v1.2.0                     # a tag desejada da base (ou template/main, para o topo)
 # … resolver os conflitos (tabelas abaixo) …
 pnpm install                         # o lockfile veio junto; dependência nova não se instala sozinha
-pnpm verify                          # lint + typecheck + test + knip + dup, o gate do CI
+pnpm verify                          # lint + typecheck + test + knip + dup + smoke, o gate do CI
 git rm -r --ignore-unmatch docs/SPEC.md .github/workflows/renovate.yml \
           .claude/skills/derivar-projeto .claude/skills/*/evals
 git commit                           # fecha o merge só com os gates verdes
@@ -129,6 +129,7 @@ A última linha é a exceção da tabela: como o `README.md` continua existindo 
 | `README.md`, `CLAUDE.md` | seu título e sua descrição vencem; **traga as convenções e receitas novas** da base |
 | `package.json` | seu `name`; da base as dependências e os scripts |
 | `app/components/ui/**`, `app/composables/**` | da base, salvo customização deliberada sua — nesse caso reaplique-a por cima |
+| `pnpm-lock.yaml` | não resolva à mão: o `pnpm install` do passo seguinte lê os marcadores de conflito e regenera o lockfile a partir do `package.json` já resolvido |
 | arquivos "só do template" | `git rm` (tabela acima) |
 
 ## Tema (identidade visual)

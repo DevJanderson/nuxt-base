@@ -16,6 +16,18 @@ README.md, seção **"Atualizar a base no derivado"** (`git fetch template --tag
 Antes de editar, pergunte (ou deduza do pedido): nome do projeto, tipo
 (site/SEO, dashboard SPA, SaaS full-stack, frontend puro) e se haverá login.
 
+**Antes de editar qualquer arquivo, confirme que você está no derivado — nunca na base:**
+
+```bash
+git remote -v                 # tem de existir `template`; se `origin` for o nuxt-base, você está NA BASE
+grep '"name"' package.json    # ainda "nuxt-base"? é a base
+ls docs/SPEC.md               # existe? é a base
+```
+
+Se for a base, **não edite nada** — nem `nuxt.config.ts`, nem `scripts/smoke.mjs`, nem
+README/CLAUDE.md: responda com o passo 0 e peça o clone. A exceção única é corrigir um defeito
+**da própria receita** (`.md`), e mesmo essa se anuncia como tal.
+
 ## 0. Repositório e vínculo com a base
 
 Caminho recomendado: **clone com histórico** — é o único que deixa o derivado receber as
@@ -49,10 +61,11 @@ modify/delete em cada merge futuro, sempre resolvida com `git rm -r`.
 git rm -r docs/SPEC.md .github/workflows/renovate.yml .claude/skills/*/evals
 ```
 
-Depois, tire as **referências penduradas** — quatro, e nenhuma some sozinha:
+Depois, tire as **referências penduradas** — **cinco**, e nenhuma some sozinha:
 
 - `README.md`, primeiro parágrafo → o link para `docs/SPEC.md`.
 - `README.md`, bloco "Estrutura de pastas" → a linha `docs/SPEC.md`.
+- `README.md`, bloco "Estrutura de pastas" → tire `derivar-projeto` da linha `.claude/skills/`.
 - `CLAUDE.md`, topo → a linha de citação "Só do template: docs/SPEC.md".
 - `CLAUDE.md`, seção "Skills" → o bullet `.claude/skills/derivar-projeto/` (a skill sai no passo 10).
 
@@ -88,18 +101,37 @@ Decida pelo tipo de projeto (receitas prontas no README.md, seção "SSR ou SPA"
 - **Dashboard 100% atrás de login** → `ssr: false` no `nuxt.config.ts`.
 - **Misto** → `routeRules` (ex.: `'/app/**': { ssr: false }`, landing com `prerender`).
 
+**`ssr: false` muda o que o `smoke` vê.** Em SPA global o servidor devolve o app shell com
+**200** para URL inexistente, e as duas asserções de 404 do `scripts/smoke.mjs` reprovam
+(produção e dev). Não afrouxe o script: o gate tem modo SPA — no derivado que adotar
+`ssr: false` global, o script `smoke` do `package.json` passa a ser
+`node scripts/smoke.mjs --spa`, que troca **só** a asserção de 404 (app shell em vez de página
+de erro). O 404 renderizado continua coberto por `tests/nuxt/components/error-page.spec.ts`.
+**A regra de log limpo e o regex não se tocam** (CLAUDE.md: "afrouxar o regex, nunca").
+Se o 404 do servidor importar para monitoramento, o caminho é o modo misto com `routeRules` —
+e aí o gate segue no modo padrão, sem a flag.
+
 ## 5. Auth
 
 A base não implementa auth — escolha no README.md, seção "Auth: duas receitas":
 
 - **Receita 1** — sessão no servidor (SaaS full-stack) com `nuxt-auth-utils`.
 - **Receita 2** — token contra API externa (cookie `auth.token`; o `useApi` já injeta o Bearer).
-- **Sem login?** Remova os pontos de encaixe: `app/middleware/auth.ts`,
-  `app/pages/login.vue` e o redirect de 401 → `/login` em `app/composables/useApi.ts`.
+- **Sem login?** Remova os pontos de encaixe: `app/middleware/auth.ts`, `app/pages/login.vue` e
+  o redirect de 401 → `/login` em `app/composables/useApi.ts`. A rota deixa de existir, então
+  tire `/login` também de `scripts/smoke.mjs` (**duas** ocorrências: a lista `ROUTES` e a
+  asserção de 200) e o botão em `app/pages/index.vue` — sem isso o gate de runtime recebe 404
+  onde exige 200 e o `pnpm verify` fecha vermelho. `NUXT_SESSION_PASSWORD` sai do
+  `.env.example` no passo 7.
 - **Login futuro (ainda sem receita escolhida)?** Mantenha os pontos de encaixe como
   estão e não instale nada — eles são inertes até serem usados.
 
 Não instale nada além do que a receita escolhida pedir.
+
+O middleware da base é **nomeado** de propósito (`app/middleware/auth.ts` +
+`definePageMeta({ middleware: 'auth' })`). Trocá-lo por `auth.global.ts` é decisão de projeto,
+não parte da receita: **proponha**, não aplique sozinho — e, se o time aceitar, o README **da
+base** não se reescreve por causa disso (é o derivado que muda).
 
 ## 6. Limpar exemplos
 
@@ -139,7 +171,9 @@ Não instale nada além do que a receita escolhida pedir.
     apontando para o repo novo e um secret `RENOVATE_TOKEN` próprio (token fine-grained com
     Contents, Issues, Pull requests, Workflows e Commit statuses em read-write). Nunca os dois
     juntos: dois Renovates no mesmo repo duplicam dashboard e bloqueiam os PRs um do outro.
-- `ci.yml` e `security.yml` continuam como estão: valem para qualquer projeto e não usam secret.
+- `ci.yml` e `security.yml` continuam como estão: valem para qualquer projeto e não usam secret
+  **em conta pessoal**. Repositório dentro de **organização** precisa do secret
+  `GITLEAKS_LICENSE` para o job `gitleaks` — sem ele, esse job falha no primeiro push.
 
 ## 9. Gate final (critérios do SPEC §11)
 

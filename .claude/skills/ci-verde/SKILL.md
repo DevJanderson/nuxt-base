@@ -13,7 +13,10 @@ já builda e ainda sobe o app (produção e `nuxt dev`), requisita as rotas de r
 e reprova log com WARN/ERROR. A regra da casa:
 **"deveria funcionar" não é terminado** — terminado é `pnpm verify` verde.
 Para o que roda em runtime há uma regra a mais: **afirmação de validação só vale com o
-log colado** — cole a saída do `pnpm smoke`, não o resumo dela.
+log colado** — cole a saída do `pnpm smoke`, não o resumo dela. E cole a saída **relida da
+fonte** (arquivo de log ou terminal): resumo de comando longo/em background já veio errado
+(caso real: "2 arquivos / 9 testes" quando a suíte tem 12 e 49) — número inventado em
+relatório de validação é falha grave, não detalhe.
 
 ## Prevenir (antes do push)
 
@@ -31,6 +34,12 @@ log colado** — cole a saída do `pnpm smoke`, não o resumo dela.
 
 ## Diagnosticar (quando o CI falhou)
 
+**Passo zero: confirme que existe falha.** O usuário costuma confundir workflow (`renovate`,
+`security`) com o `ci`, olhar um run antigo ou estar falando de outro repo/branch. Se o run do
+commit atual está verde, diga isso **com o log colado** (`gh run view <id>` com os steps),
+aponte qual workflow ficou vermelho e peça o run-id — não saia procurando o que consertar.
+Corrigir código que está passando é pior do que não fazer nada.
+
 ```bash
 gh run list --limit 5                # qual run falhou
 gh run view <run-id>                 # qual step ficou vermelho
@@ -41,6 +50,11 @@ Reproduza localmente com o comando do step (`pnpm lint`, `pnpm typecheck`,
 `pnpm knip`, `pnpm test`, `pnpm smoke`; para install: `pnpm install --frozen-lockfile`).
 Falha no `smoke` vem com a etapa (build / produção / dev), a asserção quebrada ou as
 linhas de log ofensivas — leia essas linhas antes de mexer em qualquer coisa.
+
+Exceção: `<binário>: not found` não se reproduz com o `node_modules` que você já tem — o
+binário pode ser sobra de install antigo. Reproduza a condição do CI:
+`rm -rf node_modules && pnpm install --frozen-lockfile`.
+
 Não reproduziu local? É diferença de ambiente — consulte
 `references/falhas-conhecidas.md` (catálogo com os casos já vividos e a correção).
 
@@ -56,7 +70,9 @@ Não reproduziu local? É diferença de ambiente — consulte
 
 - **Nunca re-rode o CI sem mudança** esperando cura: falha determinística não
   se resolve sozinha; se for intermitente, o problema é flakiness — investigue
-  (rede real em teste é proibida: use `registerEndpoint`).
+  (rede real em teste é proibida: use `registerEndpoint`). Isso vale também para
+  "se você insistir, o comando é…": não entregue o `gh run rerun` como saída. Peça o
+  run-id e leia o log — se a falha for intermitente, o alvo é a flakiness, não o botão.
 - Falha nova de ambiente diagnosticada → **registre** em
   `references/falhas-conhecidas.md` no mesmo commit da correção; o catálogo
   é memória do projeto e cresce com ele.
