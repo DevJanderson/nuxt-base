@@ -13,8 +13,9 @@ name: renovate
 #      esta execução cuida da base e de todos os derivados listados.
 on:
   schedule:
-    # segunda 10:00 UTC = 06:00 em Manaus — dentro da janela
-    # "before 8am on monday" do renovate.json (timezone America/Manaus)
+    # segunda 10:00 UTC = 06:00 em Manaus. Este cron É o horário do Renovate:
+    # o renovate.json não tem `schedule` de propósito — o GitHub atrasa crons em
+    # horas e uma janela lá derrubava o run pra fora dela (nenhum PR aberto).
     - cron: '0 10 * * 1'
   workflow_dispatch:
 
@@ -24,11 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: renovatebot/github-action@v46.2.4
+      - uses: renovatebot/github-action@v46.2.5
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           # O workflow do template cuida da base e dos derivados listados aqui;
           # cada repo usa o próprio renovate.json
           RENOVATE_REPOSITORIES: DevJanderson/nuxt-base
+          # Autor dos commits do Renovate; sem isto ele usa o e-mail da Mend e
+          # avisa (WARN) a cada run
+          RENOVATE_GIT_AUTHOR: 'renovate[bot] <renovate@nuxt-base.local>'
           LOG_LEVEL: info

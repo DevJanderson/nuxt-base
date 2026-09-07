@@ -1,18 +1,20 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": [
+    "Sem `schedule` de propósito: no modo self-hosted quem dita o horário é o cron de .github/workflows/renovate.yml.",
+    "Uma janela aqui ('before 8am on monday') somava-se ao atraso do cron do GitHub e o run caía fora dela — PR nenhum era aberto."
+  ],
   "extends": [
     "config:recommended",
     "group:allNonMajor",
     ":semanticCommits"
   ],
   "timezone": "America/Manaus",
-  "schedule": ["before 8am on monday"],
   "prConcurrentLimit": 5,
   "labels": ["dependencies"],
   "osvVulnerabilityAlerts": true,
   "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["before 8am on monday"]
+    "enabled": true
   },
   "packageRules": [
     {
