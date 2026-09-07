@@ -82,6 +82,9 @@
 
   --radius-box: 0.75rem; /* containers: cards, modais, overlays */
   --radius-field: 0.5rem; /* controles: botões, inputs, selects */
+  /* seletores pequenos: checkbox, radio, switch. Escala própria porque `rounded-field`
+     num quadrado de 16px vira círculo — e círculo lê como radio, não como checkbox. */
+  --radius-selector: 0.25rem;
 
   /* Escala de empilhamento — usar via z-(--z-modal); camada nova entra aqui, nunca z-[n] solto.
      Dropdown acima do modal: o Reka portaliza o SelectContent para o body, então um select

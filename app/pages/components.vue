@@ -19,6 +19,36 @@ const frameworks = [
   { label: 'Svelte (indisponível)', value: 'svelte', disabled: true },
 ]
 
+const terms = ref(true)
+const newsletter = ref(false)
+const disabledCheck = ref(true)
+
+const topics = [
+  { label: 'Lançamentos', value: 'releases' },
+  { label: 'Segurança', value: 'security' },
+  { label: 'Comunidade', value: 'community' },
+]
+
+const selectedTopics = reactive<Record<string, boolean>>({
+  releases: true,
+  security: false,
+  community: false,
+})
+
+// Marca-tudo: computed com setter, então o v-model do checkbox faz os dois sentidos
+const allTopics = computed<boolean | 'indeterminate'>({
+  get() {
+    const checked = topics.filter(topic => selectedTopics[topic.value])
+    if (checked.length === 0) return false
+    return checked.length === topics.length ? true : 'indeterminate'
+  },
+  set(value) {
+    for (const topic of topics) {
+      selectedTopics[topic.value] = value === true
+    }
+  },
+})
+
 const tableColumns = [
   { key: 'name', label: 'Nome' },
   { key: 'email', label: 'E-mail' },
@@ -119,6 +149,46 @@ const tableRows = [
           error="Informe um endereço de e-mail válido."
         />
       </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">
+        Checkbox
+      </h2>
+      <div class="grid max-w-3xl gap-6 sm:grid-cols-2">
+        <UiCheckbox
+          v-model="terms"
+          label="Aceito os termos de uso"
+          hint="Você pode revogar o aceite depois nas configurações."
+        />
+        <UiCheckbox
+          v-model="newsletter"
+          label="Quero receber a newsletter"
+          error="Confirme o recebimento para continuar."
+        />
+        <UiCheckbox
+          v-model="disabledCheck"
+          label="Opção indisponível"
+          disabled
+        />
+        <UiCheckbox
+          v-model="allTopics"
+          label="Todos os assuntos"
+        />
+      </div>
+      <div class="ms-7 space-y-2">
+        <UiCheckbox
+          v-for="topic in topics"
+          :key="topic.value"
+          v-model="selectedTopics[topic.value]"
+          :label="topic.label"
+        />
+      </div>
+      <p class="text-sm text-muted-foreground">
+        O estado <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">indeterminate</code>
+        é o do marca-tudo parcial: "Todos os assuntos" acima o assume sozinho quando só
+        parte dos assuntos está marcada.
+      </p>
     </section>
 
     <section class="space-y-4">
@@ -233,6 +303,36 @@ const tableRows = [
         <UiBadge variant="outline">
           Outline
         </UiBadge>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">
+        Alert
+      </h2>
+      <p class="text-sm text-muted-foreground">
+        Mensagem estática da página (aviso de ambiente, erro de formulário já renderizado).
+        Para mensagem que aparece em resposta a uma ação, use
+        <code class="rounded-field bg-muted px-1.5 py-0.5 text-xs">useToast()</code>,
+        que anuncia em live region.
+      </p>
+      <div class="grid max-w-3xl gap-4">
+        <UiAlert>
+          Este é um ambiente de demonstração: os dados são reiniciados todo dia.
+        </UiAlert>
+        <UiAlert title="Publicação agendada">
+          A página vai ao ar automaticamente na data escolhida. Dá para cancelar
+          enquanto o status for “agendada”.
+        </UiAlert>
+        <UiAlert variant="error">
+          Não foi possível carregar a lista de projetos.
+        </UiAlert>
+        <UiAlert
+          variant="error"
+          title="Erro ao salvar"
+        >
+          Verifique os campos destacados e envie o formulário novamente.
+        </UiAlert>
       </div>
     </section>
 
