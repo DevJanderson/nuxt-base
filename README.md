@@ -157,7 +157,7 @@ O vocabulário é o do **shadcn v4** (`background`, `foreground`, `card`, `popov
 | `ring` | anel de foco |
 | `--radius` → `rounded-sm` / `rounded-md` / `rounded-lg` / `rounded-xl` | raio único do projeto (`0.625rem`); a escala deriva dele em `@theme inline` (`0.6`/`0.8`/`1`/`1.4`). Uso na casa: `rounded-xl` em containers (card, modal, toast, table, alert), `rounded-lg` em superfícies flutuantes (dropdown do select), `rounded-md` em controles (botão, input, select) e `rounded-sm` no checkbox — raio grande num quadrado de 16px vira círculo, e círculo lê como radio |
 | `--font-sans` | tipografia base (trocar aqui **e** em `fonts.families` — ver abaixo) |
-| `--z-overlay` / `--z-modal` / `--z-dropdown` / `--z-toast` / `--z-tooltip` → `z-(--z-modal)` | escala de empilhamento (40/50/60/70/80) — dropdown acima do modal porque o Reka portaliza o `SelectContent` para o `body`; camada nova entra na escala, nunca `z-[n]` solto |
+| `--z-overlay` / `--z-modal` / `--z-dropdown` / `--z-toast` / `--z-tooltip` / `--z-skip-link` → `z-(--z-modal)` | escala de empilhamento (40/50/60/70/80/90) — dropdown acima do modal porque o Reka portaliza o `SelectContent` para o `body`, e o skip link acima de tudo; camada nova entra na escala, nunca `z-[n]` solto |
 
 **O raio é um só.** `--radius` define a curvatura da identidade e o `@theme inline` deriva dela a escala do Tailwind: `rounded-sm` (4px a menos), `rounded-md` (2px a menos), `rounded-lg` (o próprio `--radius`) e `rounded-xl` (4px a mais). Na prática: `rounded-sm` em seletores pequenos (checkbox, radio), `rounded-md` em controles (botão, input, select), `rounded-lg`/`rounded-xl` em containers e superfícies (card, modal, popover). Arredondar mais ou menos o projeto inteiro = mudar **uma** linha; raio novo não vira token novo.
 
@@ -349,7 +349,7 @@ O kit vive em `app/components/ui/` e é auto-importado com prefixo `Ui` (`<UiBut
 | `UiCard` | — | `header`, default, `footer` |
 | `UiBadge` | `variant` (`default` \| `secondary` \| `destructive` \| `outline`), `class` | default |
 | `UiAlert` | `variant` (`default` \| `destructive`), `title` (opcional), `class` — mensagem **estática** da página; a que aparece em resposta a uma ação é toast | default |
-| `UiTable` | `columns: { key, label }[]`, `rows` | `#cell-[key]` recebe `{ row, value }` |
+| `UiTable` | `columns: { key, label }[]`, `rows`, `caption` (nome acessível: vira `<caption class="sr-only">` e rotula a região rolável) | `#cell-[key]` recebe `{ row, value }` |
 | `UiToaster` | montado uma única vez no layout default | — |
 | `UiTooltip` | `text` (obrigatória), `side` (`top` \| `right` \| `bottom` \| `left`), `delayDuration` (ms), `defaultOpen` | default (o elemento que dispara a dica) |
 

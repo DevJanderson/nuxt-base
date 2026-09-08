@@ -61,10 +61,8 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
         :id="id"
         :aria-invalid="error ? 'true' : undefined"
         :aria-describedby="describedBy"
-        class="flex h-8 w-full items-center justify-between gap-x-2 rounded-md border bg-card px-3 text-start text-sm text-foreground focus:ring-1 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-[placeholder]:text-muted-foreground"
-        :class="error
-          ? 'border-destructive focus:border-destructive focus:ring-destructive'
-          : 'border-input focus:border-ring focus:ring-ring'"
+        class="flex h-8 w-full items-center justify-between gap-x-2 rounded-md border bg-card px-3 text-start text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-invalid:focus-visible:outline-destructive disabled:pointer-events-none disabled:opacity-50 data-[placeholder]:text-muted-foreground"
+        :class="error ? 'border-destructive' : 'border-input'"
       >
         <SelectValue
           class="truncate"
@@ -107,9 +105,11 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
       </SelectPortal>
     </SelectRoot>
 
+    <!-- Mesmo contrato do Input: o <p> só existe quando há erro, então `role="alert"` -->
     <p
       v-if="error"
       :id="errorId"
+      role="alert"
       class="mt-2 text-sm text-destructive"
     >
       {{ error }}

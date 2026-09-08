@@ -38,13 +38,17 @@ function onOpenChange(open: boolean, id: number) {
   >
     <!-- `data-slot` vai no ToastRoot: o ToastProvider, raiz do componente, é só
          provider e não renderiza elemento — o atributo se perderia nele. -->
+    <!-- `type` decide o `aria-live` do Reka (ToastRootImpl: foreground → assertive,
+         background → polite). Sem ele o default é `foreground` e até um toast de sucesso
+         interrompe a leitura em curso; só o erro merece esse corte. -->
     <ToastRoot
       v-for="toast in toasts"
       :key="toast.id"
+      :type="toast.variant === 'error' ? 'foreground' : 'background'"
       :duration="toast.duration"
       data-slot="toast"
       :data-variant="toast.variant"
-      class="pointer-events-auto flex w-full items-start gap-x-3 rounded-xl border border-border bg-card p-4 shadow-2xs transition duration-300 starting:translate-y-2 starting:opacity-0 data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition data-[swipe=end]:translate-x-(--reka-toast-swipe-end-x) data-[swipe=move]:translate-x-(--reka-toast-swipe-move-x) data-[swipe=move]:transition-none"
+      class="pointer-events-auto flex w-full items-start gap-x-3 rounded-xl border border-border bg-card p-4 shadow-2xs transition duration-300 motion-reduce:transition-none motion-reduce:duration-0 starting:opacity-0 motion-safe:starting:translate-y-2 data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition data-[swipe=end]:translate-x-(--reka-toast-swipe-end-x) data-[swipe=move]:translate-x-(--reka-toast-swipe-move-x) data-[swipe=move]:transition-none"
       @update:open="onOpenChange($event, toast.id)"
     >
       <Icon
@@ -81,9 +85,11 @@ function onOpenChange(open: boolean, id: number) {
       </ToastClose>
     </ToastRoot>
 
+    <!-- `pointer-events-none` é o par do `pointer-events-auto` do ToastRoot: sem ele a
+         faixa fixa do viewport intercepta cliques no canto mesmo sem toast na tela. -->
     <ToastViewport
       label="Notificações ({hotkey})"
-      class="fixed end-0 bottom-0 z-(--z-toast) flex w-full max-w-sm flex-col gap-y-3 p-4"
+      class="pointer-events-none fixed end-0 bottom-0 z-(--z-toast) flex w-full max-w-sm flex-col gap-y-3 p-4"
     />
   </ToastProvider>
 </template>

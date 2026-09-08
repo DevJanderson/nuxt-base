@@ -38,7 +38,11 @@ const describedBy = computed(() => (props.error || props.hint ? messageId : unde
       :class="disabled && 'opacity-50'"
     >
       <!-- rounded-[4px] e não rounded-sm: a escala derivada de --radius dá 6px, e num
-           quadrado de 16px isso lê como radio. 4px é o raio do checkbox do Preline. -->
+           quadrado de 16px isso lê como radio. 4px é o raio do checkbox do Preline.
+
+           `relative after:-inset-*`: o pseudo-elemento é invisível (sem fundo, sem conteúdo)
+           e existe só para levar o alvo de clique de 16×16 a 40×32 — o mínimo do WCAG 2.5.8
+           é 24×24, e sem `label` o quadrado sozinho reprovava. Nada muda no desenho. -->
       <CheckboxRoot
         :id="id"
         v-model="model"
@@ -46,7 +50,7 @@ const describedBy = computed(() => (props.error || props.hint ? messageId : unde
         :disabled="disabled"
         :aria-invalid="error ? 'true' : undefined"
         :aria-describedby="describedBy"
-        class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-[4px] border bg-card shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground"
+        class="relative mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-[4px] border bg-card shadow-2xs after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground"
         :class="error ? 'border-destructive' : 'border-border'"
       >
         <CheckboxIndicator class="flex items-center justify-center text-current">
@@ -70,9 +74,11 @@ const describedBy = computed(() => (props.error || props.hint ? messageId : unde
       </label>
     </div>
 
+    <!-- Mesmo contrato do Input: o <p> só existe quando há erro, então `role="alert"` -->
     <p
       v-if="error"
       :id="messageId"
+      role="alert"
       class="mt-2 text-sm text-destructive"
     >
       {{ error }}

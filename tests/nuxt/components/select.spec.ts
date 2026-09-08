@@ -35,5 +35,7 @@ describe('UiSelect', () => {
     const trigger = wrapper.find('button')
     expect(trigger.attributes('aria-invalid')).toBe('true')
     expect(trigger.attributes('aria-describedby')).toBe(wrapper.find('p').attributes('id'))
+    // live region: o erro que aparece depois do submit é anunciado sem o foco voltar ao campo
+    expect(wrapper.find('p').attributes('role')).toBe('alert')
   })
 })

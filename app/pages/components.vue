@@ -410,6 +410,7 @@ const tableRows = [
       <UiTable
         :columns="tableColumns"
         :rows="tableRows"
+        caption="Usuários cadastrados"
       >
         <template #cell-status="{ value }">
           <UiBadge :variant="value === 'Ativo' ? 'default' : 'secondary'">

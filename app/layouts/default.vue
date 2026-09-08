@@ -8,11 +8,22 @@ function toggleColorMode() {
 
 <template>
   <div class="flex min-h-dvh flex-col bg-background text-foreground">
+    <!-- Primeiro focável da página (WCAG 2.4.1): fica em `sr-only` e só aparece no foco,
+         então nada muda para quem usa mouse. `focus:` e não `focus-visible:` de propósito —
+         o link é inalcançável sem teclado, e o par sr-only/not-sr-only trabalha no mesmo
+         estado. O anel segue o idioma do kit. -->
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:z-(--z-skip-link) focus:rounded-md focus:border focus:border-border focus:bg-card focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-card-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    >
+      Pular para o conteúdo
+    </a>
+
     <header class="border-b border-border">
       <div class="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
         <NuxtLink
           to="/"
-          class="text-sm font-semibold tracking-tight"
+          class="rounded-md text-sm font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           Nuxt Base
         </NuxtLink>
@@ -59,7 +70,14 @@ function toggleColorMode() {
       </div>
     </header>
 
-    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">
+    <!-- Alvo do skip link. `tabindex="-1"` porque salto de âncora só move o foco de fato
+         se o destino for focável; `focus:outline-hidden` porque <main> não é controle e o
+         anel aqui seria ruído (o utilitário do Tailwind mantém o fallback de alto contraste). -->
+    <main
+      id="conteudo"
+      tabindex="-1"
+      class="mx-auto w-full max-w-5xl flex-1 px-4 py-10 focus:outline-hidden sm:px-6"
+    >
       <slot />
     </main>
 

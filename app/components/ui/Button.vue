@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<{
 // Altura fixa (`h-*`) em vez de padding vertical, na escala densa do kit: 24/28/32/36px.
 // O padding horizontal mantém a proporção do Preline (≈0.35 da altura).
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-x-2 rounded-md text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50',
+  'inline-flex items-center justify-center gap-x-2 rounded-md text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-invalid:focus-visible:outline-destructive disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50',
   {
     variants: {
       variant: {
