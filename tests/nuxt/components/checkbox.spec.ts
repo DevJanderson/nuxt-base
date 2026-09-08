@@ -56,6 +56,8 @@ describe('UiCheckbox', () => {
     expect(control.attributes('aria-invalid')).toBe('true')
     expect(control.attributes('aria-describedby')).toBe(message.attributes('id'))
     expect(message.text()).toBe('Campo obrigatório')
+    // live region: o erro que aparece depois do submit é anunciado sem o foco voltar ao campo
+    expect(message.attributes('role')).toBe('alert')
   })
 
   it('com hint (sem error), aponta aria-describedby para a mensagem de hint', async () => {

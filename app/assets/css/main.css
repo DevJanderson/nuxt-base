@@ -44,7 +44,9 @@
 
   --border: var(--color-zinc-200);
   --input: var(--color-zinc-200);
-  --ring: var(--color-zinc-400);
+  /* Anel de foco (WCAG 1.4.11, mínimo 3:1): zinc-400 rendia 2,56:1 sobre --background e
+     2,33:1 sobre --muted — reprovava. zinc-500 dá 4,83:1 e 4,40:1 nos mesmos fundos. */
+  --ring: var(--color-zinc-500);
 
   /* Raio único: toda a escala de `@theme inline` deriva daqui, então arredondar mais ou
      menos o projeto inteiro é mudar este número. Não é valor por tema (o `.dark` não o
@@ -79,7 +81,9 @@
 
   --border: var(--color-zinc-800);
   --input: var(--color-zinc-800);
-  --ring: var(--color-zinc-500);
+  /* Espelha o :root um passo mais claro: 7,76:1 sobre --background e 6,91:1 sobre --card
+     (o zinc-500 anterior passava raspando, 3,67:1 sobre --card). */
+  --ring: var(--color-zinc-400);
 }
 
 /*
@@ -140,6 +144,9 @@
   --z-dropdown: 60;
   --z-toast: 70;
   --z-tooltip: 80;
+  /* Acima de tudo: o skip link do layout aparece no foco e não pode ficar atrás de
+     header, modal ou toast — é a primeira coisa que o teclado alcança na página. */
+  --z-skip-link: 90;
 }
 
 @layer base {

@@ -24,6 +24,8 @@ describe('UiInput', () => {
     expect(input.attributes('aria-invalid')).toBe('true')
     expect(input.attributes('aria-describedby')).toBe(errorParagraph.attributes('id'))
     expect(errorParagraph.text()).toBe('Campo obrigatório')
+    // live region: o erro que aparece depois do submit é anunciado sem o foco voltar ao campo
+    expect(errorParagraph.attributes('role')).toBe('alert')
   })
 
   it('com hint (sem error), aponta aria-describedby para a mensagem de hint', async () => {
@@ -36,6 +38,8 @@ describe('UiInput', () => {
     expect(input.attributes('aria-invalid')).toBeUndefined()
     expect(input.attributes('aria-describedby')).toBe(hintParagraph.attributes('id'))
     expect(hintParagraph.text()).toBe('Use o nome completo')
+    // hint não é novidade anunciável: só o erro carrega role="alert"
+    expect(hintParagraph.attributes('role')).toBeUndefined()
   })
 
   it('v-model atualiza o valor ao digitar', async () => {

@@ -32,13 +32,13 @@ const open = defineModel<boolean>('open', { default: false })
 
     <DialogPortal>
       <!-- Backdrop do Preline (hs-overlay-backdrop) vira DialogOverlay explícito -->
-      <DialogOverlay class="fixed inset-0 z-(--z-overlay) bg-foreground/50 transition-opacity duration-300 starting:opacity-0 dark:bg-background/80" />
+      <DialogOverlay class="fixed inset-0 z-(--z-overlay) bg-foreground/50 transition-opacity duration-300 motion-reduce:transition-none starting:opacity-0 dark:bg-background/80" />
 
       <!-- `data-slot` vai no DialogContent, não no DialogRoot: o Root do Reka é só
            provider, não renderiza elemento — o atributo se perderia. -->
       <DialogContent
         data-slot="modal"
-        class="fixed top-1/2 left-1/2 z-(--z-modal) flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl border border-border bg-card shadow-2xs transition duration-300 starting:translate-y-[calc(-50%-0.5rem)] starting:opacity-0"
+        class="fixed top-1/2 left-1/2 z-(--z-modal) flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl border border-border bg-card shadow-2xs transition duration-300 motion-reduce:transition-none motion-reduce:duration-0 starting:opacity-0 motion-safe:starting:translate-y-[calc(-50%-0.5rem)]"
       >
         <div class="flex items-center justify-between gap-x-2 border-b border-border px-4 py-3">
           <DialogTitle class="font-semibold text-card-foreground">
@@ -56,7 +56,12 @@ const open = defineModel<boolean>('open', { default: false })
           </DialogClose>
         </div>
 
-        <div class="overflow-y-auto p-4">
+        <!-- `tabindex="0"`: modal de texto longo sem nada focável dentro não rola por
+             teclado (WCAG 2.1.1) — o corpo rolável precisa receber foco. -->
+        <div
+          tabindex="0"
+          class="overflow-y-auto p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
           <DialogDescription
             v-if="description"
             class="mb-2 text-sm text-muted-foreground"

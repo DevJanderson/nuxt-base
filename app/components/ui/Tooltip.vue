@@ -27,7 +27,7 @@ withDefaults(defineProps<{
           :side="side"
           :side-offset="6"
           data-slot="tooltip"
-          class="z-(--z-tooltip) rounded-md border border-border bg-popover px-2 py-1 text-xs font-medium text-popover-foreground opacity-100 shadow-2xs transition-opacity duration-150 starting:opacity-0"
+          class="z-(--z-tooltip) rounded-md border border-border bg-popover px-2 py-1 text-xs font-medium text-popover-foreground opacity-100 shadow-2xs transition-opacity duration-150 motion-reduce:transition-none starting:opacity-0"
         >
           {{ text }}
         </TooltipContent>

@@ -4,10 +4,14 @@ interface TableColumn {
   label: string
 }
 
-defineProps<{
+withDefaults(defineProps<{
   columns: TableColumn[]
   rows: Record<string, unknown>[]
-}>()
+  /** Nome acessível da tabela: vira `<caption class="sr-only">` e rotula a região rolável. */
+  caption?: string
+}>(), {
+  caption: undefined,
+})
 
 // Slot opcional por coluna: #cell-[key] recebe { row, value }
 defineSlots<{
@@ -16,11 +20,25 @@ defineSlots<{
 </script>
 
 <template>
+  <!-- `tabindex="0"`: com coluna fora da tela, quem usa só teclado precisa de um elemento
+       focável para rolar na horizontal (WCAG 2.1.1). Região sem nome é ruído no leitor de
+       tela, então o `role="region"` vem sempre acompanhado de `aria-label`. -->
   <div
     data-slot="table"
-    class="overflow-x-auto rounded-xl border border-border"
+    role="region"
+    tabindex="0"
+    :aria-label="caption ?? 'Tabela de dados'"
+    class="overflow-x-auto rounded-xl border border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
   >
     <table class="min-w-full divide-y divide-border">
+      <!-- `sr-only` e não `hidden`: a legenda nomeia a tabela na lista do leitor de tela
+           sem mudar o desenho. Legenda visível = passar outra classe daqui. -->
+      <caption
+        v-if="caption"
+        class="sr-only"
+      >
+        {{ caption }}
+      </caption>
       <thead class="bg-muted">
         <tr>
           <th

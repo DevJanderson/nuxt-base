@@ -54,15 +54,16 @@ const describedBy = computed(() => {
       :disabled="disabled"
       :aria-invalid="error ? 'true' : undefined"
       :aria-describedby="describedBy"
-      class="block h-8 w-full rounded-md border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:ring-1 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-      :class="error
-        ? 'border-destructive focus:border-destructive focus:ring-destructive'
-        : 'border-input focus:border-ring focus:ring-ring'"
+      class="block h-8 w-full rounded-md border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-invalid:focus-visible:outline-destructive disabled:pointer-events-none disabled:opacity-50"
+      :class="error ? 'border-destructive' : 'border-input'"
     >
 
+    <!-- `role="alert"` só aqui (e não no <UiAlert>): este <p> nasce junto com o erro, então
+         o leitor de tela anuncia a mensagem mesmo sem o foco voltar ao campo. -->
     <p
       v-if="error"
       :id="errorId"
+      role="alert"
       class="mt-2 text-sm text-destructive"
     >
       {{ error }}
