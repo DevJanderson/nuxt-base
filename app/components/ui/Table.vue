@@ -13,6 +13,10 @@ withDefaults(defineProps<{
   caption: undefined,
 })
 
+// Com `caption`, a região rolável é nomeada pelo próprio <caption> (aria-labelledby):
+// um nome só, anunciado uma vez; sem caption, cai no rótulo genérico.
+const captionId = useId()
+
 // Slot opcional por coluna: #cell-[key] recebe { row, value }
 defineSlots<{
   [name: `cell-${string}`]: (props: { row: Record<string, unknown>, value: unknown }) => unknown
@@ -27,7 +31,8 @@ defineSlots<{
     data-slot="table"
     role="region"
     tabindex="0"
-    :aria-label="caption ?? 'Tabela de dados'"
+    :aria-labelledby="caption ? captionId : undefined"
+    :aria-label="caption ? undefined : 'Tabela de dados'"
     class="overflow-x-auto rounded-xl border border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
   >
     <table class="min-w-full divide-y divide-border">
@@ -35,6 +40,7 @@ defineSlots<{
            sem mudar o desenho. Legenda visível = passar outra classe daqui. -->
       <caption
         v-if="caption"
+        :id="captionId"
         class="sr-only"
       >
         {{ caption }}

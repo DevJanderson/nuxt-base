@@ -37,7 +37,10 @@ const describedBy = computed(() => (props.error || props.hint ? messageId : unde
       class="flex items-start gap-x-3"
       :class="disabled && 'opacity-50'"
     >
-      <!-- rounded-[4px] e não rounded-sm: a escala derivada de --radius dá 6px, e num
+      <!-- `after:-inset-x-3 after:-inset-y-2` amplia o alvo de toque de 16×16 para 40×32
+           (WCAG 2.5.8) sem mudar o desenho; em lista apertada (< 8px entre itens) as áreas
+           se sobrepõem e a de baixo vence — é o comportamento esperado, não bug.
+           rounded-[4px] e não rounded-sm: a escala derivada de --radius dá 6px, e num
            quadrado de 16px isso lê como radio. 4px é o raio do checkbox do Preline.
 
            `relative after:-inset-*`: o pseudo-elemento é invisível (sem fundo, sem conteúdo)

@@ -6,10 +6,11 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import DefaultLayout from '~/layouts/default.vue'
 
 describe('layout default', () => {
-  it('o primeiro link da página é o skip link, escondido fora do foco', async () => {
+  it('o primeiro elemento focável da página é o skip link, escondido fora do foco', async () => {
     const wrapper = await mountSuspended(DefaultLayout, { slots: { default: () => 'Conteúdo' } })
 
-    const first = wrapper.findAll('a')[0]!
+    // Qualquer focável antes dele (botão, input, link) quebra o WCAG 2.4.1 em silêncio
+    const first = wrapper.findAll('a, button, input, select, textarea, [tabindex="0"]')[0]!
     expect(first.text()).toBe('Pular para o conteúdo')
     expect(first.attributes('href')).toBe('#conteudo')
     expect(first.classes()).toContain('sr-only')

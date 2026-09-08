@@ -85,8 +85,9 @@ function onOpenChange(open: boolean, id: number) {
       </ToastClose>
     </ToastRoot>
 
-    <!-- `pointer-events-none` é o par do `pointer-events-auto` do ToastRoot: sem ele a
-         faixa fixa do viewport intercepta cliques no canto mesmo sem toast na tela. -->
+    <!-- `pointer-events-none` é o par do `pointer-events-auto` do ToastRoot. Sem toast o
+         Reka já desliga o viewport sozinho; com toast na tela, é esta classe que libera o
+         clique na moldura (`p-4`/`gap-y-3`) em volta dos cards. -->
     <ToastViewport
       label="Notificações ({hotkey})"
       class="pointer-events-none fixed end-0 bottom-0 z-(--z-toast) flex w-full max-w-sm flex-col gap-y-3 p-4"

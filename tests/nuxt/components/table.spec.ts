@@ -28,8 +28,12 @@ describe('UiTable', () => {
   it('com caption, nomeia a região e renderiza a legenda em sr-only', async () => {
     const wrapper = await mountTable({ caption: 'Usuários cadastrados' })
 
-    expect(wrapper.find('[data-slot="table"]').attributes('aria-label')).toBe('Usuários cadastrados')
+    // A região é nomeada pelo próprio <caption> (aria-labelledby): um nome só, sem duplicar
+    const region = wrapper.find('[data-slot="table"]')
     const caption = wrapper.find('caption')
+    expect(region.attributes('aria-label')).toBeUndefined()
+    expect(region.attributes('aria-labelledby')).toBe(caption.attributes('id'))
+    expect(caption.attributes('id')).toBeTruthy()
     expect(caption.text()).toBe('Usuários cadastrados')
     expect(caption.classes()).toContain('sr-only')
   })

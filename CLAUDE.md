@@ -52,6 +52,10 @@ Projeto derivado atualiza-se por merge do remoto `template` — README, "Atualiz
   `UiBadge` `default | secondary | destructive | outline`; `UiAlert` `default | destructive`.
   Alturas na escala "Nova" (densa): botão `default` 32px, `xs` 24, `sm` 28, `lg` 36; Input e
   Select fixos em 32px — **só o Button tem `size`**.
+- **Foco visível num idioma só**: `focus-visible:outline-2 focus-visible:outline-offset-2
+  focus-visible:outline-ring` em todo focável (erro: `aria-invalid:focus-visible:outline-destructive`).
+  Nunca `focus:ring-*`, `focus:border-ring` nem `focus:outline-hidden` em controle — o
+  teste-inventário `tests/nuxt/conventions/focus-idiom.spec.ts` reprova.
 - Pinia: setup stores (modelo em `app/stores/app.ts`).
 - Toda chamada HTTP sai por `useApi`/`useApiData` (`app/composables/useApi.ts`);
   erros no formato `ApiError { statusCode, statusMessage, data }`.
